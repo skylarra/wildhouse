@@ -761,6 +761,41 @@ footer {
   .shop {
     width: 100%;
   }
+
+  .shop .product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .shop .product-card {
+    flex: 0 1 calc(50% - 16px);
+    width: calc(50% - 16px);
+    margin: 8px 0;
+    padding: 10px;
+  }
+
+  .shop .product-card img {
+    width: 100%;
+    height: auto;
+  }
+
+  .best-sellers .product-grid {
+    justify-content: space-between;
+  }
+
+  .best-sellers .product-card {
+    flex: 0 1 calc(50% - 16px);
+    width: calc(50% - 16px);
+    margin: 8px 0;
+    padding: 10px;
+  }
+
+  .best-sellers .product-card img {
+    width: 100%;
+    height: auto;
+  }
 }
 
 a:focus, button:focus {
