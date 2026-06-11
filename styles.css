@@ -8,6 +8,13 @@
   font-style: normal;
 }
 
+.shadows-into-light-regular {
+  font-family: "Shadows Into Light", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
 
 
 html,
@@ -542,7 +549,7 @@ footer {
 }
 
 .side-bar {
-    width: 200px;
+    width: 250px;
     background-color: var(--light-green);
     padding: 20px;
 }
@@ -566,7 +573,8 @@ footer {
     color: var(--brown);
     text-decoration: none;
     padding: 5px 20px;
-    width: 40px;
+    width: auto;
+    display: block;
 }
 
 .side-bar ul li a:hover {
@@ -736,6 +744,22 @@ footer {
     justify-content: center;
     flex-direction: column;
     align-items: center;
+  }
+}
+
+/* mobile-friendly shop layout */
+@media (max-width: 768px) {
+  .shop-all-page {
+    flex-direction: column;
+  }
+
+  .side-bar {
+    width: 100%;
+    order: -1;
+  }
+
+  .shop {
+    width: 100%;
   }
 }
 
