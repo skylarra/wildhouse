@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildhouse Market</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+
+    <nav class="nav">
+        <img src="./assets/WILDHOUSE-submark.svg"
+             class="nav-logo"
+             alt="Wildhouse Market">
+
+        <div class="nav-links" id="navLinks">
+            <a href="./home.html">HOME</a>
+            <a href="./shop.html">SHOP</a>
+        </div>
+
+        <div class="nav-actions">
+            <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="hero-section-divider"></div>
+
+    <div class="hero-container">
+
+        <div class="hero-top">
+            <img src="./assets/WILDHOUSE-LongMark.svg"
+                 class="hero-logo"
+                 alt="Wildhouse Market">
+        </div>
+
+        <div class="hero-strip">
+            <img src="./assets/sunny-mirror.jpg" alt="Laser cut mirror with a sunny design">
+            <img src="./assets/2.2.png" alt="COMING JULY 27TH 2026">
+        </div>
+
+        <div class="hero-bottom">
+            <a href="./shop.html" class="btn secondary">SHOP ALL</a>
+        </div>
+
+    </div>
+
+</header>
+    <section class="best-sellers">
+        <h2>BEST SELLERS</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="./assets/Wildhouse.png" alt="Product 1">
+                <h3>Coming soon</h3>
+                <p>$0.00</p>
+            </div>
+            <div class="product-card">
+                <img src="./assets/Wildhouse.png" alt="Product 2">
+                <h3>Coming soon</h3>
+                <p>$0.00</p>
+            </div>
+            <div class="product-card">
+                <img src="./assets/Wildhouse.png" alt="Product 3">
+                <h3>Coming soon</h3>
+                <p>$0.00</p>
+            </div>
+            <div class="product-card">
+                <img src="./assets/Wildhouse.png" alt="Product 4">
+                <h3>Coming soon</h3>
+                <p>$0.00</p>
+            </div>
+        </div>
+        <div class="shop-button-container">
+            <button class="shop-all-button"><a href="products.html">SHOP ALL</a></button>
+        </div>
+    </section>
+    <section class="welcome">
+        <div class="welcome-first-img">
+            <img src="./assets/about-me-picture.png" alt="Welcome Image 1">
+        </div>
+        <div class="welcome-content">
+            <h2 class="homemade-apple-regular"> Welcome, Friend </h2>
+            <p>There are two things I have always wanted to be: an artist and a wildlife consvervationist. Wildhouse Market is my way of living both dreams in hopes people will come along for the ride. 10% of all profits will be donated to wildlife conservation efforts and I can't wait to share how much is donated along the way.</p>
+        </div>
+        <div class="welcome-second-img">
+            <img src="./assets/welcome1.jpg" alt="Welcome Image 2">
+        </div>
+    </section>
+    <section class="banner">
+        <img src="./assets/sticker-banner-big.png" alt="Banner Image">
+    </section>
+    <div class="banner-divider">
+        <div class="event-section-divider"></div>
+    </div>
+    
+    <section class="events">
+        <h2>UPCOMING EVENTS</h2>
+        <div class="event-grid">
+            <div class="event-card">
+                <p>Coming soon</p>
+                <p>Date: TBD</p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Wildhouse Market. All rights reserved.</p>
+            <div class="social-links">
+                <p>Follow us:</p>
+                <a href="#"><img src="./assets/social1.svg" alt="Instagram"></a>
+                <a href="#"><img src="./assets/social2.svg" alt="TikTok"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        navToggle.addEventListener('click', () => {
+            const isOpen = navLinks.classList.toggle('active');
+            navToggle.setAttribute('aria-expanded', isOpen);
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
