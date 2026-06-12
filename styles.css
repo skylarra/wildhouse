@@ -15,7 +15,9 @@
 }
 
 
-
+.seo-content {
+    display: none;
+}
 
 html,
 body {
