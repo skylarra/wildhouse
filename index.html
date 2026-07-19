@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wildhouse Lane - handmade goods for people who love spooky nature art. Suncatchers, keychains, stickers, magnets, patches, and tees.">
+    <meta property="og:title" content="Wildhouse Lane">
+    <meta property="og:description" content="Wildlife-inspired art and handmade goods.">
+    <meta property="og:image" content="./assets/wildhouselogo-pink-brown.png">
+    <meta property="og:url" content="https://wildhouselane.com">
+    <title>Wildhouse Lane | Handmade Spooky Nature Art</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/WILDHOUSE-logomark.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Wildhouse Lane",
+          "url": "https://wildhouselane.com",
+          "description": "Wildlife-inspired art and handmade nature-themed goods.",
+          "logo": "https://wildhouselane.com/assets/wildhouselogo-pink-brown.png"
+        }
+    </script>
+</head>
+<body>
+    <div id="site-announcement"></div>
+    <header id="site-header"></header>
+
+    <div class="seo-content">
+        <h1>Wildhouse Lane - handmade products for people who love spooky nature art.</h1>
+        <p>Discover unique, handcrafted items inspired by the beauty of nature and the allure of the 24/7 halloween spirit. At Wildhouse Lane, we blend artistry with a love for wildlife conservation.</p>
+    </div>
+
+    <section class="hero-container">
+        <div class="hero-top">
+            <img src="./assets/WILDHOUSE-LongMark.svg" class="hero-logo" alt="Wildhouse Lane">
+        </div>
+        <div class="hero-strip">
+            <img src="./assets/sunny-mirror.jpg" alt="Laser cut mirror with a sunny design">
+            <img src="./assets/2.2.png" alt="Coming soon">
+        </div>
+        <div class="hero-bottom">
+            <a href="./shop.html" class="btn secondary">SHOP ALL</a>
+        </div>
+    </section>
+
+    <section class="best-sellers">
+        <h2>BEST SELLERS</h2>
+        <div class="product-grid" id="featured-grid" aria-live="polite"></div>
+        <div class="shop-button-container">
+            <a class="btn secondary" href="./shop.html">SHOP ALL</a>
+        </div>
+    </section>
+
+    <section class="welcome">
+        <div class="welcome-first-img">
+            <img src="./assets/about-me-picture.png" alt="Skylar, founder of Wildhouse Lane">
+        </div>
+        <div class="welcome-content">
+            <h2 class="homemade-apple-regular">Welcome, Friend</h2>
+            <h2 class="shadows-into-light-regular">Hi, I'm Skylar!</h2>
+            <p>There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride. 10% of all profits will be donated to wildlife conservation efforts and I can't wait to share how much is donated along the way.</p>
+            <a class="btn primary" href="./about.html">Read our story</a>
+        </div>
+        <div class="welcome-second-img">
+            <img src="./assets/welcome1.jpg" alt="Handmade Wildhouse Lane goods">
+        </div>
+    </section>
+
+    <section class="banner">
+        <img src="./assets/sticker-banner-big.png" alt="Wildhouse Lane sticker banner">
+    </section>
+    <div class="banner-divider"><div class="event-section-divider"></div></div>
+
+    <section class="events">
+        <h2>UPCOMING EVENTS</h2>
+        <div class="event-grid" id="events-preview">
+            <div class="event-card">
+                <p><strong>Waffle Fest</strong> &mdash; Downtown Liberty, SC</p>
+                <p>03/15/2026 · 10AM&ndash;4PM</p>
+            </div>
+        </div>
+        <div class="shop-button-container">
+            <a class="btn primary" href="./events.html">All events</a>
+        </div>
+    </section>
+
+    <section id="recently-viewed" class="best-sellers" hidden>
+        <h2>RECENTLY VIEWED</h2>
+        <div class="product-grid" id="recently-viewed-grid"></div>
+    </section>
+
+    <div id="site-newsletter"></div>
+    <footer id="site-footer" class="site-footer"></footer>
+
+    <script type="module" src="./js/components.js"></script>
+    <script type="module" src="./js/home.js"></script>
+</body>
+</html>

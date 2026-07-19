@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- EDITABLE PLACEHOLDER PAGE. Replace the copy in <main> before launch. Form is UI-only (no backend yet). -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact Wildhouse Lane.">
+    <meta property="og:title" content="Contact | Wildhouse Lane">
+    <meta property="og:image" content="./assets/wildhouselogo-pink-brown.png">
+    <title>Contact | Wildhouse Lane</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/WILDHOUSE-logomark.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="site-announcement"></div>
+    <header id="site-header"></header>
+
+    <main class="page-wrap prose">
+        <h1 class="page-title">Contact</h1>
+        <p><em>[Placeholder — replace copy and connect the form to a provider before launch.]</em></p>
+        <p>Questions about an order, a custom piece, or a vendor event? Send a note and we'll get back to you.</p>
+
+        <form class="contact-form" id="contact-form" novalidate>
+            <label class="field">
+                <span>Name</span>
+                <input type="text" name="name" id="contact-name" required autocomplete="name">
+            </label>
+            <label class="field">
+                <span>Email</span>
+                <input type="email" name="email" id="contact-email" required autocomplete="email">
+            </label>
+            <label class="field">
+                <span>Message</span>
+                <textarea name="message" id="contact-message" rows="5" required></textarea>
+            </label>
+            <button type="submit" class="btn secondary">Send message</button>
+            <p class="form-message" role="status" aria-live="polite"></p>
+        </form>
+    </main>
+
+    <div id="site-newsletter"></div>
+    <footer id="site-footer" class="site-footer"></footer>
+
+    <script type="module" src="./js/components.js"></script>
+    <script type="module" src="./js/contact.js"></script>
+</body>
+</html>

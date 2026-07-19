@@ -1,0 +1,194 @@
+{
+  "_comment": "Local placeholder catalog for Wildhouse Lane. Mirrors the Square Catalog API shape (objects of type ITEM / ITEM_VARIATION, price_money in cents, category + image references, and a separate inventory count map keyed by variation id). Replace this file with live Square data after launch. Edit products/prices/inventory here until then.",
+  "currency": "USD",
+  "categories": [
+    { "id": "CAT_KEYCHAINS", "type": "CATEGORY", "category_data": { "name": "Keychains", "handle": "keychains" } },
+    { "id": "CAT_SUNCATCHERS", "type": "CATEGORY", "category_data": { "name": "Suncatchers", "handle": "suncatchers" } },
+    { "id": "CAT_STICKERS", "type": "CATEGORY", "category_data": { "name": "Stickers", "handle": "stickers" } },
+    { "id": "CAT_MAGNETS", "type": "CATEGORY", "category_data": { "name": "Magnets", "handle": "magnets" } },
+    { "id": "CAT_PATCHES", "type": "CATEGORY", "category_data": { "name": "Patches", "handle": "patches" } },
+    { "id": "CAT_TSHIRTS", "type": "CATEGORY", "category_data": { "name": "T-Shirts", "handle": "t-shirts" } }
+  ],
+  "images": {
+    "IMG_SUNNY_1": { "url": "./assets/sunny-mirror.jpg" },
+    "IMG_SUNNY_2": { "url": "./assets/1.png" },
+    "IMG_TREE_KEY": { "url": "./assets/fake-product1.png" },
+    "IMG_TOADSTOOL_KEY": { "url": "./assets/fake-product2.png" },
+    "IMG_MOTH_STICKER": { "url": "./assets/fake-product3.png" },
+    "IMG_STICKER_PACK": { "url": "./assets/2.png" },
+    "IMG_MUSHROOM_MAGNET": { "url": "./assets/fake-product4.png" },
+    "IMG_WILDFLOWER_MAGNET": { "url": "./assets/1.png" },
+    "IMG_EVERGREEN_PATCH": { "url": "./assets/fake-product1.png" },
+    "IMG_TEE_1": { "url": "./assets/Wildhouse.png" },
+    "IMG_TEE_2": { "url": "./assets/wildhouselogo-pink-brown.png" },
+    "IMG_LUNA_1": { "url": "./assets/fake-product2.png" }
+  },
+  "inventory": {
+    "VAR_SUNNY_DEFAULT": 14,
+    "VAR_LUNA_DEFAULT": 9,
+    "VAR_TREE_KEY_DEFAULT": 33,
+    "VAR_TOADSTOOL_DEFAULT": 21,
+    "VAR_MOTH_STICKER_DEFAULT": 120,
+    "VAR_STICKER_PACK_DEFAULT": 54,
+    "VAR_MUSHROOM_MAGNET_DEFAULT": 40,
+    "VAR_WILDFLOWER_MAGNET_DEFAULT": 0,
+    "VAR_EVERGREEN_PATCH_DEFAULT": 18,
+    "VAR_TEE_BLACK_S": 6,
+    "VAR_TEE_BLACK_M": 10,
+    "VAR_TEE_BLACK_L": 8,
+    "VAR_TEE_BLACK_XL": 4,
+    "VAR_TEE_SAND_S": 5,
+    "VAR_TEE_SAND_M": 7,
+    "VAR_TEE_SAND_L": 3,
+    "VAR_TEE_SAND_XL": 0
+  },
+  "objects": [
+    {
+      "type": "ITEM",
+      "id": "ITEM_SUNNY_MIRROR",
+      "item_data": {
+        "name": "Sunny Mirror Suncatcher",
+        "description": "Hand-cut acrylic suncatcher that throws warm rainbows across the room. Each piece is finished by hand, so no two catch the light exactly alike.",
+        "category_id": "CAT_SUNCATCHERS",
+        "image_ids": ["IMG_SUNNY_1", "IMG_SUNNY_2"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_SUNNY_DEFAULT", "item_variation_data": { "item_id": "ITEM_SUNNY_MIRROR", "name": "Regular", "sku": "WHL-SUN-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2400, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "sunny-mirror-suncatcher", "tags": ["nature", "sun", "handmade"], "featured": true }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_LUNA_MOTH",
+      "item_data": {
+        "name": "Luna Moth Suncatcher",
+        "description": "A luna moth in flight, cut from iridescent acrylic. Comes with a suction hook for a sunny window.",
+        "category_id": "CAT_SUNCATCHERS",
+        "image_ids": ["IMG_LUNA_1"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_LUNA_DEFAULT", "item_variation_data": { "item_id": "ITEM_LUNA_MOTH", "name": "Regular", "sku": "WHL-SUN-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2600, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "luna-moth-suncatcher", "tags": ["moth", "spooky", "nature"], "featured": true }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_TREE_KEYCHAIN",
+      "item_data": {
+        "name": "Wildhouse Tree Keychain",
+        "description": "Our signature rooted evergreen, laser-engraved on birch and sealed for everyday carry.",
+        "category_id": "CAT_KEYCHAINS",
+        "image_ids": ["IMG_TREE_KEY"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_TREE_KEY_DEFAULT", "item_variation_data": { "item_id": "ITEM_TREE_KEYCHAIN", "name": "Regular", "sku": "WHL-KEY-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1200, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "wildhouse-tree-keychain", "tags": ["tree", "wood", "handmade"], "featured": true }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_TOADSTOOL_KEYCHAIN",
+      "item_data": {
+        "name": "Toadstool Keychain",
+        "description": "A cheerful little toadstool charm for keys, bags, and zipper pulls.",
+        "category_id": "CAT_KEYCHAINS",
+        "image_ids": ["IMG_TOADSTOOL_KEY"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_TOADSTOOL_DEFAULT", "item_variation_data": { "item_id": "ITEM_TOADSTOOL_KEYCHAIN", "name": "Regular", "sku": "WHL-KEY-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1200, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "toadstool-keychain", "tags": ["mushroom", "cottagecore"], "featured": false }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_MOTH_STICKER",
+      "item_data": {
+        "name": "Spooky Moth Sticker",
+        "description": "Weatherproof vinyl sticker with a matte finish. Great for water bottles, laptops, and journals.",
+        "category_id": "CAT_STICKERS",
+        "image_ids": ["IMG_MOTH_STICKER"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_MOTH_STICKER_DEFAULT", "item_variation_data": { "item_id": "ITEM_MOTH_STICKER", "name": "Regular", "sku": "WHL-STK-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 400, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "spooky-moth-sticker", "tags": ["moth", "spooky", "vinyl"], "featured": false }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_STICKER_PACK",
+      "item_data": {
+        "name": "Forest Friends Sticker Pack",
+        "description": "A set of five woodland critter stickers. Mix of matte and holographic finishes.",
+        "category_id": "CAT_STICKERS",
+        "image_ids": ["IMG_STICKER_PACK"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_STICKER_PACK_DEFAULT", "item_variation_data": { "item_id": "ITEM_STICKER_PACK", "name": "Pack of 5", "sku": "WHL-STK-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1200, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "forest-friends-sticker-pack", "tags": ["pack", "animals", "vinyl"], "featured": true }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_MUSHROOM_MAGNET",
+      "item_data": {
+        "name": "Mushroom Magnet",
+        "description": "A chunky hand-finished magnet strong enough for the fridge or filing cabinet.",
+        "category_id": "CAT_MAGNETS",
+        "image_ids": ["IMG_MUSHROOM_MAGNET"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_MUSHROOM_MAGNET_DEFAULT", "item_variation_data": { "item_id": "ITEM_MUSHROOM_MAGNET", "name": "Regular", "sku": "WHL-MAG-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 800, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "mushroom-magnet", "tags": ["mushroom", "kitchen"], "featured": false }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_WILDFLOWER_MAGNET",
+      "item_data": {
+        "name": "Wildflower Magnet Set",
+        "description": "A trio of pressed-wildflower style magnets. Currently sold out while we restock.",
+        "category_id": "CAT_MAGNETS",
+        "image_ids": ["IMG_WILDFLOWER_MAGNET"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_WILDFLOWER_MAGNET_DEFAULT", "item_variation_data": { "item_id": "ITEM_WILDFLOWER_MAGNET", "name": "Set of 3", "sku": "WHL-MAG-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1400, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "wildflower-magnet-set", "tags": ["flowers", "set"], "featured": false }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_EVERGREEN_PATCH",
+      "item_data": {
+        "name": "Evergreen Patch",
+        "description": "Iron-on embroidered patch of the Wildhouse Lane evergreen. Perfect for jackets and totes.",
+        "category_id": "CAT_PATCHES",
+        "image_ids": ["IMG_EVERGREEN_PATCH"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_EVERGREEN_PATCH_DEFAULT", "item_variation_data": { "item_id": "ITEM_EVERGREEN_PATCH", "name": "Regular", "sku": "WHL-PAT-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1000, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "evergreen-patch", "tags": ["tree", "embroidered"], "featured": false }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_WILDHOUSE_TEE",
+      "item_data": {
+        "name": "Wildhouse Lane Tee",
+        "description": "Soft, mid-weight unisex tee screen-printed with the rooted evergreen. Runs true to size.",
+        "category_id": "CAT_TSHIRTS",
+        "image_ids": ["IMG_TEE_1", "IMG_TEE_2"],
+        "variations": [
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_BLACK_S", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Black / S", "sku": "WHL-TEE-BLK-S", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2800, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_BLACK_M", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Black / M", "sku": "WHL-TEE-BLK-M", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2800, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_BLACK_L", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Black / L", "sku": "WHL-TEE-BLK-L", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2800, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_BLACK_XL", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Black / XL", "sku": "WHL-TEE-BLK-XL", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 3000, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_SAND_S", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Sand / S", "sku": "WHL-TEE-SND-S", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2800, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_SAND_M", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Sand / M", "sku": "WHL-TEE-SND-M", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2800, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_SAND_L", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Sand / L", "sku": "WHL-TEE-SND-L", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2800, "currency": "USD" } } },
+          { "type": "ITEM_VARIATION", "id": "VAR_TEE_SAND_XL", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Sand / XL", "sku": "WHL-TEE-SND-XL", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 3000, "currency": "USD" } } }
+        ]
+      },
+      "custom": { "handle": "wildhouse-lane-tee", "tags": ["apparel", "unisex", "tree"], "featured": true }
+    }
+  ]
+}
