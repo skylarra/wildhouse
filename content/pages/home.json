@@ -1,0 +1,34 @@
+{
+  "_comment": "Home page content. Edit hero, welcome, banner, and section headings here.",
+  "seo": {
+    "heading": "Wildhouse Lane - handmade products for people who love spooky nature art.",
+    "body": "Discover unique, handcrafted items inspired by the beauty of nature and the allure of the 24/7 halloween spirit. At Wildhouse Lane, we blend artistry with a love for wildlife conservation."
+  },
+  "hero": {
+    "logo": "./assets/WILDHOUSE-LongMark.svg",
+    "logoAlt": "Wildhouse Lane",
+    "images": [
+      { "src": "./assets/sunny-mirror.jpg", "alt": "Laser cut mirror with a sunny design" },
+      { "src": "./assets/2.2.png", "alt": "Coming soon" }
+    ],
+    "cta": { "label": "SHOP ALL", "href": "./shop.html" }
+  },
+  "bestSellers": {
+    "heading": "BEST SELLERS",
+    "cta": { "label": "SHOP ALL", "href": "./shop.html" }
+  },
+  "welcome": {
+    "eyebrow": "Welcome, Friend",
+    "heading": "Hi, I'm Skylar!",
+    "body": "There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride. 10% of all profits will be donated to wildlife conservation efforts and I can't wait to share how much is donated along the way.",
+    "cta": { "label": "Read our story", "href": "./about.html" },
+    "primaryImage": { "src": "./assets/about-me-picture.png", "alt": "Skylar, founder of Wildhouse Lane" },
+    "secondaryImage": { "src": "./assets/welcome1.jpg", "alt": "Handmade Wildhouse Lane goods" }
+  },
+  "banner": { "src": "./assets/sticker-banner-big.png", "alt": "Wildhouse Lane sticker banner" },
+  "eventsPreview": {
+    "heading": "UPCOMING EVENTS",
+    "cta": { "label": "All events", "href": "./events.html" }
+  },
+  "recentlyViewedHeading": "RECENTLY VIEWED"
+}

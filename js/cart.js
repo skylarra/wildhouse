@@ -2,10 +2,11 @@
 // progress, and a placeholder checkout (Square Checkout is wired after launch).
 import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
-import { site } from "./config.js";
+import { loadSite } from "./content.js";
 import { escapeHtml, toast } from "./ui.js";
 
 const root = document.getElementById("cart-root");
+let freeShippingThresholdCents = 7500;
 
 function lineHTML(line) {
   const variant = line.variationName ? `<p class="cart-line__variant">${escapeHtml(line.variationName)}</p>` : "";
@@ -42,8 +43,7 @@ function render() {
   }
 
   const subtotal = cartSubtotalCents();
-  const threshold = site.freeShippingThresholdCents;
-  const remaining = Math.max(0, threshold - subtotal);
+  const remaining = Math.max(0, freeShippingThresholdCents - subtotal);
   const shippingNote =
     remaining === 0
       ? `You've unlocked free shipping!`
@@ -99,4 +99,10 @@ function wire() {
 }
 
 document.addEventListener("cart:change", render);
-render();
+
+loadSite()
+  .then((site) => {
+    freeShippingThresholdCents = site.freeShippingThresholdCents ?? freeShippingThresholdCents;
+  })
+  .catch((err) => console.error(err))
+  .finally(render);

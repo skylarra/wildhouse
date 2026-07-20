@@ -30,67 +30,31 @@
     <div id="site-announcement"></div>
     <header id="site-header"></header>
 
-    <div class="seo-content">
-        <h1>Wildhouse Lane - handmade products for people who love spooky nature art.</h1>
-        <p>Discover unique, handcrafted items inspired by the beauty of nature and the allure of the 24/7 halloween spirit. At Wildhouse Lane, we blend artistry with a love for wildlife conservation.</p>
-    </div>
+    <noscript>
+        <div class="seo-content" style="display:block">
+            <h1>Wildhouse Lane — handmade products for people who love spooky nature art.</h1>
+            <p>Enable JavaScript to browse the full shop, or <a href="./shop.html">visit the shop</a>.</p>
+        </div>
+    </noscript>
+    <div class="seo-content" id="seo-content"></div>
 
-    <section class="hero-container">
-        <div class="hero-top">
-            <img src="./assets/WILDHOUSE-LongMark.svg" class="hero-logo" alt="Wildhouse Lane">
-        </div>
-        <div class="hero-strip">
-            <img src="./assets/sunny-mirror.jpg" alt="Laser cut mirror with a sunny design">
-            <img src="./assets/2.2.png" alt="Coming soon">
-        </div>
-        <div class="hero-bottom">
-            <a href="./shop.html" class="btn secondary">SHOP ALL</a>
-        </div>
-    </section>
+    <section class="hero-container" id="hero"></section>
 
     <section class="best-sellers">
-        <h2>BEST SELLERS</h2>
+        <h2 id="best-sellers-heading">BEST SELLERS</h2>
         <div class="product-grid" id="featured-grid" aria-live="polite"></div>
-        <div class="shop-button-container">
-            <a class="btn secondary" href="./shop.html">SHOP ALL</a>
-        </div>
+        <div class="shop-button-container" id="best-sellers-cta"></div>
     </section>
 
-    <section class="welcome">
-        <div class="welcome-first-img">
-            <img src="./assets/about-me-picture.png" alt="Skylar, founder of Wildhouse Lane">
-        </div>
-        <div class="welcome-content">
-            <h2 class="homemade-apple-regular">Welcome, Friend</h2>
-            <h2 class="shadows-into-light-regular">Hi, I'm Skylar!</h2>
-            <p>There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride. 10% of all profits will be donated to wildlife conservation efforts and I can't wait to share how much is donated along the way.</p>
-            <a class="btn primary" href="./about.html">Read our story</a>
-        </div>
-        <div class="welcome-second-img">
-            <img src="./assets/welcome1.jpg" alt="Handmade Wildhouse Lane goods">
-        </div>
-    </section>
+    <section class="welcome" id="welcome"></section>
 
-    <section class="banner">
-        <img src="./assets/sticker-banner-big.png" alt="Wildhouse Lane sticker banner">
-    </section>
+    <section class="banner" id="banner"></section>
     <div class="banner-divider"><div class="event-section-divider"></div></div>
 
-    <section class="events">
-        <h2>UPCOMING EVENTS</h2>
-        <div class="event-grid" id="events-preview">
-            <div class="event-card">
-                <p><strong>Waffle Fest</strong> &mdash; Downtown Liberty, SC</p>
-                <p>03/15/2026 · 10AM&ndash;4PM</p>
-            </div>
-        </div>
-        <div class="shop-button-container">
-            <a class="btn primary" href="./events.html">All events</a>
-        </div>
-    </section>
+    <section class="events" id="events-preview"></section>
 
     <section id="recently-viewed" class="best-sellers" hidden>
-        <h2>RECENTLY VIEWED</h2>
+        <h2 id="recently-viewed-heading">RECENTLY VIEWED</h2>
         <div class="product-grid" id="recently-viewed-grid"></div>
     </section>
 

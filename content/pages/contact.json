@@ -1,0 +1,18 @@
+{
+  "_comment": "Contact page. Edit intro/note copy here. The form is a component; connect it to a provider before launch.",
+  "title": "Contact",
+  "blocks": [
+    { "type": "note", "html": "Placeholder — replace copy and connect the form to a provider before launch." },
+    { "type": "paragraph", "html": "Questions about an order, a custom piece, or a vendor event? Send a note and we'll get back to you." }
+  ],
+  "form": {
+    "successMessage": "Thanks! Your message has been received.",
+    "errorMessage": "Please fill in your name, a valid email, and a message.",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send message"
+    }
+  }
+}

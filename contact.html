@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- EDITABLE PLACEHOLDER PAGE. Replace the copy in <main> before launch. Form is UI-only (no backend yet). -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,26 +19,10 @@
     <header id="site-header"></header>
 
     <main class="page-wrap prose">
-        <h1 class="page-title">Contact</h1>
-        <p><em>[Placeholder — replace copy and connect the form to a provider before launch.]</em></p>
-        <p>Questions about an order, a custom piece, or a vendor event? Send a note and we'll get back to you.</p>
-
-        <form class="contact-form" id="contact-form" novalidate>
-            <label class="field">
-                <span>Name</span>
-                <input type="text" name="name" id="contact-name" required autocomplete="name">
-            </label>
-            <label class="field">
-                <span>Email</span>
-                <input type="email" name="email" id="contact-email" required autocomplete="email">
-            </label>
-            <label class="field">
-                <span>Message</span>
-                <textarea name="message" id="contact-message" rows="5" required></textarea>
-            </label>
-            <button type="submit" class="btn secondary">Send message</button>
-            <p class="form-message" role="status" aria-live="polite"></p>
-        </form>
+        <div id="contact-content" data-page="contact" data-page-manual="true" aria-live="polite">
+            <p class="loading">Loading…</p>
+        </div>
+        <div id="contact-form-mount"></div>
     </main>
 
     <div id="site-newsletter"></div>

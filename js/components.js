@@ -1,10 +1,11 @@
 // Wildhouse Lane — reusable layout components.
-// Renders the announcement bar, header/nav, footer, and newsletter into the
-// placeholder containers present on every page, then wires their behavior.
-// Content comes from js/config.js so there is a single place to edit.
+// Renders the announcement bar, header/nav, newsletter, and footer into the
+// placeholder containers present on every page. All content comes from
+// content/site.json via js/content.js — no copy is hardcoded here.
 
-import { site, announcement, nav, footerLinks, social } from "./config.js";
+import { loadSite } from "./content.js";
 import { cartCount, getPref, setPref } from "./store.js";
+import { escapeHtml } from "./ui.js";
 
 const currentFile = location.pathname.split("/").pop() || "index.html";
 
@@ -14,9 +15,9 @@ function isActive(href) {
 }
 
 /* ------------------------- Announcement bar ------------------------- */
-function mountAnnouncement() {
+function mountAnnouncement(announcement) {
   const el = document.getElementById("site-announcement");
-  if (!el || !announcement.messages.length) return;
+  if (!el || !announcement || !announcement.messages?.length) return;
 
   if (announcement.dismissible && getPref("announcementDismissed") === true) {
     el.hidden = true;
@@ -25,17 +26,17 @@ function mountAnnouncement() {
 
   el.innerHTML = `
     <div class="announcement" role="region" aria-label="Announcements">
-      <p class="announcement__text" aria-live="polite">${announcement.messages[0]}</p>
+      <p class="announcement__text" aria-live="polite">${escapeHtml(announcement.messages[0])}</p>
       ${announcement.dismissible ? '<button class="announcement__close" type="button" aria-label="Dismiss announcement">&times;</button>' : ""}
     </div>`;
 
   const textEl = el.querySelector(".announcement__text");
-  let i = 0;
   if (announcement.messages.length > 1) {
+    let i = 0;
     setInterval(() => {
       i = (i + 1) % announcement.messages.length;
       textEl.textContent = announcement.messages[i];
-    }, announcement.rotateMs);
+    }, announcement.rotateMs || 4500);
   }
 
   const closeBtn = el.querySelector(".announcement__close");
@@ -48,21 +49,21 @@ function mountAnnouncement() {
 }
 
 /* ------------------------------ Header ------------------------------ */
-function mountHeader() {
+function mountHeader(site) {
   const el = document.getElementById("site-header");
   if (!el) return;
 
-  const links = nav
+  const links = site.nav
     .map(
       (item) =>
-        `<a href="${item.href}"${isActive(item.href) ? ' aria-current="page"' : ""}>${item.label}</a>`
+        `<a href="${item.href}"${isActive(item.href) ? ' aria-current="page"' : ""}>${escapeHtml(item.label)}</a>`
     )
     .join("");
 
   el.innerHTML = `
     <nav class="nav" aria-label="Primary">
-      <a href="./index.html" class="nav-brand" aria-label="${site.brand} home">
-        <img src="./assets/WILDHOUSE-submark.svg" class="nav-logo" alt="${site.brand}">
+      <a href="./index.html" class="nav-brand" aria-label="${escapeHtml(site.brand)} home">
+        <img src="${site.logos.submark}" class="nav-logo" alt="${escapeHtml(site.brand)}">
       </a>
       <div class="nav-links" id="navLinks">${links}</div>
       <div class="nav-actions">
@@ -102,18 +103,18 @@ export function updateCartBadge() {
 }
 
 /* ---------------------------- Newsletter ---------------------------- */
-function mountNewsletter() {
+function mountNewsletter(n) {
   const el = document.getElementById("site-newsletter");
-  if (!el) return;
+  if (!el || !n) return;
 
   el.innerHTML = `
     <section class="newsletter" aria-labelledby="newsletter-heading">
-      <h2 id="newsletter-heading" class="shadows-into-light-regular">Join the Club</h2>
-      <p>Be first to know about new collections, restocks, and vendor events.</p>
+      <h2 id="newsletter-heading" class="shadows-into-light-regular">${escapeHtml(n.heading)}</h2>
+      <p>${escapeHtml(n.body)}</p>
       <form class="newsletter__form" novalidate>
         <label class="visually-hidden" for="newsletter-email">Email address</label>
-        <input type="email" id="newsletter-email" name="email" placeholder="you@example.com" autocomplete="email" required>
-        <button type="submit" class="btn secondary">Sign Up</button>
+        <input type="email" id="newsletter-email" name="email" placeholder="${escapeHtml(n.placeholder)}" autocomplete="email" required>
+        <button type="submit" class="btn secondary">${escapeHtml(n.buttonLabel)}</button>
       </form>
       <p class="newsletter__message" role="status" aria-live="polite"></p>
     </section>`;
@@ -125,61 +126,63 @@ function mountNewsletter() {
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const value = input.value.trim();
-    if (!emailRe.test(value)) {
-      message.textContent = "Please enter a valid email address.";
+    if (!emailRe.test(input.value.trim())) {
+      message.textContent = n.errorMessage;
       message.className = "newsletter__message is-error";
       input.focus();
       return;
     }
     // UI only for now — no email provider connected yet.
-    message.textContent = "Thanks for joining! Check your inbox soon.";
+    message.textContent = n.successMessage;
     message.className = "newsletter__message is-success";
     form.reset();
   });
 }
 
 /* ------------------------------ Footer ------------------------------ */
-function mountFooter() {
+function mountFooter(site) {
   const el = document.getElementById("site-footer");
   if (!el) return;
 
-  const columns = footerLinks
+  const columns = site.footerLinks
     .map(
       (col) => `
       <div class="footer-col">
-        <h3>${col.heading}</h3>
-        <ul>${col.links.map((l) => `<li><a href="${l.href}">${l.label}</a></li>`).join("")}</ul>
+        <h3>${escapeHtml(col.heading)}</h3>
+        <ul>${col.links.map((l) => `<li><a href="${l.href}">${escapeHtml(l.label)}</a></li>`).join("")}</ul>
       </div>`
     )
     .join("");
 
-  const socialLinks = social
-    .map(
-      (s) => `<a href="${s.href}" aria-label="${s.label}"><img src="${s.icon}" alt=""></a>`
-    )
+  const socialLinks = site.social
+    .map((s) => `<a href="${s.href}" aria-label="${escapeHtml(s.label)}"><img src="${s.icon}" alt=""></a>`)
     .join("");
 
   el.innerHTML = `
     <div class="footer-grid">
       <div class="footer-col footer-brand">
-        <img src="./assets/WILDHOUSE-WordMark.svg" alt="${site.brand}" class="footer-logo">
-        <p>${site.tagline}</p>
+        <img src="${site.logos.wordmark}" alt="${escapeHtml(site.brand)}" class="footer-logo">
+        <p>${escapeHtml(site.tagline)}</p>
         <div class="social-links">${socialLinks}</div>
       </div>
       ${columns}
     </div>
     <div class="footer-bottom">
-      <p>&copy; ${new Date().getFullYear()} ${site.brand}. All rights reserved.</p>
+      <p>&copy; ${new Date().getFullYear()} ${escapeHtml(site.brand)}. All rights reserved.</p>
     </div>`;
 }
 
-function mountChrome() {
-  mountAnnouncement();
-  mountHeader();
-  mountNewsletter();
-  mountFooter();
+async function mountChrome() {
   document.addEventListener("cart:change", updateCartBadge);
+  try {
+    const site = await loadSite();
+    mountAnnouncement(site.announcement);
+    mountHeader(site);
+    mountNewsletter(site.newsletter);
+    mountFooter(site);
+  } catch (err) {
+    console.error("Failed to mount site chrome:", err);
+  }
 }
 
 if (document.readyState === "loading") {
