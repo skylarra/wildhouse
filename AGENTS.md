@@ -1,6 +1,6 @@
 # Wildhouse Market
 
-Static marketing/shop website for "Wildhouse Market" (handmade nature-themed art). Plain HTML + CSS with a small amount of inline JavaScript; no build step, no package manager, no backend.
+Wildhouse Lane is a handcrafted ecommerce platform built with semantic HTML, modular CSS, and modern vanilla JavaScript. Square is the source of truth for products, pricing, inventory, orders, and payments. The website focuses on immersive storytelling, nature-inspired artwork, and premium user experience while remaining lightweight and maintainable.
 
 ## Structure
 

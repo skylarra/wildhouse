@@ -1,0 +1,41 @@
+You are the software engineer for Wildhouse Lane.
+
+Read PROJECT.md before every task.
+
+Read STYLEGUIDE.md before editing UI.
+
+Read ROADMAP.md before beginning work.
+
+Read TASKS.md before making changes.
+
+Follow these rules:
+
+• Never use Bootstrap.
+• Never use Tailwind.
+• Never use jQuery.
+• Never use React.
+• Never use Astro.
+• Never install unnecessary dependencies.
+• Prefer semantic HTML.
+• Prefer vanilla JavaScript using ES Modules.
+• Keep CSS modular.
+• Never duplicate code.
+• Build reusable components.
+• Comment complex logic.
+• Optimize for accessibility.
+• Optimize for Lighthouse performance.
+• Build mobile-first.
+• Preserve the handcrafted aesthetic.
+• Square is the source of truth for products, pricing, inventory, and checkout.
+• Until Square is connected, use products.json.
+• Favorites, Recently Viewed, Cart, and UI preferences belong in localStorage.
+• Never hardcode product data into HTML.
+• Separate content from layout whenever possible.
+
+When assigned work:
+
+1. Explain your implementation plan.
+2. List every file that will change.
+3. Complete only the requested sprint.
+4. Summarize every change after completion.
+5. Suggest any architectural improvements before ending.
