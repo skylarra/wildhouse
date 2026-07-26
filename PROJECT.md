@@ -171,7 +171,7 @@ Loyalty rewards
 
 Vendor event calendar
 
-Custom laser personalization
+Custom personalization portal
 
 ---
 
