@@ -11,20 +11,25 @@ function ctaHTML(cta, cls = "btn secondary") {
 
 function renderSeo(seo) {
   const el = document.getElementById("seo-content");
-  if (el && seo) el.innerHTML = `<h1>${escapeHtml(seo.heading)}</h1><p>${escapeHtml(seo.body)}</p>`;
+  if (el && seo) {
+    el.innerHTML = `<h1 class="page-intro__title">${escapeHtml(seo.heading)}</h1><p class="page-intro__body">${escapeHtml(seo.body)}</p>`;
+  }
 }
 
 function renderHero(hero) {
   const el = document.getElementById("hero");
   if (!el || !hero) return;
-  const strip = (hero.images || [])
-    .map((img) => `<img src="${img.src}" alt="${escapeHtml(img.alt || "")}">`)
+  const stripImgs = (hero.images || [])
+    .map((img, i) => {
+      const eager = i === 0 ? ' fetchpriority="high"' : ' loading="lazy"';
+      return `<img src="${img.src}" alt="${escapeHtml(img.alt || "")}"${eager}>`;
+    })
     .join("");
   el.innerHTML = `
     <div class="hero-top">
-      <img src="${hero.logo}" class="hero-logo" alt="${escapeHtml(hero.logoAlt || "")}">
+      <img src="${hero.logo}" class="hero-logo" alt="${escapeHtml(hero.logoAlt || "")}" width="550" height="180">
     </div>
-    <div class="hero-strip">${strip}</div>
+    <div class="hero-strip">${stripImgs}</div>
     <div class="hero-bottom">${ctaHTML(hero.cta)}</div>`;
 }
 
@@ -41,22 +46,24 @@ function renderWelcome(w) {
   if (!el || !w) return;
   el.innerHTML = `
     <div class="welcome-first-img">
-      <img src="${w.primaryImage.src}" alt="${escapeHtml(w.primaryImage.alt || "")}">
+      <img src="${w.primaryImage.src}" alt="${escapeHtml(w.primaryImage.alt || "")}" loading="lazy">
     </div>
     <div class="welcome-content">
-      <h2 class="homemade-apple-regular">${escapeHtml(w.eyebrow)}</h2>
+      <p class="homemade-apple-regular welcome-eyebrow">${escapeHtml(w.eyebrow)}</p>
       <h2 class="shadows-into-light-regular">${escapeHtml(w.heading)}</h2>
       <p>${escapeHtml(w.body)}</p>
       ${ctaHTML(w.cta, "btn primary")}
     </div>
     <div class="welcome-second-img">
-      <img src="${w.secondaryImage.src}" alt="${escapeHtml(w.secondaryImage.alt || "")}">
+      <img src="${w.secondaryImage.src}" alt="${escapeHtml(w.secondaryImage.alt || "")}" loading="lazy">
     </div>`;
 }
 
 function renderBanner(banner) {
   const el = document.getElementById("banner");
-  if (el && banner) el.innerHTML = `<img src="${banner.src}" alt="${escapeHtml(banner.alt || "")}">`;
+  if (el && banner) {
+    el.innerHTML = `<img src="${banner.src}" alt="${escapeHtml(banner.alt || "")}" loading="lazy">`;
+  }
 }
 
 async function renderEventsPreview(preview) {

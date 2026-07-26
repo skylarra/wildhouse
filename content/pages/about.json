@@ -1,7 +1,7 @@
 {
   "_comment": "About page. Edit copy and blocks here. Block types: paragraph, heading, image, cta, note.",
   "title": "Our Story",
-  "hero": { "src": "./assets/about-me-picture.png", "alt": "Skylar, founder of Wildhouse Lane" },
+  "hero": { "src": "./assets/about-me-picture.jpg", "alt": "Skylar, founder of Wildhouse Lane" },
   "blocks": [
     { "type": "note", "html": "Placeholder copy — replace before launch." },
     { "type": "paragraph", "html": "There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride." },

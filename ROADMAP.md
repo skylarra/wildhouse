@@ -52,7 +52,7 @@ Related Products
 
 ---
 
-## Sprint 4
+## Sprint 4 ✅
 
 Square Catalog
 
@@ -66,15 +66,16 @@ Order Confirmation
 
 ## Sprint 5
 
-SEO
+SEO ✅
 
-Accessibility
+Accessibility ✅
 
-Performance
+Performance ✅
 
-Testing
+Testing / launch checklist ✅
 
-Launch
+Launch (ops: Square sandbox secrets + custom domain)
+
 
 ---
 

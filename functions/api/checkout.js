@@ -3,11 +3,20 @@
 // Creates a Square Payment Link (Square-hosted checkout) and returns its URL.
 // Pricing comes from the Square catalog (source of truth) — we send only
 // catalog variation ids + quantities, never prices or card data.
-import { squareConfig, squareFetch, json } from "./_square.js";
+import { squareConfig, squareFetch, json, missingSquareEnv } from "./_square.js";
 
 export async function onRequestPost({ request, env }) {
   const cfg = squareConfig(env);
-  if (!cfg.configured) return json({ error: "Square not configured" }, 501);
+  if (!cfg.configured) {
+    return json(
+      {
+        error: "Square not configured",
+        missing: missingSquareEnv(env),
+        environment: cfg.environment,
+      },
+      501
+    );
+  }
 
   let payload;
   try {

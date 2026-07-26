@@ -1,10 +1,19 @@
 // GET /api/order?orderId=...
 // Returns a trimmed order summary for the confirmation page.
-import { squareConfig, squareFetch, json } from "./_square.js";
+import { squareConfig, squareFetch, json, missingSquareEnv } from "./_square.js";
 
 export async function onRequestGet({ request, env }) {
   const cfg = squareConfig(env);
-  if (!cfg.configured) return json({ error: "Square not configured" }, 501);
+  if (!cfg.configured) {
+    return json(
+      {
+        error: "Square not configured",
+        missing: missingSquareEnv(env),
+        environment: cfg.environment,
+      },
+      501
+    );
+  }
 
   const orderId = new URL(request.url).searchParams.get("orderId");
   if (!orderId) return json({ error: "Missing orderId" }, 400);

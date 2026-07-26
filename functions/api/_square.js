@@ -21,6 +21,26 @@ export function squareConfig(env) {
   };
 }
 
+/** Names only — never values — so deploy diagnostics stay safe to expose. */
+export function missingSquareEnv(env = {}) {
+  const missing = [];
+  if (!env.SQUARE_ACCESS_TOKEN) missing.push("SQUARE_ACCESS_TOKEN");
+  if (!env.SQUARE_LOCATION_ID) missing.push("SQUARE_LOCATION_ID");
+  return missing;
+}
+
+function isFeaturedItem(itemData = {}) {
+  // Prefer an explicit Square custom attribute named like "featured".
+  const attrs = itemData.custom_attribute_values || {};
+  for (const attr of Object.values(attrs)) {
+    const key = String(attr?.name || attr?.key || "").toLowerCase();
+    if (!key.includes("featured")) continue;
+    if (attr.boolean_value === true) return true;
+    if (String(attr.string_value || "").toLowerCase() === "true") return true;
+  }
+  return false;
+}
+
 export async function squareFetch(cfg, path, options = {}) {
   const res = await fetch(`${cfg.base}${path}`, {
     ...options,
@@ -112,9 +132,9 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
       custom: {
         handle: slugify(d.name) || it.id,
         tags: [],
-        // Square has no native "featured" flag; can later be driven by a custom
-        // attribute or a category. Defaults to false for live catalog items.
-        featured: false,
+        // Square has no native featured flag; map a "featured" custom attribute
+        // when present. Frontend also falls back to in-stock items.
+        featured: isFeaturedItem(d),
       },
     };
   });

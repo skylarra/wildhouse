@@ -36,7 +36,7 @@ async function renderCategories() {
   categoryList.innerHTML = items
     .map(
       (c) =>
-        `<li><a href="#" data-category="${c.handle}"${c.handle === state.category ? ' class="is-active"' : ""}>${c.name}</a></li>`
+        `<li><a href="${c.handle === "all" ? "./shop.html" : `./shop.html?category=${encodeURIComponent(c.handle)}`}" data-category="${c.handle}"${c.handle === state.category ? ' class="is-active"' : ""}>${c.name}</a></li>`
     )
     .join("");
   categoryList.addEventListener("click", (e) => {
