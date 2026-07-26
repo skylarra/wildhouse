@@ -13,6 +13,18 @@ export function formatMoney(cents, currency = "USD") {
 
 async function loadRaw() {
   if (cache) return cache;
+  // Prefer the live Square catalog (served by the Cloudflare Function at
+  // /api/catalog). Fall back to the bundled products.json when Square isn't
+  // configured or during local/static preview. Both return the same shape.
+  try {
+    const live = await fetch("./api/catalog", { cache: "no-store" });
+    if (live.ok) {
+      cache = await live.json();
+      return cache;
+    }
+  } catch (_) {
+    /* network/offline or static host without Functions — use local fallback */
+  }
   const res = await fetch("./data/products.json", { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load catalog: ${res.status}`);
   cache = await res.json();

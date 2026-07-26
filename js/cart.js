@@ -58,7 +58,7 @@ function render() {
         <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${formatMoney(subtotal)}</span></div>
         <p class="cart-summary__ship">${shippingNote}</p>
         <button class="btn secondary cart-checkout" id="checkout-btn" type="button">Checkout</button>
-        <p class="cart-summary__note">Secure checkout with Square is coming soon.</p>
+        <p class="cart-summary__note">Secure checkout powered by Square.</p>
         <a class="cart-continue" href="./shop.html">Continue shopping</a>
       </aside>
     </div>`;
@@ -91,10 +91,39 @@ function wire() {
 
   const checkout = document.getElementById("checkout-btn");
   if (checkout) {
-    checkout.addEventListener("click", () => {
-      // Placeholder until Square Checkout / Web Payments is connected post-launch.
-      toast("Checkout with Square is coming soon.");
+    checkout.addEventListener("click", () => startCheckout(checkout));
+  }
+}
+
+// Sends the cart to our Square-backed Function and redirects to the hosted
+// checkout. Fails gracefully when Square isn't configured (e.g. static preview).
+async function startCheckout(button) {
+  const cart = getCart();
+  if (!cart.length) return;
+
+  const originalLabel = button.textContent;
+  button.disabled = true;
+  button.textContent = "Redirecting…";
+
+  try {
+    const res = await fetch("./api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cart.map((l) => ({ variationId: l.variationId, qty: l.qty })),
+      }),
     });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.url) {
+      window.location.href = data.url;
+      return;
+    }
+    throw new Error(data.error || `Checkout failed (${res.status})`);
+  } catch (err) {
+    console.error(err);
+    button.disabled = false;
+    button.textContent = originalLabel;
+    toast("Checkout isn't available yet. Please try again soon.");
   }
 }
 

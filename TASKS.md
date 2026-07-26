@@ -1,39 +1,46 @@
 # Current Sprint
 
-## Sprint 2
+## Sprint 4 — Square Integration
 
-### Components
+### Catalog & Inventory
+- Server-side Square Catalog fetch (Cloudflare Pages Function) ✅
+- Real-time inventory counts ✅
+- Same schema as products.json + graceful fallback ✅
 
-- Header
-- Footer
-- Navigation
-- Announcement Bar
+### Checkout
+- Square Payment Links (hosted checkout, no card handling) ✅
+- Cart posts variation ids + quantities to /api/checkout ✅
 
-### Shop
+### Order Confirmation
+- order-confirmation.html redirect target ✅
+- Clears cart, shows order reference/summary ✅
 
-- Product Cards
-- products.json
-- Dynamic Rendering
-- Collections
-- Search
-- Filters
+### Domain
+- wildhouselane.com finalized (canonical tags) ✅
 
-### Architecture
+---
 
-- ES Modules
-- Component Loader
-- Modular CSS
+## Pending (requires user)
+
+- Add Square **Sandbox** credentials as secrets to enable/verify the live path:
+  `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, `SQUARE_ENVIRONMENT=sandbox`.
+- Connect `wildhouselane.com` to the Cloudflare Pages project and set the same
+  env vars there. Add production credentials only after sandbox testing passes.
 
 ---
 
 ## Rules
 
-Do not begin Square integration.
-
 Do not build customer accounts.
 
 Do not add frameworks.
 
-Focus only on Sprint 2.
+Do not add production Square credentials until sandbox testing is complete.
 
 Everything should remain production quality.
+
+---
+
+## Next: Sprint 5
+
+SEO, accessibility, performance, testing, launch.
