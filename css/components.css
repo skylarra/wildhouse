@@ -72,7 +72,12 @@
   display: flex; align-items: center; justify-content: center;
 }
 .nav-brand { display: inline-flex; }
-.nav-links a[aria-current="page"] { color: var(--green); text-decoration: underline; }
+.nav-links a[aria-current="page"] {
+  color: var(--brown);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 700;
+}
 
 /* --------------------------- Product grid -------------------------- */
 .product-grid {
@@ -112,7 +117,7 @@
   border-radius: 999px;
   border: none;
   background: rgba(255, 255, 255, 0.85);
-  color: #b9a3a0;
+  color: #6b4546;
   font-size: 1.1rem;
   cursor: pointer;
   line-height: 1;
@@ -348,6 +353,7 @@
 .order-lines li { padding: 8px 0; border-bottom: 1px solid var(--light-pink); color: var(--brown); }
 .order-total { font-weight: 700; color: var(--brown); }
 .confirmation-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+.confirmation--warning .order-ref { color: var(--brown); }
 
 /* Respect reduced-motion preferences. */
 @media (prefers-reduced-motion: reduce) {

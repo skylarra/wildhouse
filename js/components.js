@@ -14,6 +14,10 @@ function isActive(href) {
   return file === currentFile || (currentFile === "" && file === "index.html");
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+}
+
 /* ------------------------- Announcement bar ------------------------- */
 function mountAnnouncement(announcement) {
   const el = document.getElementById("site-announcement");
@@ -31,7 +35,7 @@ function mountAnnouncement(announcement) {
     </div>`;
 
   const textEl = el.querySelector(".announcement__text");
-  if (announcement.messages.length > 1) {
+  if (announcement.messages.length > 1 && !prefersReducedMotion()) {
     let i = 0;
     setInterval(() => {
       i = (i + 1) % announcement.messages.length;
@@ -49,6 +53,12 @@ function mountAnnouncement(announcement) {
 }
 
 /* ------------------------------ Header ------------------------------ */
+function setNavOpen(navToggle, navLinks, isOpen) {
+  navLinks.classList.toggle("active", isOpen);
+  navToggle.setAttribute("aria-expanded", String(isOpen));
+  navToggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+}
+
 function mountHeader(site) {
   const el = document.getElementById("site-header");
   if (!el) return;
@@ -67,7 +77,7 @@ function mountHeader(site) {
       </a>
       <div class="nav-links" id="navLinks">${links}</div>
       <div class="nav-actions">
-        <a class="nav-cart" href="./cart.html" aria-label="Cart">
+        <a class="nav-cart" href="./cart.html" id="navCartLink" aria-label="Cart">
           <img src="./assets/cart-icon.svg" alt="">
           <span class="cart-badge" id="cartBadge" hidden>0</span>
         </a>
@@ -81,14 +91,16 @@ function mountHeader(site) {
   const navToggle = el.querySelector("#navToggle");
   const navLinks = el.querySelector("#navLinks");
   navToggle.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("active");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
+    setNavOpen(navToggle, navLinks, !navLinks.classList.contains("active"));
   });
   navLinks.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      navLinks.classList.remove("active");
-      navToggle.setAttribute("aria-expanded", "false");
-    });
+    link.addEventListener("click", () => setNavOpen(navToggle, navLinks, false));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navLinks.classList.contains("active")) {
+      setNavOpen(navToggle, navLinks, false);
+      navToggle.focus();
+    }
   });
 
   updateCartBadge();
@@ -96,10 +108,15 @@ function mountHeader(site) {
 
 export function updateCartBadge() {
   const badge = document.getElementById("cartBadge");
-  if (!badge) return;
+  const cartLink = document.getElementById("navCartLink");
   const count = cartCount();
-  badge.textContent = String(count);
-  badge.hidden = count === 0;
+  if (badge) {
+    badge.textContent = String(count);
+    badge.hidden = count === 0;
+  }
+  if (cartLink) {
+    cartLink.setAttribute("aria-label", count === 0 ? "Cart" : `Cart, ${count} ${count === 1 ? "item" : "items"}`);
+  }
 }
 
 /* ---------------------------- Newsletter ---------------------------- */

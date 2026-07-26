@@ -188,8 +188,76 @@ async function init() {
     return;
   }
   document.title = `${product.name} | Wildhouse Lane`;
+  syncProductMeta(product);
   pushRecentlyViewed(product.id);
   render();
+}
+
+function upsertMeta(selector, attr, value) {
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement("meta");
+    const prop = selector.match(/property="([^"]+)"/);
+    const name = selector.match(/name="([^"]+)"/);
+    if (prop) el.setAttribute("property", prop[1]);
+    if (name) el.setAttribute("name", name[1]);
+    document.head.appendChild(el);
+  }
+  el.setAttribute(attr, value);
+}
+
+function syncProductMeta(product) {
+  const origin = "https://wildhouselane.com";
+  const url = `${origin}/product.html?handle=${encodeURIComponent(product.handle)}`;
+  const image = product.images[0]
+    ? product.images[0].startsWith("http")
+      ? product.images[0]
+      : `${origin}/${product.images[0].replace(/^\.\//, "")}`
+    : `${origin}/assets/wildhouselogo-pink-brown.png`;
+  const description = (product.description || `${product.name} from Wildhouse Lane.`).slice(0, 160);
+
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.setAttribute("content", description);
+
+  upsertMeta('meta[property="og:title"]', "content", `${product.name} | Wildhouse Lane`);
+  upsertMeta('meta[property="og:description"]', "content", description);
+  upsertMeta('meta[property="og:image"]', "content", image);
+  upsertMeta('meta[property="og:url"]', "content", url);
+  upsertMeta('meta[property="og:type"]', "content", "product");
+
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.rel = "canonical";
+    document.head.appendChild(canonical);
+  }
+  canonical.href = url;
+
+  let ld = document.getElementById("product-jsonld");
+  if (!ld) {
+    ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.id = "product-jsonld";
+    document.head.appendChild(ld);
+  }
+  const offer = product.variations[0];
+  ld.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.images,
+    sku: offer?.sku,
+    offers: {
+      "@type": "Offer",
+      url,
+      priceCurrency: offer?.currency || "USD",
+      price: ((offer?.priceCents || 0) / 100).toFixed(2),
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+    },
+  });
 }
 
 init();

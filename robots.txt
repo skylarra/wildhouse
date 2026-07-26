@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /cart.html
+Disallow: /cart
+Disallow: /order-confirmation.html
+Disallow: /order-confirmation
 
 Sitemap: https://wildhouselane.com/sitemap.xml

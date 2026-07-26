@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:site_name" content="Wildhouse Lane">
+    <meta property="og:type" content="website">
     <meta name="description" content="Wildhouse Lane - handmade goods for people who love spooky nature art. Suncatchers, keychains, stickers, magnets, patches, and tees.">
     <meta property="og:title" content="Wildhouse Lane">
     <meta property="og:description" content="Wildlife-inspired art and handmade goods.">
-    <meta property="og:image" content="./assets/wildhouselogo-pink-brown.png">
+    <meta property="og:image" content="https://wildhouselane.com/assets/wildhouselogo-pink-brown.png">
     <meta property="og:url" content="https://wildhouselane.com">
     <title>Wildhouse Lane | Handmade Spooky Nature Art</title>
     <link rel="canonical" href="https://wildhouselane.com/">
@@ -19,25 +22,41 @@
     <script type="application/ld+json">
         {
           "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "Wildhouse Lane",
-          "url": "https://wildhouselane.com",
-          "description": "Wildlife-inspired art and handmade nature-themed goods.",
-          "logo": "https://wildhouselane.com/assets/wildhouselogo-pink-brown.png"
+          "@graph": [
+            {
+              "@type": "Organization",
+              "name": "Wildhouse Lane",
+              "url": "https://wildhouselane.com",
+              "description": "Wildlife-inspired art and handmade nature-themed goods.",
+              "logo": "https://wildhouselane.com/assets/wildhouselogo-pink-brown.png"
+            },
+            {
+              "@type": "WebSite",
+              "name": "Wildhouse Lane",
+              "url": "https://wildhouselane.com",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://wildhouselane.com/shop.html?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+          ]
         }
     </script>
 </head>
 <body>
-    <div id="site-announcement"></div>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+<div id="site-announcement"></div>
     <header id="site-header"></header>
 
     <noscript>
-        <div class="seo-content" style="display:block">
+        <div class="page-intro">
             <h1>Wildhouse Lane — handmade products for people who love spooky nature art.</h1>
             <p>Enable JavaScript to browse the full shop, or <a href="./shop.html">visit the shop</a>.</p>
         </div>
     </noscript>
-    <div class="seo-content" id="seo-content"></div>
+    <main id="main-content">
+    <div class="page-intro" id="seo-content"></div>
 
     <section class="hero-container" id="hero"></section>
 
@@ -60,6 +79,7 @@
     </section>
 
     <div id="site-newsletter"></div>
+    </main>
     <footer id="site-footer" class="site-footer"></footer>
 
     <script type="module" src="./js/components.js"></script>

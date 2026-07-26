@@ -14,4 +14,11 @@
 - Checkout uses **Square Payment Links** (Square-hosted checkout) rather than the Web Payments SDK, so the site never handles card data and Square owns pricing. Cart sends only variation ids + quantities.
 - `order-confirmation.html` is the Square `redirect_url` target; it clears the local cart and shows the order reference.
 - Secrets required (set in Cursor + Cloudflare Pages): `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, and `SQUARE_ENVIRONMENT` (`sandbox`|`production`, defaults to `sandbox`). Sandbox first; production only after testing.
-- Domain `wildhouselane.com` finalized: canonical tags added; custom domain is connected in the Cloudflare Pages dashboard (not in-repo).
+- Domain `wildhouselane.com` finalized: canonical tags added; custom domain must be connected in the Cloudflare Pages dashboard (not in-repo).
+
+## 2026-07-26 (Sprint 5 — launch hardening)
+
+- Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.
+- Order confirmation is a small state machine: no order id → warning; order lookup failure → cautious thank-you; only clear claims success when evidence exists.
+- `/api/catalog` 501 responses include missing env var **names** (never values) plus resolved `environment` so sandbox vs production wiring can be verified safely.
+- Photographic assets are compressed JPEGs; unused multi‑MB assets removed; Cloudflare `_headers` sets long-cache for `/assets`.

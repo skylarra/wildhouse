@@ -92,7 +92,11 @@ export async function getProductByHandle(handle) {
 
 export async function getFeatured(limit = 4) {
   const products = await getProducts();
-  return products.filter((p) => p.featured).slice(0, limit);
+  const featured = products.filter((p) => p.featured);
+  if (featured.length) return featured.slice(0, limit);
+  // Live Square catalogs may not mark featured items yet — prefer in-stock.
+  const inStock = products.filter((p) => p.inStock);
+  return (inStock.length ? inStock : products).slice(0, limit);
 }
 
 export async function getRelated(product, limit = 4) {
