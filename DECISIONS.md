@@ -6,3 +6,12 @@
 - Use Square as the source of truth.
 - Use localStorage until customer accounts exist.
 - Host on Cloudflare Pages.
+
+## 2026-07-26 (Sprint 4 — Square integration)
+
+- Square API calls run server-side via **Cloudflare Pages Functions** (`functions/api/*`); the access token stays in env vars and never reaches the browser. No frontend framework or runtime dependency was added (Functions run natively on Cloudflare).
+- The Function `/api/catalog` returns the **same schema as `data/products.json`**, so the frontend catalog layer is source-agnostic and **falls back to `products.json`** when Square is not configured (local/static preview).
+- Checkout uses **Square Payment Links** (Square-hosted checkout) rather than the Web Payments SDK, so the site never handles card data and Square owns pricing. Cart sends only variation ids + quantities.
+- `order-confirmation.html` is the Square `redirect_url` target; it clears the local cart and shows the order reference.
+- Secrets required (set in Cursor + Cloudflare Pages): `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, and `SQUARE_ENVIRONMENT` (`sandbox`|`production`, defaults to `sandbox`). Sandbox first; production only after testing.
+- Domain `wildhouselane.com` finalized: canonical tags added; custom domain is connected in the Cloudflare Pages dashboard (not in-repo).

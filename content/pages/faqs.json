@@ -1,0 +1,16 @@
+{
+  "_comment": "FAQs page. Edit questions/answers in the faqs block.",
+  "title": "FAQs",
+  "blocks": [
+    { "type": "note", "html": "Placeholder answers — replace before launch." },
+    {
+      "type": "faqs",
+      "items": [
+        { "q": "When will my order ship?", "a": "Orders are handmade to order and typically ship within 3–5 business days." },
+        { "q": "Do you offer free shipping?", "a": "Yes — free shipping on orders over $75." },
+        { "q": "Can I return or exchange an item?", "a": "See our <a href=\"./policies.html\">Shipping &amp; Policies</a> page for full details." },
+        { "q": "Do you do custom pieces or vendor events?", "a": "Yes! Reach out through the <a href=\"./contact.html\">Contact</a> page." }
+      ]
+    }
+  ]
+}

@@ -3,114 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Wildhouse Market - Handmade products for people who love spooky nature art.">
-    <meta property="og:title" content="Wildhouse Market">
+    <meta name="description" content="Shop handmade Wildhouse Lane goods - suncatchers, keychains, stickers, magnets, patches, and tees.">
+    <meta property="og:title" content="Shop | Wildhouse Lane">
     <meta property="og:description" content="Wildlife-inspired art and handmade goods.">
-    <meta property="og:image" content="https://wildhousemarket.com/assets/c:\Users\skyee\Downloads\wildhouselogo-pink-brown.png">
-    <meta property="og:url" content="https://wildhousemarket.com">
-    <title>Wildhouse Market | Shop Handmade Spooky Nature Art</title>
+    <meta property="og:image" content="./assets/wildhouselogo-pink-brown.png">
+    <meta property="og:url" content="https://wildhouselane.com/shop.html">
+    <title>Shop | Wildhouse Lane</title>
+    <link rel="canonical" href="https://wildhouselane.com/shop.html">
     <link rel="icon" type="image/svg+xml" href="./assets/WILDHOUSE-logomark.svg">
     <link rel="stylesheet" href="styles.css">
-   <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Shadows+Into+Light&display=swap" rel="stylesheet">
-    <script type="application/ld+json">
-        {
-        "@context":"https://schema.org",
-        "@type":"Organization",
-        "name":"Wildhouse Market",
-        "url":"https://wildhousemarket.com",
-        "description":"Wildlife-inspired art and handmade nature-themed goods.",
-        "logo":"https://wildhousemarket.com/assets/wildhouselogo-pink-brown.png",
-        }
-    </script>
 </head>
 <body>
-    <header>
-        <nav class="nav">
-        <img src="./assets/WILDHOUSE-submark.svg"
-             class="nav-logo"
-             alt="Wildhouse Market">
+    <div id="site-announcement"></div>
+    <header id="site-header"></header>
 
-        <div class="nav-links" id="navLinks">
-            <a href="./home.html">HOME</a>
-            <a href="./shop.html">SHOP</a>
-        </div>
-
-        <div class="nav-actions">
-            <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Open navigation menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
-    </header>
     <div class="shop-all-page">
+        <aside class="side-bar">
+            <h2>Categories</h2>
+            <ul id="category-list"></ul>
+        </aside>
         <section class="shop">
             <h2>SHOP ALL</h2>
-            <div class="filter-bar">
-                <button class="filter-button"><a href="#">FILTER</a></button>
-                <button class="sort-button"><a href="#">SORT</a></button>
+            <div class="shop-toolbar">
+                <label class="field shop-search-field">
+                    <span class="visually-hidden">Search products</span>
+                    <input type="search" id="shop-search" placeholder="Search products…" autocomplete="off">
+                </label>
+                <label class="field shop-sort-field">
+                    <span class="visually-hidden">Sort products</span>
+                    <select id="shop-sort">
+                        <option value="featured">Featured</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="name-asc">Name: A to Z</option>
+                    </select>
+                </label>
+                <p class="shop-count" id="shop-count" aria-live="polite"></p>
             </div>
-            <div class="shop product-grid">
-                <div class="shop product-card">
-                    <img src="./assets/Wildhouse.png" alt="Product 1">
-                    <h3>Coming soon</h3>
-                    <p>$0.00</p>
-                </div>
-                <div class="shop product-card">
-                    <img src="./assets/Wildhouse.png" alt="Product 2">
-                    <h3>Coming soon</h3>
-                    <p>$0.00</p>
-                </div>
-                <div class="shop product-card">
-                    <img src="./assets/Wildhouse.png" alt="Product 3">
-                    <h3>Coming soon</h3>
-                    <p>$0.00</p>
-                </div>
-                <div class="shop product-card">
-                    <img src="./assets/Wildhouse.png" alt="Product 3">
-                    <h3>Coming soon</h3>
-                    <p>$0.00</p>
-                </div>
-            </div>
-        </section>
-        <section class="side-bar">
-            <h2>Categories</h2>
-            <ul>
-                <li><a href="#">All Products</a></li>
-            </ul>
+            <div class="product-grid" id="shop-grid" aria-live="polite"></div>
         </section>
     </div>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 Wildhouse Market. All rights reserved.</p>
-            <div class="social-links">
-                <p>Follow us:</p>
-                <a href="#"><img src="./assets/social1.svg" alt="Instagram"></a>
-                <a href="#"><img src="./assets/social2.svg" alt="TikTok"></a>
-            </div>
-        </div>
-    </footer>
-        <script>
-        const navToggle = document.getElementById('navToggle');
-        const navLinks = document.getElementById('navLinks');
 
-        navToggle.addEventListener('click', () => {
-            const isOpen = navLinks.classList.toggle('active');
-            navToggle.setAttribute('aria-expanded', isOpen);
-        });
+    <div id="site-newsletter"></div>
+    <footer id="site-footer" class="site-footer"></footer>
 
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    navToggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        });
-    </script>
+    <script type="module" src="./js/components.js"></script>
+    <script type="module" src="./js/shop.js"></script>
 </body>
-
 </html>

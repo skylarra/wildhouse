@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wildhouse Lane - handmade goods for people who love spooky nature art. Suncatchers, keychains, stickers, magnets, patches, and tees.">
+    <meta property="og:title" content="Wildhouse Lane">
+    <meta property="og:description" content="Wildlife-inspired art and handmade goods.">
+    <meta property="og:image" content="./assets/wildhouselogo-pink-brown.png">
+    <meta property="og:url" content="https://wildhouselane.com">
+    <title>Wildhouse Lane | Handmade Spooky Nature Art</title>
+    <link rel="canonical" href="https://wildhouselane.com/">
+    <link rel="icon" type="image/svg+xml" href="./assets/WILDHOUSE-logomark.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Wildhouse Lane",
+          "url": "https://wildhouselane.com",
+          "description": "Wildlife-inspired art and handmade nature-themed goods.",
+          "logo": "https://wildhouselane.com/assets/wildhouselogo-pink-brown.png"
+        }
+    </script>
+</head>
+<body>
+    <div id="site-announcement"></div>
+    <header id="site-header"></header>
+
+    <noscript>
+        <div class="seo-content" style="display:block">
+            <h1>Wildhouse Lane — handmade products for people who love spooky nature art.</h1>
+            <p>Enable JavaScript to browse the full shop, or <a href="./shop.html">visit the shop</a>.</p>
+        </div>
+    </noscript>
+    <div class="seo-content" id="seo-content"></div>
+
+    <section class="hero-container" id="hero"></section>
+
+    <section class="best-sellers">
+        <h2 id="best-sellers-heading">BEST SELLERS</h2>
+        <div class="product-grid" id="featured-grid" aria-live="polite"></div>
+        <div class="shop-button-container" id="best-sellers-cta"></div>
+    </section>
+
+    <section class="welcome" id="welcome"></section>
+
+    <section class="banner" id="banner"></section>
+    <div class="banner-divider"><div class="event-section-divider"></div></div>
+
+    <section class="events" id="events-preview"></section>
+
+    <section id="recently-viewed" class="best-sellers" hidden>
+        <h2 id="recently-viewed-heading">RECENTLY VIEWED</h2>
+        <div class="product-grid" id="recently-viewed-grid"></div>
+    </section>
+
+    <div id="site-newsletter"></div>
+    <footer id="site-footer" class="site-footer"></footer>
+
+    <script type="module" src="./js/components.js"></script>
+    <script type="module" src="./js/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "_comment": "Canonical events list. Shown in full on events.html and previewed on the home page. Edit events here.",
+  "title": "Upcoming Events",
+  "intro": "Come say hi in person — here's where you can find Wildhouse Lane next.",
+  "events": [
+    { "name": "Waffle Fest", "location": "Downtown Liberty, SC", "date": "2026-03-15", "time": "10AM–4PM" },
+    { "name": "Spring Makers Market", "location": "Greenville, SC", "date": "2026-04-12", "time": "9AM–3PM" },
+    { "name": "Autumn Art Walk", "location": "Clemson, SC", "date": "2026-10-04", "time": "11AM–5PM" }
+  ]
+}

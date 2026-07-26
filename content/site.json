@@ -1,0 +1,65 @@
+{
+  "_comment": "Global site content. Edit brand text, the announcement bar, navigation, footer, and social links here — no code changes required.",
+  "brand": "Wildhouse Lane",
+  "tagline": "Handmade goods for people who love spooky nature art.",
+  "domain": "https://wildhouselane.com",
+  "email": "hello@wildhouselane.com",
+  "freeShippingThresholdCents": 7500,
+  "logos": {
+    "submark": "./assets/WILDHOUSE-submark.svg",
+    "wordmark": "./assets/WILDHOUSE-WordMark.svg",
+    "logomark": "./assets/WILDHOUSE-logomark.svg"
+  },
+  "announcement": {
+    "dismissible": true,
+    "rotateMs": 4500,
+    "messages": [
+      "Free shipping on orders over $75",
+      "New Collection Available",
+      "Vendor Event This Weekend"
+    ]
+  },
+  "nav": [
+    { "label": "SHOP", "href": "./shop.html" },
+    { "label": "COLLECTIONS", "href": "./collections.html" },
+    { "label": "ABOUT", "href": "./about.html" },
+    { "label": "CONTACT", "href": "./contact.html" },
+    { "label": "FAQs", "href": "./faqs.html" }
+  ],
+  "footerLinks": [
+    {
+      "heading": "Shop",
+      "links": [
+        { "label": "All Products", "href": "./shop.html" },
+        { "label": "Collections", "href": "./collections.html" },
+        { "label": "Events", "href": "./events.html" }
+      ]
+    },
+    {
+      "heading": "About",
+      "links": [
+        { "label": "Our Story", "href": "./about.html" },
+        { "label": "Contact", "href": "./contact.html" },
+        { "label": "FAQs", "href": "./faqs.html" }
+      ]
+    },
+    {
+      "heading": "Info",
+      "links": [
+        { "label": "Shipping & Policies", "href": "./policies.html" }
+      ]
+    }
+  ],
+  "social": [
+    { "label": "Instagram @wildhousemkt", "href": "https://www.instagram.com/wildhousemkt/", "icon": "./assets/social1.svg" },
+    { "label": "TikTok @wildhousemarket", "href": "https://www.tiktok.com/@wildhousemarket", "icon": "./assets/social2.svg" }
+  ],
+  "newsletter": {
+    "heading": "Join the Club",
+    "body": "Be first to know about new collections, restocks, and vendor events.",
+    "buttonLabel": "Sign Up",
+    "placeholder": "you@example.com",
+    "successMessage": "Thanks for joining! Check your inbox soon.",
+    "errorMessage": "Please enter a valid email address."
+  }
+}
