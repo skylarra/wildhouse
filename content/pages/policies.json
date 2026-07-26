@@ -1,0 +1,13 @@
+{
+  "_comment": "Shipping & Policies page. Replace with final, legally reviewed copy before launch.",
+  "title": "Shipping & Policies",
+  "blocks": [
+    { "type": "note", "html": "Placeholder policies — replace with final, legally reviewed copy before launch." },
+    { "type": "heading", "text": "Shipping" },
+    { "type": "paragraph", "html": "Orders are handmade to order and typically ship within 3–5 business days. Free shipping on orders over $75." },
+    { "type": "heading", "text": "Returns & Exchanges" },
+    { "type": "paragraph", "html": "Reach out within 14 days of delivery for returns or exchanges on unused items." },
+    { "type": "heading", "text": "Privacy" },
+    { "type": "paragraph", "html": "We only use your information to fulfill orders and, if you opt in, to send occasional updates." }
+  ]
+}
