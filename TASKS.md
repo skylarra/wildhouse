@@ -1,39 +1,24 @@
 # Current Sprint
 
+## Hotfix — restore Sprint 5 visual regressions
+
+Priority: restore frontend polish and shop fallback before any further feature work.
+
+- Restore pre–Sprint 5 hero/layout/typography styling
+- Shop must show local `products.json` when Square is empty/unavailable
+- Do not start Sprint 6 or new features until verified
+
+---
+
 ## Sprint 5 — SEO, Accessibility, Performance, Testing, Launch
 
-### SEO
-- Absolute OG/Twitter meta + WebSite JSON-LD ✅
-- Visible home H1 / shop H1 ✅
-- Product meta + Product JSON-LD synced in JS ✅
-- Sitemap product URLs + robots disallow cart/confirmation ✅
-
-### Accessibility
-- Skip links + main landmarks ✅
-- `:focus-visible` on controls ✅
-- Escape closes mobile nav; cart count in aria-label ✅
-- Reduced-motion skips announcement rotation ✅
-- Contrast fixes (nav current, favorites) ✅
-
-### Performance
-- Removed unused multi‑MB assets ✅
-- Hero no longer loads 7MB SVG background ✅
-- Compressed photographic assets to JPEG ✅
-- Lazy-loading below-fold images + Cloudflare `_headers` ✅
-
-### Square launch hardening
-- Featured fallback when Square has no featured flags ✅
-- Confirmation no longer always claims success ✅
-- `/api/catalog` reports missing env var **names** + environment ✅
+Completed in PR #4. Some visual changes from that sprint are being restored in this hotfix.
 
 ---
 
 ## Pending (requires user / ops)
 
-- Confirm Square **Sandbox** secrets are on the Pages project runtime:
-  `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, `SQUARE_ENVIRONMENT=sandbox`
-- Redeploy and verify: `curl -sS https://wildhouse.pages.dev/api/catalog`
-  should return `_meta.environment: "sandbox"` with live items
+- Populate Square Sandbox catalog (live `/api/catalog` currently returns 0 items)
 - Connect `wildhouselane.com` DNS to the Cloudflare Pages project
 - Complete sandbox checkout with Square test card before production credentials
 

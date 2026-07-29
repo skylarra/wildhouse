@@ -22,10 +22,10 @@
     "heading": "Hi, I'm Skylar!",
     "body": "There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride. 10% of all profits will be donated to wildlife conservation efforts and I can't wait to share how much is donated along the way.",
     "cta": { "label": "Read our story", "href": "./about.html" },
-    "primaryImage": { "src": "./assets/about-me-picture.jpg", "alt": "Skylar, founder of Wildhouse Lane" },
+    "primaryImage": { "src": "./assets/about-me-picture.png", "alt": "Skylar, founder of Wildhouse Lane" },
     "secondaryImage": { "src": "./assets/welcome1.jpg", "alt": "Handmade Wildhouse Lane goods" }
   },
-  "banner": { "src": "./assets/sticker-banner-big.jpg", "alt": "Wildhouse Lane sticker banner" },
+  "banner": { "src": "./assets/sticker-banner-big.png", "alt": "Wildhouse Lane sticker banner" },
   "eventsPreview": {
     "heading": "UPCOMING EVENTS",
     "cta": { "label": "All events", "href": "./events.html" }

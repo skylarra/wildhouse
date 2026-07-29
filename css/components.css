@@ -72,12 +72,7 @@
   display: flex; align-items: center; justify-content: center;
 }
 .nav-brand { display: inline-flex; }
-.nav-links a[aria-current="page"] {
-  color: var(--brown);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  font-weight: 700;
-}
+.nav-links a[aria-current="page"] { color: var(--green); text-decoration: underline; }
 
 /* --------------------------- Product grid -------------------------- */
 .product-grid {
@@ -117,7 +112,7 @@
   border-radius: 999px;
   border: none;
   background: rgba(255, 255, 255, 0.85);
-  color: #6b4546;
+  color: #b9a3a0;
   font-size: 1.1rem;
   cursor: pointer;
   line-height: 1;
