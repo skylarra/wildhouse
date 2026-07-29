@@ -15,26 +15,18 @@
 }
 
 
-/* Visually calm page intro used as the real H1 (not display:none). */
+/* SEO copy is injected for crawlers/AT but kept out of the visual layout. */
+.seo-content,
 .page-intro {
-    max-width: 720px;
-    margin: 18px auto 8px;
-    padding: 0 16px;
-    text-align: center;
-    color: var(--brown);
-}
-.page-intro__title {
-    font-family: "Homemade Apple", cursive;
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 400;
-    margin: 0 0 8px;
-    line-height: 1.35;
-}
-.page-intro__body {
-    margin: 0;
-    font-size: 0.98rem;
-    line-height: 1.55;
-    color: var(--green);
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .skip-link {
@@ -49,7 +41,8 @@
     border-radius: 6px;
     font-weight: 700;
 }
-.skip-link:focus {
+.skip-link:focus,
+.skip-link:focus-visible {
     top: 12px;
 }
 
@@ -164,10 +157,7 @@ header {
 .hero-container {
     position: relative;
     min-height: 650px;
-    /* Compressed photographic hero plane (replaces multi‑MB SVG background). */
-    background:
-      linear-gradient(120deg, rgba(78, 40, 41, 0.55), rgba(244, 178, 173, 0.35)),
-      url("./assets/sunny-mirror.jpg") center center / cover no-repeat;
+    background: url("./assets/hero-svg.svg") center center / cover no-repeat;
     overflow: hidden;
     padding-bottom: 40px;
 }
@@ -436,6 +426,16 @@ a {
         margin-top: 0;
     }
 
+    .welcome-circle {
+        position: absolute;
+        left: 50%;
+        top: 60px;
+        transform: translateX(-50%);
+        margin-top: 0;
+        z-index: 99;
+        width: fit-content;
+    }
+
     .welcome-content {
         text-align: center;
         max-width: 500px;
@@ -535,6 +535,7 @@ footer {
 }
 
 
+.shop h1,
 .shop h2 {
     text-align: center;
     color: var(--pink);
@@ -617,6 +618,11 @@ footer {
   .welcome {
     flex-direction: column;
   }
+
+  .welcome-circle {
+    position: static;
+    transform: none;
+  }
 }
 
 /* events */
@@ -680,6 +686,8 @@ footer {
   }
 }
 
+a:focus,
+button:focus,
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -688,12 +696,6 @@ textarea:focus-visible,
 summary:focus-visible {
   outline: 2px solid var(--brown);
   outline-offset: 2px;
-}
-
-.welcome-eyebrow {
-  margin: 0 0 6px;
-  font-size: 1.6rem;
-  color: var(--brown);
 }
 
 .btn {

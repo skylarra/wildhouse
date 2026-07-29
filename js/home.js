@@ -49,7 +49,7 @@ function renderWelcome(w) {
       <img src="${w.primaryImage.src}" alt="${escapeHtml(w.primaryImage.alt || "")}" loading="lazy">
     </div>
     <div class="welcome-content">
-      <p class="homemade-apple-regular welcome-eyebrow">${escapeHtml(w.eyebrow)}</p>
+      <h2 class="homemade-apple-regular">${escapeHtml(w.eyebrow)}</h2>
       <h2 class="shadows-into-light-regular">${escapeHtml(w.heading)}</h2>
       <p>${escapeHtml(w.body)}</p>
       ${ctaHTML(w.cta, "btn primary")}
