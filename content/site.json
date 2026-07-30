@@ -1,5 +1,5 @@
 {
-  "_comment": "Global site content. Edit brand text, the announcement bar, navigation, footer, social links, and optional collectionOrder here — no code changes required. collectionOrder lists Square category names that should appear first; any other categories append alphabetically.",
+  "_comment": "Global site content. Edit brand text, the announcement bar, navigation, footer, and social links here. Collection order, descriptions, heroes, and featured flags live in content/collections.json. collectionOrder below is a legacy fallback only.",
   "brand": "Wildhouse Lane",
   "tagline": "Handmade goods for people who love spooky nature art.",
   "domain": "https://wildhouselane.com",
@@ -64,14 +64,5 @@
     "placeholder": "you@example.com",
     "successMessage": "Thanks for joining! Check your inbox soon.",
     "errorMessage": "Please enter a valid email address."
-  },
-  "collectionOrder": [
-    "Moon, Sun & Stars",
-    "Ocean Wonders",
-    "Coastal Carolina",
-    "Pet Keepsakes",
-    "Family & Home",
-    "Weddings & Events",
-    "Holiday Collection"
-  ]
+  }
 }

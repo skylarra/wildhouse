@@ -1,33 +1,25 @@
 # Wildhouse Lane Website Roadmap
 
-## Phase 1 — Foundation & Shopping Experience ✅ / in progress
+## Phase 1 — Foundation & Shopping Experience ✅
 
 Goal: Finish the storefront so it's polished and ready for customers.
 
-### Homepage
-- Hero section
-- "A Little Note" (random/daily message under hero)
-- Featured Collections (from Square)
-- Best Sellers
-- Keychain Studio preview
-- Custom Creations preview
-- About preview
-- Post Office preview
-- Footer
-
-### Shop
-- 4:5 product images
-- Dynamic Collections from Square Categories
-- All Products / Search / Sorting
-- Responsive layout
-- Better product cards
-- Related products
+Homepage hero, A Little Note, featured collections, best sellers, destination previews, footer. Shop with 4:5 cards, search/sort, dynamic categories, related products.
 
 ---
 
-## Phase 2 — Collections
+## Phase 2 — Collections ✅ / in progress
 
-Collections come entirely from Square: auto-create from categories, custom order, hero image, description, featured homepage section, collection pages.
+Collections come entirely from Square categories, enriched by `content/collections.json`:
+
+- Auto-create from Square Categories (live collections only when products exist)
+- Custom display order
+- Collection hero image
+- Collection description
+- Featured collection section on homepage (`featured` flags)
+- Dedicated collection pages (`collection.html?handle=…`)
+
+Future Square category names (copy ready): Moon, Sun & Stars · Ocean Wonders · Coastal Carolina · Pet Keepsakes · Family & Home · Holiday Collection · Haunted Hollow
 
 ---
 

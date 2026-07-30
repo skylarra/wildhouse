@@ -1,5 +1,5 @@
-// Collections page — one card per Square category that has products.
-// Names, covers, and counts come from the catalog; nothing is hardcoded.
+// Collections index — one card per Square category that has products.
+// Names, covers, counts, and storytelling copy come from catalog + content/collections.json.
 import { getCollections } from "./catalog.js";
 import { collectionCardHTML } from "./ui.js";
 

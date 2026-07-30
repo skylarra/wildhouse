@@ -74,12 +74,15 @@ export function escapeHtml(str) {
 }
 
 export function collectionCardHTML(collection) {
+  const blurb = collection.description
+    ? `<p class="collection-card__blurb">${escapeHtml(collection.description)}</p>`
+    : `<p>${collection.count} ${collection.count === 1 ? "product" : "products"}</p>`;
   return `
-    <a class="collection-card" href="./shop.html?category=${encodeURIComponent(collection.handle)}">
+    <a class="collection-card" href="./collection.html?handle=${encodeURIComponent(collection.handle)}">
       <div class="collection-card__media">
         <img src="${collection.image}" alt="${escapeHtml(collection.name)}" loading="lazy">
       </div>
       <h3>${escapeHtml(collection.name)}</h3>
-      <p>${collection.count} ${collection.count === 1 ? "product" : "products"}</p>
+      ${blurb}
     </a>`;
 }

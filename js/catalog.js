@@ -3,9 +3,10 @@
 // data/products.json. Pages depend on the normalized product/collection
 // helpers below — never hardcode Square category names in the UI.
 
-import { loadSite } from "./content.js";
+import { loadSite, loadJSON } from "./content.js";
 
 let cache = null;
+let collectionsMetaCache = null;
 
 const DEFAULT_COLLECTION_IMAGE = "./assets/Wildhouse.png";
 
@@ -36,6 +37,38 @@ async function loadRaw() {
   if (!res.ok) throw new Error(`Failed to load catalog: ${res.status}`);
   cache = await res.json();
   return cache;
+}
+
+async function loadCollectionsMeta() {
+  if (collectionsMetaCache) return collectionsMetaCache;
+  try {
+    collectionsMetaCache = await loadJSON("./content/collections.json");
+  } catch (_) {
+    collectionsMetaCache = { order: [], entries: [] };
+  }
+  return collectionsMetaCache;
+}
+
+/** Index storytelling metadata by Square category name and handle. */
+function metaIndex(meta) {
+  const byName = new Map();
+  const byHandle = new Map();
+  for (const entry of meta.entries || []) {
+    if (entry.name) byName.set(entry.name, entry);
+    if (entry.handle) byHandle.set(entry.handle, entry);
+  }
+  return { byName, byHandle };
+}
+
+function enrichCollection(base, metaMaps) {
+  const entry =
+    metaMaps.byHandle.get(base.handle) || metaMaps.byName.get(base.name) || null;
+  return {
+    ...base,
+    description: entry?.description || "",
+    heroImage: entry?.heroImage || base.image,
+    featured: Boolean(entry?.featured),
+  };
 }
 
 function normalize(raw) {
@@ -113,12 +146,18 @@ export function sortCollections(collections, order = []) {
 /**
  * Dynamic storefront collections derived from Square categories.
  * - One collection per category that has at least one product
- * - Cover: category image → first product image → placeholder
- * - Optional display order from content/site.json → collectionOrder
+ * - Cover/hero: content override → category image → first product image → placeholder
+ * - Description + featured flags from content/collections.json
+ * - Display order from collections.json → order (fallback: site.json collectionOrder)
  */
 export async function getCollections() {
-  const [raw, products] = await Promise.all([loadRaw(), getProducts()]);
+  const [raw, products, meta] = await Promise.all([
+    loadRaw(),
+    getProducts(),
+    loadCollectionsMeta(),
+  ]);
   const images = raw.images || {};
+  const maps = metaIndex(meta);
 
   const counts = new Map();
   const firstImage = new Map();
@@ -136,25 +175,45 @@ export async function getCollections() {
       const count = counts.get(c.id) || 0;
       const imageId = data.image_id || data.image_ids?.[0] || null;
       const categoryImage = imageId ? images[imageId]?.url : null;
-      return {
-        id: c.id,
-        name: data.name || "Collection",
-        handle: data.handle || c.id,
-        count,
-        image: categoryImage || firstImage.get(c.id) || DEFAULT_COLLECTION_IMAGE,
-      };
+      const cover = categoryImage || firstImage.get(c.id) || DEFAULT_COLLECTION_IMAGE;
+      return enrichCollection(
+        {
+          id: c.id,
+          name: data.name || "Collection",
+          handle: data.handle || c.id,
+          count,
+          image: cover,
+        },
+        maps
+      );
     })
     .filter((c) => c.count > 0);
 
-  let order = [];
-  try {
-    const site = await loadSite();
-    order = Array.isArray(site.collectionOrder) ? site.collectionOrder : [];
-  } catch (_) {
-    /* site.json optional for ordering */
+  let order = Array.isArray(meta.order) ? meta.order : [];
+  if (!order.length) {
+    try {
+      const site = await loadSite();
+      order = Array.isArray(site.collectionOrder) ? site.collectionOrder : [];
+    } catch (_) {
+      /* optional */
+    }
   }
 
   return sortCollections(collections, order);
+}
+
+export async function getCollectionByHandle(handle) {
+  if (!handle) return null;
+  const collections = await getCollections();
+  return collections.find((c) => c.handle === handle) || null;
+}
+
+/** Homepage featured collections: explicit featured flags first, then ordered list. */
+export async function getFeaturedCollections(limit = 6) {
+  const collections = await getCollections();
+  const flagged = collections.filter((c) => c.featured);
+  const list = flagged.length ? flagged : collections;
+  return list.slice(0, limit);
 }
 
 export async function getProductByHandle(handle) {
