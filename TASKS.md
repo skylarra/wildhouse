@@ -1,20 +1,24 @@
 # Current Sprint
 
-## Dynamic collections + product card polish
+## Phase 1 — Foundation & Shopping Experience
 
-- Product cards use consistent 4:5 portrait frames (`object-fit: contain`) ✅
-- Collections are generated from Square categories (via `/api/catalog` / `products.json`) ✅
-- Optional `collectionOrder` in `content/site.json` ✅
-- Homepage features dynamic collections ✅
-- Empty categories hidden; uncategorized products only under All Products ✅
+### Done
+- Hero, footer, announcement bar, shop search/sort
+- 4:5 product cards (`object-fit: contain`)
+- Dynamic collections from Square categories + optional `collectionOrder`
+- Related products on product pages
+- Square catalog/checkout Functions (sandbox)
 
----
+### In this pass
+- Homepage "A Little Note" (daily rotating message, editable JSON)
+- Reorder homepage: Hero → Note → Featured Collections → Best Sellers → previews
+- Keychain Studio / Custom Creations / About / Post Office preview sections + lightweight pages
 
-## Pending (requires user / ops)
-
-- Populate Square Sandbox catalog with real categories + products
-- Connect `wildhouselane.com` DNS to the Cloudflare Pages project
-- Complete sandbox checkout with Square test card before production credentials
+### Out of scope (later phases)
+- Full Keychain Studio builder (Phase 4)
+- Custom Creations inquiry backend (Phase 5)
+- Kit/ConvertKit Post Office (Phase 6)
+- Back-in-stock / Happy Mail (Phase 7)
 
 ---
 

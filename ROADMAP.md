@@ -1,98 +1,78 @@
-# Wildhouse Lane Roadmap
+# Wildhouse Lane Website Roadmap
 
-## Sprint 1 ✅
+## Phase 1 — Foundation & Shopping Experience ✅ / in progress
 
-Project audit
+Goal: Finish the storefront so it's polished and ready for customers.
 
-Architecture
+### Homepage
+- Hero section
+- "A Little Note" (random/daily message under hero)
+- Featured Collections (from Square)
+- Best Sellers
+- Keychain Studio preview
+- Custom Creations preview
+- About preview
+- Post Office preview
+- Footer
 
-Planning
-
-Repository setup
-
----
-
-## Sprint 2
-
-Reusable Components
-
-Header
-
-Footer
-
-Navigation
-
-Announcement Bar
-
-Shop
-
-Collections
-
-Search
-
-Filtering
+### Shop
+- 4:5 product images
+- Dynamic Collections from Square Categories
+- All Products / Search / Sorting
+- Responsive layout
+- Better product cards
+- Related products
 
 ---
 
-## Sprint 3
+## Phase 2 — Collections
 
-Product Pages
-
-Favorites
-
-Recently Viewed
-
-Cart Drawer
-
-Cart Page
-
-Toast Notifications
-
-Related Products
+Collections come entirely from Square: auto-create from categories, custom order, hero image, description, featured homepage section, collection pages.
 
 ---
 
-## Sprint 4 ✅
+## Phase 3 — Product Pages
 
-Square Catalog
-
-Inventory
-
-Checkout
-
-Order Confirmation
+Large 4:5 images, gallery, zoom, related products, shipping/handmade copy, processing time, inventory status. Future: live personalization preview.
 
 ---
 
-## Sprint 5
+## Phase 4 — Keychain Studio
 
-SEO ✅
-
-Accessibility ✅
-
-Performance ✅
-
-Testing / launch checklist ✅
-
-Launch (ops: Square sandbox secrets + custom domain)
-
+Dedicated builder (hardware → beaded sequence → charms → live preview → cart). Version 1: layered PNG/SVG — not Canvas/3D.
 
 ---
 
-## Post Launch
+## Phase 5 — Custom Creations
 
-Customer Accounts
+Inquiry form for fully custom projects (details, budget, uploads) with email notify + thank-you page.
 
-Reviews
+---
 
-Astrology Builder
+## Phase 6 — Post Office
 
-Wholesale
+Wildhouse Post (email) + Snail Mail list. Future: Kit/ConvertKit.
 
-Memberships
+---
 
-Digital Downloads
+## Phase 7 — Customer Experience
 
-Loyalty
+A Little Note expansion, Random Happy Mail, Back-in-Stock notifications.
 
-Journal
+---
+
+## Phase 8 — About Wildhouse Lane
+
+Story, workspace photos, values, handmade process — short and personal.
+
+---
+
+## Phase 9 — Future Features
+
+Not for launch: wishlists, accounts, reviews, seasonal themes, quizzes, loyalty, gift registry, NFC guestbook, etc.
+
+---
+
+## Long-Term Vision
+
+Discovery over browsing. Handmade over mass-produced. Calm navigation. Lightweight interactivity. Seasonal storytelling. Fast, responsive, easy to maintain.

@@ -1,0 +1,27 @@
+{
+  "_comment": "Post Office landing (Phase 1 preview). Kit/ConvertKit integration arrives in Phase 6.",
+  "title": "Post Office",
+  "intro": "Two quiet ways to stay close to the studio — digital notes when something new blooms, and the occasional letter you can hold.",
+  "blocks": [
+    { "type": "heading", "text": "Wildhouse Post" },
+    {
+      "type": "paragraph",
+      "html": "An email list for collection launches, behind-the-scenes glimpses, studio updates, product releases, and special announcements. No noise — just the good stuff."
+    },
+    {
+      "type": "paragraph",
+      "html": "You can join from the signup form on this site (footer on every page). A dedicated Post Office signup experience is on the way."
+    },
+    { "type": "heading", "text": "Snail Mail List" },
+    {
+      "type": "paragraph",
+      "html": "For people who like paper: seasonal postcards, studio notes, collection previews, and small surprises in the mail. Signups for physical mail will open here in a later phase."
+    },
+    {
+      "type": "note",
+      "html": "Email marketing will eventually integrate with Kit (formerly ConvertKit) for gentle segmentation — never spammy blasts."
+    },
+    { "type": "cta", "label": "Join the email list", "href": "./index.html#site-newsletter" },
+    { "type": "cta", "label": "Back home", "href": "./index.html" }
+  ]
+}

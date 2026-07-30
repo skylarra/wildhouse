@@ -1,7 +1,7 @@
-// Home page — renders all sections from content (home.json + events.json),
-// featured products, dynamic Square collections, and recently viewed.
+// Home page — renders all sections from content (home.json + events.json + notes.json),
+// featured products, dynamic Square collections, destination previews, and recently viewed.
 import { getFeatured, getProducts, getCollections } from "./catalog.js";
-import { loadPage } from "./content.js";
+import { loadPage, loadJSON } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
 import { productCardHTML, wireFavorites, escapeHtml, collectionCardHTML } from "./ui.js";
 
@@ -31,6 +31,39 @@ function renderHero(hero) {
     </div>
     <div class="hero-strip">${stripImgs}</div>
     <div class="hero-bottom">${ctaHTML(hero.cta)}</div>`;
+}
+
+/** Stable daily pick: same message for everyone on a given local calendar day. */
+function pickDailyMessage(messages) {
+  if (!messages?.length) return "";
+  const now = new Date();
+  const dayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+  let hash = 0;
+  for (let i = 0; i < dayKey.length; i++) {
+    hash = (hash * 31 + dayKey.charCodeAt(i)) >>> 0;
+  }
+  return messages[hash % messages.length];
+}
+
+async function renderLittleNote() {
+  const el = document.getElementById("little-note");
+  if (!el) return;
+  try {
+    const data = await loadJSON("./content/notes.json");
+    const message = pickDailyMessage(data.messages);
+    if (!message) {
+      el.hidden = true;
+      return;
+    }
+    const heading = data.heading || "A Little Note";
+    el.innerHTML = `
+      <p class="little-note__label homemade-apple-regular">${escapeHtml(heading)}</p>
+      <p class="little-note__message shadows-into-light-regular">${escapeHtml(message)}</p>`;
+    el.hidden = false;
+  } catch (err) {
+    el.hidden = true;
+    console.error(err);
+  }
 }
 
 function renderBestSellersChrome(bs) {
@@ -64,6 +97,33 @@ function renderBanner(banner) {
   if (el && banner) {
     el.innerHTML = `<img src="${banner.src}" alt="${escapeHtml(banner.alt || "")}" loading="lazy">`;
   }
+}
+
+function renderPreviews(previews) {
+  const mount = document.getElementById("home-previews");
+  if (!mount || !Array.isArray(previews) || !previews.length) return;
+
+  mount.innerHTML = previews
+    .map((p, i) => {
+      const reverse = i % 2 === 1 ? " home-preview__inner--reverse" : "";
+      const muted = i % 2 === 1 ? " home-preview--muted" : "";
+      const img = p.image
+        ? `<div class="home-preview__media"><img src="${p.image.src}" alt="${escapeHtml(p.image.alt || "")}" loading="lazy"></div>`
+        : "";
+      return `
+        <section class="home-preview${muted}" id="preview-${escapeHtml(p.id || String(i))}">
+          <div class="home-preview__inner${reverse}">
+            ${img}
+            <div class="home-preview__content">
+              ${p.eyebrow ? `<p class="home-preview__eyebrow homemade-apple-regular">${escapeHtml(p.eyebrow)}</p>` : ""}
+              <h2>${escapeHtml(p.heading || "")}</h2>
+              <p>${escapeHtml(p.body || "")}</p>
+              ${ctaHTML(p.cta, "btn primary")}
+            </div>
+          </div>
+        </section>`;
+    })
+    .join("");
 }
 
 async function renderEventsPreview(preview) {
@@ -150,12 +210,14 @@ async function renderRecentlyViewed(heading) {
 
 async function init() {
   renderFeatured();
+  renderLittleNote();
   try {
     const home = await loadPage("home");
     renderSeo(home.seo);
     renderHero(home.hero);
-    renderBestSellersChrome(home.bestSellers);
     await renderHomeCollections(home.collections);
+    renderBestSellersChrome(home.bestSellers);
+    renderPreviews(home.previews);
     renderWelcome(home.welcome);
     renderBanner(home.banner);
     await renderEventsPreview(home.eventsPreview);
