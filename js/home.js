@@ -1,6 +1,6 @@
 // Home page — renders all sections from content (home.json + events.json + notes.json),
 // featured products, dynamic Square collections, destination previews, and recently viewed.
-import { getFeatured, getProducts, getCollections } from "./catalog.js";
+import { getFeatured, getProducts, getFeaturedCollections } from "./catalog.js";
 import { loadPage, loadJSON } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
 import { productCardHTML, wireFavorites, escapeHtml, collectionCardHTML } from "./ui.js";
@@ -175,15 +175,13 @@ async function renderHomeCollections(cfg = {}) {
   if (!section || !grid) return;
 
   try {
-    const collections = await getCollections();
-    if (!collections.length) {
+    const featured = await getFeaturedCollections(cfg.limit || 6);
+    if (!featured.length) {
       section.hidden = true;
       return;
     }
     if (heading && cfg.heading) heading.textContent = cfg.heading;
     if (cta) cta.innerHTML = ctaHTML(cfg.cta);
-    // Homepage features a subset; full list lives on collections.html.
-    const featured = collections.slice(0, 6);
     grid.innerHTML = featured.map(collectionCardHTML).join("");
     section.hidden = false;
   } catch (err) {

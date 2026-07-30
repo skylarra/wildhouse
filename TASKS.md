@@ -1,24 +1,21 @@
 # Current Sprint
 
-## Phase 1 — Foundation & Shopping Experience
+## Phase 2 — Collections
 
-### Done
-- Hero, footer, announcement bar, shop search/sort
-- 4:5 product cards (`object-fit: contain`)
-- Dynamic collections from Square categories + optional `collectionOrder`
-- Related products on product pages
-- Square catalog/checkout Functions (sandbox)
+### Done (this pass)
+- Dedicated collection pages with full-bleed hero, description, sort, product grid
+- `content/collections.json` for order, descriptions, hero overrides, featured flags
+- Homepage featured collections use `featured: true` (fallback: ordered list)
+- Collection cards + product breadcrumbs link to collection pages
+- Future collection names pre-authored so Square categories unlock copy on arrival
 
-### In this pass
-- Homepage "A Little Note" (daily rotating message, editable JSON)
-- Reorder homepage: Hero → Note → Featured Collections → Best Sellers → previews
-- Keychain Studio / Custom Creations / About / Post Office preview sections + lightweight pages
+### Still Square-owned
+- Creating categories and assigning products in Square Dashboard
+- Optional Square category images (used when no `heroImage` override)
 
-### Out of scope (later phases)
-- Full Keychain Studio builder (Phase 4)
-- Custom Creations inquiry backend (Phase 5)
-- Kit/ConvertKit Post Office (Phase 6)
-- Back-in-stock / Happy Mail (Phase 7)
+### Out of scope
+- Phase 3 product page upgrades
+- Full Keychain Studio / Custom / Post Office backends
 
 ---
 

@@ -78,13 +78,21 @@ function render() {
   root.innerHTML = `
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="./shop.html">Shop</a> /
-      <a href="./shop.html?category=${product.categoryHandle}">${escapeHtml(product.categoryName)}</a> /
+      ${
+        product.categoryHandle
+          ? `<a href="./collection.html?handle=${encodeURIComponent(product.categoryHandle)}">${escapeHtml(product.categoryName)}</a> /`
+          : ""
+      }
       <span>${escapeHtml(product.name)}</span>
     </nav>
     <div class="product-detail">
       ${renderGallery()}
       <div class="product-info">
-        <p class="product-category">${escapeHtml(product.categoryName)}</p>
+        <p class="product-category">${
+          product.categoryHandle
+            ? `<a href="./collection.html?handle=${encodeURIComponent(product.categoryHandle)}">${escapeHtml(product.categoryName)}</a>`
+            : escapeHtml(product.categoryName)
+        }</p>
         <h1>${escapeHtml(product.name)}</h1>
         <p class="product-price" id="product-price"></p>
         <p class="product-stock" id="product-stock"></p>

@@ -28,6 +28,13 @@
 - Phase 1 Keychain Studio / Custom Creations / Post Office are lightweight content pages (`content/pages/*.json` + shared `page.js`). Full builder, inquiry backend, and Kit integration stay in later phases.
 - Homepage order is fixed in `index.html`: Hero → Note → Featured Collections → Best Sellers → destination previews → About (welcome) → banner/events → footer.
 
+## 2026-07-30 (Phase 2 — Collection pages + storytelling metadata)
+
+- Square categories still define which collections exist and which products belong in them. Empty categories stay hidden.
+- Storytelling (description, optional `heroImage`, `featured`, display `order`) lives in `content/collections.json`, matched by category name or handle — no hardcoded category names in JS.
+- Dedicated pages at `collection.html?handle=…` with edge-to-edge hero image and intro copy below (no overlay badges). Shop `?category=` filters remain for power browsing.
+- Homepage featured strip prefers collections flagged `featured: true`; otherwise falls back to the ordered live list.
+
 ## 2026-07-26 (Sprint 5 — launch hardening)
 
 - Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.
