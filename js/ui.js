@@ -72,3 +72,14 @@ export function escapeHtml(str) {
     "'": "&#39;",
   }[c]));
 }
+
+export function collectionCardHTML(collection) {
+  return `
+    <a class="collection-card" href="./shop.html?category=${encodeURIComponent(collection.handle)}">
+      <div class="collection-card__media">
+        <img src="${collection.image}" alt="${escapeHtml(collection.name)}" loading="lazy">
+      </div>
+      <h3>${escapeHtml(collection.name)}</h3>
+      <p>${collection.count} ${collection.count === 1 ? "product" : "products"}</p>
+    </a>`;
+}

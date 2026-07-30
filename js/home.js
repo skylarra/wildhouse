@@ -1,9 +1,9 @@
-// Home page — renders all sections from content (home.json + events.json) and
-// the featured "best sellers" + recently-viewed products from the catalog.
-import { getFeatured, getProducts } from "./catalog.js";
+// Home page — renders all sections from content (home.json + events.json),
+// featured products, dynamic Square collections, and recently viewed.
+import { getFeatured, getProducts, getCollections } from "./catalog.js";
 import { loadPage } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
-import { productCardHTML, wireFavorites, escapeHtml } from "./ui.js";
+import { productCardHTML, wireFavorites, escapeHtml, collectionCardHTML } from "./ui.js";
 
 function ctaHTML(cta, cls = "btn secondary") {
   return cta ? `<a class="${cls}" href="${cta.href}">${escapeHtml(cta.label)}</a>` : "";
@@ -107,6 +107,31 @@ async function renderFeatured() {
   }
 }
 
+async function renderHomeCollections(cfg = {}) {
+  const section = document.getElementById("home-collections");
+  const grid = document.getElementById("home-collections-grid");
+  const heading = document.getElementById("home-collections-heading");
+  const cta = document.getElementById("home-collections-cta");
+  if (!section || !grid) return;
+
+  try {
+    const collections = await getCollections();
+    if (!collections.length) {
+      section.hidden = true;
+      return;
+    }
+    if (heading && cfg.heading) heading.textContent = cfg.heading;
+    if (cta) cta.innerHTML = ctaHTML(cfg.cta);
+    // Homepage features a subset; full list lives on collections.html.
+    const featured = collections.slice(0, 6);
+    grid.innerHTML = featured.map(collectionCardHTML).join("");
+    section.hidden = false;
+  } catch (err) {
+    section.hidden = true;
+    console.error(err);
+  }
+}
+
 async function renderRecentlyViewed(heading) {
   const section = document.getElementById("recently-viewed");
   const grid = document.getElementById("recently-viewed-grid");
@@ -130,6 +155,7 @@ async function init() {
     renderSeo(home.seo);
     renderHero(home.hero);
     renderBestSellersChrome(home.bestSellers);
+    await renderHomeCollections(home.collections);
     renderWelcome(home.welcome);
     renderBanner(home.banner);
     await renderEventsPreview(home.eventsPreview);

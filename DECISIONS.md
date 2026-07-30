@@ -16,6 +16,12 @@
 - Secrets required (set in Cursor + Cloudflare Pages): `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, and `SQUARE_ENVIRONMENT` (`sandbox`|`production`, defaults to `sandbox`). Sandbox first; production only after testing.
 - Domain `wildhouselane.com` finalized: canonical tags added; custom domain must be connected in the Cloudflare Pages dashboard (not in-repo).
 
+## 2026-07-30 (Dynamic collections)
+
+- Storefront collections are derived from Square Catalog categories at runtime (`getCollections()` in `js/catalog.js`). Empty categories are omitted; products without a category appear only under All Products.
+- Optional display priority lives in content, not code: `content/site.json` → `collectionOrder` (exact category name match). Unlisted categories append alphabetically.
+- Adding a new collection only requires creating a Square category and assigning products — no frontend code change unless a custom order entry is desired.
+
 ## 2026-07-26 (Sprint 5 — launch hardening)
 
 - Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.

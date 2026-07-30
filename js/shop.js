@@ -1,5 +1,5 @@
 // Shop page — search, category filter, sort, and product grid rendered from the catalog.
-import { getProducts, getCategories, queryProducts } from "./catalog.js";
+import { getProducts, getCollections, queryProducts } from "./catalog.js";
 import { productCardHTML, wireFavorites } from "./ui.js";
 
 const state = { search: "", category: "all", sort: "featured" };
@@ -31,7 +31,8 @@ function render() {
 
 async function renderCategories() {
   if (!categoryList) return;
-  const cats = await getCategories();
+  // Sidebar lists only collections that currently have products (+ All Products).
+  const cats = await getCollections();
   const items = [{ handle: "all", name: "All Products" }, ...cats];
   categoryList.innerHTML = items
     .map(

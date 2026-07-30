@@ -1,24 +1,18 @@
 # Current Sprint
 
-## Hotfix — restore Sprint 5 visual regressions
+## Dynamic collections + product card polish
 
-Priority: restore frontend polish and shop fallback before any further feature work.
-
-- Restore pre–Sprint 5 hero/layout/typography styling
-- Shop must show local `products.json` when Square is empty/unavailable
-- Do not start Sprint 6 or new features until verified
-
----
-
-## Sprint 5 — SEO, Accessibility, Performance, Testing, Launch
-
-Completed in PR #4. Some visual changes from that sprint are being restored in this hotfix.
+- Product cards use consistent 4:5 portrait frames (`object-fit: contain`) ✅
+- Collections are generated from Square categories (via `/api/catalog` / `products.json`) ✅
+- Optional `collectionOrder` in `content/site.json` ✅
+- Homepage features dynamic collections ✅
+- Empty categories hidden; uncategorized products only under All Products ✅
 
 ---
 
 ## Pending (requires user / ops)
 
-- Populate Square Sandbox catalog (live `/api/catalog` currently returns 0 items)
+- Populate Square Sandbox catalog with real categories + products
 - Connect `wildhouselane.com` DNS to the Cloudflare Pages project
 - Complete sandbox checkout with Square test card before production credentials
 

@@ -87,10 +87,17 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
   for (const obj of objects) {
     if (obj.type === "CATEGORY") {
       const name = obj.category_data?.name || "Uncategorized";
+      const imageIds = obj.category_data?.image_ids || [];
       categories.push({
         id: obj.id,
         type: "CATEGORY",
-        category_data: { name, handle: slugify(name) },
+        category_data: {
+          name,
+          handle: slugify(name),
+          // Square may attach images to categories; first id wins as cover.
+          image_ids: imageIds,
+          image_id: imageIds[0] || null,
+        },
       });
     } else if (obj.type === "IMAGE") {
       if (obj.image_data?.url) images[obj.id] = { url: obj.image_data.url };
