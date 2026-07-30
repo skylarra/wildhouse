@@ -1,0 +1,27 @@
+{
+  "_comment": "Custom Creations landing (Phase 1 preview). Full inquiry form + email arrives in Phase 5.",
+  "title": "Custom Creations",
+  "intro": "For projects that aren't already on the shelf — keepsakes, one-offs, and ideas that need a little conversation first.",
+  "blocks": [
+    {
+      "type": "note",
+      "html": "A full inquiry form with photo uploads is coming soon. Until then, email is the best way to start."
+    },
+    { "type": "heading", "text": "What to include" },
+    {
+      "type": "paragraph",
+      "html": "When you reach out, share your name, email, project type, rough budget and timeline, preferred size and materials, and a short description. Inspiration photos help a lot."
+    },
+    {
+      "type": "paragraph",
+      "html": "Custom work is made by hand in small batches of one — timing depends on the season and how detailed the piece is."
+    },
+    { "type": "heading", "text": "Start the conversation" },
+    {
+      "type": "paragraph",
+      "html": "Send a note to <a href=\"mailto:hello@wildhouselane.com\">hello@wildhouselane.com</a>, or use the contact page. We'll reply with next steps."
+    },
+    { "type": "cta", "label": "Contact Wildhouse Lane", "href": "./contact.html" },
+    { "type": "cta", "label": "Shop ready-made pieces", "href": "./shop.html" }
+  ]
+}

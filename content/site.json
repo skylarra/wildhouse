@@ -22,9 +22,9 @@
   "nav": [
     { "label": "SHOP", "href": "./shop.html" },
     { "label": "COLLECTIONS", "href": "./collections.html" },
+    { "label": "STUDIO", "href": "./keychain-studio.html" },
     { "label": "ABOUT", "href": "./about.html" },
-    { "label": "CONTACT", "href": "./contact.html" },
-    { "label": "FAQs", "href": "./faqs.html" }
+    { "label": "POST OFFICE", "href": "./post-office.html" }
   ],
   "footerLinks": [
     {
@@ -32,6 +32,8 @@
       "links": [
         { "label": "All Products", "href": "./shop.html" },
         { "label": "Collections", "href": "./collections.html" },
+        { "label": "Keychain Studio", "href": "./keychain-studio.html" },
+        { "label": "Custom Creations", "href": "./custom-creations.html" },
         { "label": "Events", "href": "./events.html" }
       ]
     },
@@ -39,6 +41,7 @@
       "heading": "About",
       "links": [
         { "label": "Our Story", "href": "./about.html" },
+        { "label": "Post Office", "href": "./post-office.html" },
         { "label": "Contact", "href": "./contact.html" },
         { "label": "FAQs", "href": "./faqs.html" }
       ]

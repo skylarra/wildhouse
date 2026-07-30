@@ -22,6 +22,12 @@
 - Optional display priority lives in content, not code: `content/site.json` → `collectionOrder` (exact category name match). Unlisted categories append alphabetically.
 - Adding a new collection only requires creating a Square category and assigning products — no frontend code change unless a custom order entry is desired.
 
+## 2026-07-30 (Phase 1 — A Little Note + destination previews)
+
+- Homepage “A Little Note” messages live in `content/notes.json` (add/edit strings only). One message is chosen per local calendar day via a stable hash so the note does not flicker on reload.
+- Phase 1 Keychain Studio / Custom Creations / Post Office are lightweight content pages (`content/pages/*.json` + shared `page.js`). Full builder, inquiry backend, and Kit integration stay in later phases.
+- Homepage order is fixed in `index.html`: Hero → Note → Featured Collections → Best Sellers → destination previews → About (welcome) → banner/events → footer.
+
 ## 2026-07-26 (Sprint 5 — launch hardening)
 
 - Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.

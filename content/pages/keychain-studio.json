@@ -1,0 +1,27 @@
+{
+  "_comment": "Keychain Studio landing (Phase 1 preview). Full builder arrives in Phase 4.",
+  "title": "Keychain Studio",
+  "intro": "Design a keychain that feels like yours — hardware, beads, letters, and charms, assembled into something small enough to carry everywhere.",
+  "blocks": [
+    {
+      "type": "note",
+      "html": "The interactive builder is coming soon. For now, browse the shop for ready-made keychains, or reach out for a custom request."
+    },
+    { "type": "heading", "text": "How it will work" },
+    {
+      "type": "paragraph",
+      "html": "You'll choose hardware color, then decide between a standard charm stack or a beaded sequence. Beaded designs will let you arrange letters, colors, and shapes — with live preview as you go."
+    },
+    {
+      "type": "paragraph",
+      "html": "Version 1 will use lightweight layered images so it stays fast on every device. No heavy 3D, no laggy canvas tricks."
+    },
+    { "type": "heading", "text": "Meanwhile" },
+    {
+      "type": "paragraph",
+      "html": "Explore current keychains in the shop, or tell us about a fully custom idea through Custom Creations."
+    },
+    { "type": "cta", "label": "Browse the shop", "href": "./shop.html" },
+    { "type": "cta", "label": "Custom Creations", "href": "./custom-creations.html" }
+  ]
+}

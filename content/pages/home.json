@@ -1,5 +1,5 @@
 {
-  "_comment": "Home page content. Edit hero, welcome, banner, and section headings here.",
+  "_comment": "Home page content. Edit hero, section headings, and destination previews here. A Little Note messages live in content/notes.json.",
   "seo": {
     "heading": "Wildhouse Lane - handmade products for people who love spooky nature art.",
     "body": "Discover unique, handcrafted items inspired by the beauty of nature and the allure of the 24/7 halloween spirit. At Wildhouse Lane, we blend artistry with a love for wildlife conservation."
@@ -13,14 +13,40 @@
     ],
     "cta": { "label": "SHOP ALL", "href": "./shop.html" }
   },
+  "collections": {
+    "heading": "FEATURED COLLECTIONS",
+    "cta": { "label": "VIEW ALL COLLECTIONS", "href": "./collections.html" }
+  },
   "bestSellers": {
     "heading": "BEST SELLERS",
     "cta": { "label": "SHOP ALL", "href": "./shop.html" }
   },
-  "collections": {
-    "heading": "COLLECTIONS",
-    "cta": { "label": "VIEW ALL COLLECTIONS", "href": "./collections.html" }
-  },
+  "previews": [
+    {
+      "id": "keychain-studio",
+      "eyebrow": "Build your own",
+      "heading": "Keychain Studio",
+      "body": "Mix hardware, beads, and charms into a one-of-a-kind keep-close companion. A full builder is on the way — peek at what's coming.",
+      "cta": { "label": "Visit the Studio", "href": "./keychain-studio.html" },
+      "image": { "src": "./assets/fake-product2.jpg", "alt": "Handmade keychain charms" }
+    },
+    {
+      "id": "custom-creations",
+      "eyebrow": "Made just for you",
+      "heading": "Custom Creations",
+      "body": "Have something entirely your own in mind? Share a sketch of the idea and we'll talk materials, size, and timeline.",
+      "cta": { "label": "Start a custom project", "href": "./custom-creations.html" },
+      "image": { "src": "./assets/fake-product3.jpg", "alt": "Custom handmade piece" }
+    },
+    {
+      "id": "post-office",
+      "eyebrow": "Stay connected",
+      "heading": "Post Office",
+      "body": "Join Wildhouse Post for studio notes and launches — or the snail mail list for occasional postcards and small surprises.",
+      "cta": { "label": "Visit the Post Office", "href": "./post-office.html" },
+      "image": { "src": "./assets/fake-product4.jpg", "alt": "Studio notes and mail" }
+    }
+  ],
   "welcome": {
     "eyebrow": "Welcome, Friend",
     "heading": "Hi, I'm Skylar!",
