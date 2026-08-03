@@ -3,6 +3,12 @@ import { getProductByHandle, getRelated, formatMoney } from "./catalog.js";
 import { loadJSON, loadSite } from "./content.js";
 import { addToCart, pushRecentlyViewed, isFavorite, toggleFavorite } from "./store.js";
 import { productCardHTML, wireFavorites, toast, escapeHtml } from "./ui.js";
+import {
+  buildVariantModel,
+  defaultSelection,
+  resolveOptionImage,
+  splitName,
+} from "./variants.js";
 
 const root = document.getElementById("product-root");
 const params = new URLSearchParams(location.search);
@@ -11,6 +17,9 @@ const handle = params.get("handle");
 let product = null;
 let selectedVariation = null;
 let info = null;
+let variantMedia = {};
+let variantModel = null;
+let selection = {};
 let freeShippingThresholdCents = 7500;
 let galleryIndex = 0;
 let galleryImages = [];
@@ -70,8 +79,60 @@ function shippingText() {
   return text;
 }
 
+function colorImagesForProduct() {
+  return {
+    ...(product.colorImages || {}),
+    ...(variantMedia[product.handle]?.colorImages || {}),
+  };
+}
+
+function imagesForSelection() {
+  const base = product.images.length ? [...product.images] : ["./assets/Wildhouse.png"];
+  const colorAxis = variantModel?.axes?.find((a) => a.key === "color");
+  if (!colorAxis) return base;
+  const color = selection.color;
+  if (!color) return base;
+  const colorIndex = colorAxis.values.indexOf(color);
+  const varsForColor = product.variations.filter(
+    (v) => splitName(v.name)[0] === color
+  );
+  const primary = resolveOptionImage({
+    value: color,
+    valueIndex: Math.max(0, colorIndex),
+    productImages: base,
+    colorImages: colorImagesForProduct(),
+    variationsForValue: varsForColor,
+  });
+  // Lead with the selected color photo, then remaining product images.
+  return [primary, ...base.filter((src) => src !== primary)];
+}
+
+function refreshGallerySources({ resetIndex = false } = {}) {
+  galleryImages = imagesForSelection();
+  if (resetIndex || galleryIndex >= galleryImages.length) galleryIndex = 0;
+  const thumbs = root.querySelector(".gallery__thumbs");
+  if (thumbs) {
+    if (galleryImages.length > 1) {
+      thumbs.hidden = false;
+      thumbs.innerHTML = galleryImages
+        .map(
+          (src, i) =>
+            `<button class="gallery__thumb${i === galleryIndex ? " is-active" : ""}" data-index="${i}" type="button" aria-label="View image ${i + 1}" aria-current="${i === galleryIndex ? "true" : "false"}"><img src="${src}" alt="" loading="lazy"></button>`
+        )
+        .join("");
+      thumbs.querySelectorAll(".gallery__thumb").forEach((thumb) => {
+        thumb.addEventListener("click", () => setGalleryImage(Number(thumb.dataset.index)));
+      });
+    } else {
+      thumbs.hidden = true;
+      thumbs.innerHTML = "";
+    }
+  }
+  setGalleryImage(galleryIndex);
+}
+
 function renderGallery() {
-  galleryImages = product.images.length ? product.images : ["./assets/Wildhouse.png"];
+  galleryImages = imagesForSelection();
   galleryIndex = 0;
   const hint = info.gallery?.zoomHint || DEFAULT_INFO.gallery.zoomHint;
   const thumbs = galleryImages
@@ -89,46 +150,127 @@ function renderGallery() {
         </span>
         <span class="gallery__zoom-hint">${escapeHtml(hint)}</span>
       </button>
-      ${galleryImages.length > 1 ? `<div class="gallery__thumbs" role="list">${thumbs}</div>` : ""}
+      <div class="gallery__thumbs" role="list"${galleryImages.length > 1 ? "" : " hidden"}>${thumbs}</div>
     </div>
     <dialog class="zoom-dialog" id="zoom-dialog" aria-label="Zoomed product image">
       <div class="zoom-dialog__toolbar">
         <button type="button" class="zoom-dialog__close" id="zoom-close">${escapeHtml(info.gallery?.zoomCloseLabel || "Close")}</button>
       </div>
       <div class="zoom-dialog__stage">
-        ${
-          galleryImages.length > 1
-            ? `<button type="button" class="zoom-dialog__nav zoom-dialog__nav--prev" id="zoom-prev" aria-label="${escapeHtml(info.gallery?.zoomPrevLabel || "Previous image")}">‹</button>`
-            : ""
-        }
+        <button type="button" class="zoom-dialog__nav zoom-dialog__nav--prev" id="zoom-prev" aria-label="${escapeHtml(info.gallery?.zoomPrevLabel || "Previous image")}">‹</button>
         <img id="zoom-image" src="${galleryImages[0]}" alt="${escapeHtml(product.name)}">
-        ${
-          galleryImages.length > 1
-            ? `<button type="button" class="zoom-dialog__nav zoom-dialog__nav--next" id="zoom-next" aria-label="${escapeHtml(info.gallery?.zoomNextLabel || "Next image")}">›</button>`
-            : ""
-        }
+        <button type="button" class="zoom-dialog__nav zoom-dialog__nav--next" id="zoom-next" aria-label="${escapeHtml(info.gallery?.zoomNextLabel || "Next image")}">›</button>
       </div>
-      ${
-        galleryImages.length > 1
-          ? `<p class="zoom-dialog__count" id="zoom-count" aria-live="polite">1 / ${galleryImages.length}</p>`
-          : ""
-      }
+      <p class="zoom-dialog__count" id="zoom-count" aria-live="polite">1 / ${galleryImages.length}</p>
     </dialog>`;
 }
 
-function renderVariations() {
-  if (!product.hasVariants) return "";
-  const opts = product.variations
-    .map(
-      (v) =>
-        `<option value="${v.id}"${v.stock === 0 ? " disabled" : ""}>${escapeHtml(v.name)}${v.stock === 0 ? " — sold out" : ""}</option>`
-    )
+function axisStock(axis, value) {
+  // A value is available if any variation matching current selection + this value has stock.
+  const probe = { ...selection, [axis.key]: value };
+  if (variantModel.mode === "list") {
+    const v = variantModel.findVariation(probe);
+    return v?.stock || 0;
+  }
+  // For matrix: if choosing color, ignore size; if choosing size, keep color.
+  if (axis.key === "color") {
+    const axisIndex = variantModel.axes.findIndex((a) => a.key === "color");
+    return product.variations
+      .filter((v) => splitName(v.name)[axisIndex] === value)
+      .reduce((sum, v) => sum + (v.stock || 0), 0);
+  }
+  const match = variantModel.findVariation(probe);
+  return match?.stock || 0;
+}
+
+function renderAxisSection(axis) {
+  const selectedValue = selection[axis.key];
+  if (axis.presentation === "swatches") {
+    const colors = colorImagesForProduct();
+    const cards = axis.values
+      .map((value, i) => {
+        const axisIndex = variantModel.axes.findIndex((a) => a.key === axis.key);
+        const varsForValue = product.variations.filter(
+          (v) => splitName(v.name)[axisIndex] === value
+        );
+        const img = resolveOptionImage({
+          value,
+          valueIndex: i,
+          productImages: product.images,
+          colorImages: colors,
+          variationsForValue: varsForValue,
+        });
+        const stock = axisStock(axis, value);
+        const active = value === selectedValue;
+        // Sold-out colors stay selectable so shoppers can still preview that photo.
+        return `
+          <button type="button"
+            class="option-swatch${active ? " is-active" : ""}${stock === 0 ? " is-sold-out" : ""}"
+            data-axis="${axis.key}" data-value="${escapeHtml(value)}"
+            aria-pressed="${active}"
+            aria-label="${escapeHtml(axis.label)}: ${escapeHtml(value)}${stock === 0 ? " (sold out)" : ""}">
+            <span class="option-swatch__media"><img src="${img}" alt="" loading="lazy"></span>
+            <span class="option-swatch__label">${escapeHtml(value)}</span>
+          </button>`;
+      })
+      .join("");
+    return `
+      <section class="option-section" data-axis-section="${axis.key}" aria-label="${escapeHtml(axis.label)}">
+        <h2 class="option-section__title">${escapeHtml(axis.label)}
+          <span class="option-section__chosen">${escapeHtml(selectedValue || "")}</span>
+        </h2>
+        <div class="option-swatches">${cards}</div>
+      </section>`;
+  }
+
+  const chips = axis.values
+    .map((value) => {
+      const stock = axisStock(axis, value);
+      const active = value === selectedValue;
+      return `
+        <button type="button"
+          class="option-chip${active ? " is-active" : ""}${stock === 0 ? " is-sold-out" : ""}"
+          data-axis="${axis.key}" data-value="${escapeHtml(value)}"
+          aria-pressed="${active}"
+          ${stock === 0 ? "disabled" : ""}>
+          ${escapeHtml(value)}
+        </button>`;
+    })
     .join("");
+
   return `
-    <label class="field">
-      <span>Option</span>
-      <select id="variation-select">${opts}</select>
-    </label>`;
+    <section class="option-section" data-axis-section="${axis.key}" aria-label="${escapeHtml(axis.label)}">
+      <h2 class="option-section__title">${escapeHtml(axis.label)}
+        <span class="option-section__chosen">${escapeHtml(selectedValue || "")}</span>
+      </h2>
+      <div class="option-chips">${chips}</div>
+    </section>`;
+}
+
+function renderVariations() {
+  if (!variantModel || variantModel.mode === "none") return "";
+  return `<div class="product-options" id="product-options">${variantModel.axes.map(renderAxisSection).join("")}</div>`;
+}
+
+function syncSelectionToVariation({ updateGallery = false } = {}) {
+  let next = variantModel.findVariation(selection);
+  // If current size is unavailable for the color, snap to first in-stock size.
+  if ((!next || next.stock === 0) && variantModel.mode === "matrix") {
+    const sizeAxis = variantModel.axes.find((a) => a.key === "size");
+    if (sizeAxis) {
+      const available = sizeAxis.values.find((size) => {
+        const probe = { ...selection, size };
+        const match = variantModel.findVariation(probe);
+        return match && match.stock > 0;
+      });
+      if (available) {
+        selection.size = available;
+        next = variantModel.findVariation(selection);
+      }
+    }
+  }
+  selectedVariation = next || product.variations[0];
+  if (updateGallery) refreshGallerySources({ resetIndex: true });
 }
 
 function renderInfoNotes() {
@@ -188,10 +330,6 @@ function renderPriceAndStock() {
   }
 }
 
-function pickDefaultVariation() {
-  return product.variations.find((v) => v.stock > 0) || product.variations[0];
-}
-
 function setGalleryImage(index) {
   if (!galleryImages.length) return;
   galleryIndex = ((index % galleryImages.length) + galleryImages.length) % galleryImages.length;
@@ -215,8 +353,17 @@ function setGalleryImage(index) {
   });
 }
 
+function renderOptionsMount() {
+  const mount = document.getElementById("product-options");
+  if (!mount) return;
+  mount.outerHTML = renderVariations() || `<div class="product-options" id="product-options" hidden></div>`;
+  wireOptionControls();
+}
+
 function render() {
-  selectedVariation = pickDefaultVariation();
+  variantModel = buildVariantModel(product.variations);
+  selection = defaultSelection(variantModel, product.variations);
+  syncSelectionToVariation();
   const fav = isFavorite(product.id);
   const relatedHeading = info.relatedHeading || DEFAULT_INFO.relatedHeading;
   root.innerHTML = `
@@ -260,6 +407,7 @@ function render() {
 
   renderPriceAndStock();
   wireGallery();
+  wireOptionControls();
   wireControls();
   renderRelated();
 }
@@ -313,18 +461,27 @@ function wireGallery() {
   });
 }
 
-function wireControls() {
-  const select = document.getElementById("variation-select");
-  if (select) {
-    select.addEventListener("change", () => {
-      selectedVariation = product.variations.find((v) => v.id === select.value);
-      // Re-render notes so out-of-stock message stays in sync with variation.
+function wireOptionControls() {
+  const mount = document.getElementById("product-options");
+  if (!mount) return;
+  mount.querySelectorAll("[data-axis]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+      const axis = btn.dataset.axis;
+      const value = btn.dataset.value;
+      selection[axis] = value;
+      syncSelectionToVariation({
+        updateGallery: axis === "color" || axis === "option" || variantModel.mode === "list",
+      });
+      renderOptionsMount();
       const notes = root.querySelector(".product-notes");
       if (notes) notes.outerHTML = renderInfoNotes();
       renderPriceAndStock();
     });
-  }
+  });
+}
 
+function wireControls() {
   const addBtn = document.getElementById("add-to-cart");
   const qtyInput = document.getElementById("qty");
   addBtn.addEventListener("click", () => {
@@ -333,6 +490,11 @@ function wireControls() {
     let qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
     qty = Math.min(qty, stock);
     qtyInput.value = String(qty);
+    const cartImage =
+      galleryImages[0] ||
+      selectedVariation?.image ||
+      product.images[0] ||
+      "./assets/Wildhouse.png";
     addToCart(
       {
         variationId: selectedVariation.id,
@@ -340,7 +502,7 @@ function wireControls() {
         name: product.name,
         variationName: product.hasVariants ? selectedVariation.name : "",
         priceCents: selectedVariation.priceCents,
-        image: product.images[0] || "./assets/Wildhouse.png",
+        image: cartImage,
         handle: product.handle,
       },
       qty
@@ -376,13 +538,15 @@ async function init() {
   }
 
   try {
-    const [loadedProduct, loadedInfo, site] = await Promise.all([
+    const [loadedProduct, loadedInfo, site, media] = await Promise.all([
       getProductByHandle(handle),
       loadJSON("./content/product-info.json").catch(() => DEFAULT_INFO),
       loadSite().catch(() => null),
+      loadJSON("./content/variant-media.json").catch(() => ({})),
     ]);
     product = loadedProduct;
     info = loadedInfo || DEFAULT_INFO;
+    variantMedia = media || {};
     if (site?.freeShippingThresholdCents) {
       freeShippingThresholdCents = site.freeShippingThresholdCents;
     }

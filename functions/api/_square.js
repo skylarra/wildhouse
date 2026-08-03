@@ -133,6 +133,8 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
             sku: v.item_variation_data?.sku,
             pricing_type: v.item_variation_data?.pricing_type || "FIXED_PRICING",
             price_money: v.item_variation_data?.price_money || { amount: 0, currency },
+            // Per-variation images (e.g. shirt color photos) when set in Square.
+            image_ids: v.item_variation_data?.image_ids || v.image_ids || [],
           },
         })),
       },

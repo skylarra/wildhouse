@@ -9,6 +9,7 @@
 - Shipping, handmade, and estimated processing notes from `content/product-info.json`
 - Related products section polish
 - Keep collection breadcrumbs from Phase 2
+- Split Color (photo swatches) + Size (chips) option sections for apparel-style variants
 
 ### Out of scope
 - Live personalization preview (later)

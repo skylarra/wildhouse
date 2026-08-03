@@ -188,7 +188,15 @@
           { "type": "ITEM_VARIATION", "id": "VAR_TEE_SAND_XL", "item_variation_data": { "item_id": "ITEM_WILDHOUSE_TEE", "name": "Sand / XL", "sku": "WHL-TEE-SND-XL", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 3000, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "wildhouse-lane-tee", "tags": ["apparel", "unisex", "tree"], "featured": true }
+      "custom": {
+        "handle": "wildhouse-lane-tee",
+        "tags": ["apparel", "unisex", "tree"],
+        "featured": true,
+        "colorImages": {
+          "Black": "./assets/Wildhouse.png",
+          "Sand": "./assets/wildhouselogo-pink-brown.png"
+        }
+      }
     }
   ]
 }
