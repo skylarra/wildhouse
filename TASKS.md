@@ -1,21 +1,19 @@
 # Current Sprint
 
-## Phase 2 — Collections
+## Phase 3 — Product Pages
 
-### Done (this pass)
-- Dedicated collection pages with full-bleed hero, description, sort, product grid
-- `content/collections.json` for order, descriptions, hero overrides, featured flags
-- Homepage featured collections use `featured: true` (fallback: ordered list)
-- Collection cards + product breadcrumbs link to collection pages
-- Future collection names pre-authored so Square categories unlock copy on arrival
-
-### Still Square-owned
-- Creating categories and assigning products in Square Dashboard
-- Optional Square category images (used when no `heroImage` override)
+### In this pass
+- Large 4:5 product gallery with multi-image thumbs
+- Accessible image zoom (dialog lightbox)
+- Inventory status (in stock / low / sold out) with clearer copy
+- Shipping, handmade, and estimated processing notes from `content/product-info.json`
+- Related products section polish
+- Keep collection breadcrumbs from Phase 2
 
 ### Out of scope
-- Phase 3 product page upgrades
-- Full Keychain Studio / Custom / Post Office backends
+- Live personalization preview (later)
+- Back-in-stock notify (Phase 7)
+- Keychain Studio builder (Phase 4)
 
 ---
 

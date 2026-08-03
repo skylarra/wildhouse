@@ -1,0 +1,30 @@
+{
+  "_comment": "Shared product-page notes shown on every product detail page. Edit copy here — no code changes needed. processingTime is the estimated handmade lead time before shipping.",
+  "processingTime": {
+    "label": "Estimated processing",
+    "text": "Handmade to order — typically ships in 3–5 business days."
+  },
+  "handmade": {
+    "label": "Handmade",
+    "text": "Designed and finished by hand in South Carolina. Small variations are part of the charm."
+  },
+  "shipping": {
+    "label": "Shipping",
+    "text": "Carefully packed and shipped from the studio. Free shipping on orders over $75.",
+    "policiesHref": "./policies.html",
+    "policiesLabel": "Shipping & policies"
+  },
+  "inventory": {
+    "inStock": "In stock — ready to make",
+    "lowStock": "Only {count} left",
+    "outOfStock": "Sold out",
+    "outOfStockNote": "This piece is resting for now. Check back soon, or browse related finds below."
+  },
+  "gallery": {
+    "zoomHint": "Click to zoom",
+    "zoomCloseLabel": "Close",
+    "zoomPrevLabel": "Previous image",
+    "zoomNextLabel": "Next image"
+  },
+  "relatedHeading": "You may also like"
+}
