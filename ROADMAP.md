@@ -22,16 +22,14 @@ Future: live personalization preview.
 
 ## Phase 4 — Keychain Studio ✅ / in progress
 
-Dedicated builder:
+Premium PNG-layer configurator (4:5 product-photo preview):
 
-- Hardware color
-- Standard or Beaded
-- Beaded: letter / color / shape sequence
-- Main charm → Mini charm
-- Live layered SVG/PNG preview (not Canvas/3D)
-- Add to cart with design note for Square checkout
+- Clasp · Jump ring · Beads · Main charm · Mini charm
+- Data-driven `content/studio.json` + transparent PNGs in `assets/studio/`
+- Partial layer crossfades, stable mobile chips, no scroll jump
+- Adds **Build Your Own Charm Set** to cart with design note (checkout unchanged)
 
-Future: save/share designs, auto-generated names, photographic PNG layers, 3D-printed beads.
+Future: save/share designs, auto-generated names, extra bead rows / ribbons / seasonal accessories.
 
 ---
 
