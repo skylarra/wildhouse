@@ -174,7 +174,7 @@
       "id": "ITEM_WILDHOUSE_TEE",
       "item_data": {
         "name": "Wildhouse Lane Tee",
-        "description": "Soft, mid-weight unisex tee screen-printed with the rooted evergreen. Runs true to size.",
+        "description": "Soft, mid-weight unisex tee screen-printed with the rooted evergreen. Runs true to size.\n\nChoose your color, then pick a size below.\nEach tee is printed to order in small batches.",
         "category_id": "CAT_TSHIRTS",
         "image_ids": ["IMG_TEE_1", "IMG_TEE_2"],
         "variations": [
