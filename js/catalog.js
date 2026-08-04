@@ -82,14 +82,16 @@ function normalize(raw) {
       const d = obj.item_data;
       const category = d.category_id ? catById.get(d.category_id) : null;
       const variations = (d.variations || []).map((v) => {
-        const vd = v.item_variation_data;
+        const vd = v.item_variation_data || {};
+        const variationImageIds = vd.image_ids || v.image_ids || [];
         return {
           id: v.id,
           name: vd.name,
           sku: vd.sku,
-          priceCents: vd.price_money.amount,
-          currency: vd.price_money.currency,
+          priceCents: vd.price_money?.amount || 0,
+          currency: vd.price_money?.currency || raw.currency || "USD",
           stock: inventory[v.id] ?? 0,
+          image: variationImageIds.map((id) => images[id]?.url).find(Boolean) || null,
         };
       });
       const prices = variations.map((v) => v.priceCents);
@@ -101,6 +103,8 @@ function normalize(raw) {
         handle: obj.custom?.handle || obj.id,
         tags: obj.custom?.tags || [],
         featured: Boolean(obj.custom?.featured),
+        // Optional map of color/option label → image URL (local catalog or content overlay).
+        colorImages: obj.custom?.colorImages || {},
         // Products without a Square category only appear under All Products.
         categoryId: d.category_id || null,
         categoryName: category?.name || "",

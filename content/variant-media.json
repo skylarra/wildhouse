@@ -1,0 +1,9 @@
+{
+  "_comment": "Optional product option media. Keyed by product handle. colorImages maps the Color (or first-axis) option label to a photo shown in the color picker and main gallery. Use this for live Square catalogs that don't attach images per variation yet.",
+  "wildhouse-lane-tee": {
+    "colorImages": {
+      "Black": "./assets/Wildhouse.png",
+      "Sand": "./assets/wildhouselogo-pink-brown.png"
+    }
+  }
+}

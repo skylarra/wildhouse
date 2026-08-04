@@ -35,6 +35,14 @@
 - Dedicated pages at `collection.html?handle=…` with edge-to-edge hero image and intro copy below (no overlay badges). Shop `?category=` filters remain for power browsing.
 - Homepage featured strip prefers collections flagged `featured: true`; otherwise falls back to the ordered live list.
 
+## 2026-08-03 (Phase 3 — Product page experience)
+
+- Product gallery uses a consistent **4:5** frame with `object-fit: contain` (same language as shop cards) so product photography isn’t cropped oddly.
+- Zoom is a native `<dialog>` lightbox with keyboard arrows / Escape — no Canvas or third-party zoom library.
+- Shared shipping, handmade, and processing copy lives in `content/product-info.json` so studio messaging can change without touching JS. Free-shipping threshold still reads from `content/site.json` when present.
+- Inventory status is variation-aware (in stock / low / sold out); quantity is capped to available stock on add-to-cart.
+- Multi-axis Square variations named like `Black / M` render as separate sections: **Color** (image swatches) then **Size** (chips). Parsing lives in `js/variants.js`. Color photos come from Square variation `image_ids` when present, else `custom.colorImages` / `content/variant-media.json`, else product image order.
+
 ## 2026-07-26 (Sprint 5 — launch hardening)
 
 - Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.

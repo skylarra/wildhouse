@@ -8,7 +8,7 @@ Homepage hero, A Little Note, featured collections, best sellers, destination pr
 
 ---
 
-## Phase 2 — Collections ✅ / in progress
+## Phase 2 — Collections ✅
 
 Collections come entirely from Square categories, enriched by `content/collections.json`:
 
@@ -23,9 +23,15 @@ Future Square category names (copy ready): Moon, Sun & Stars · Ocean Wonders ·
 
 ---
 
-## Phase 3 — Product Pages
+## Phase 3 — Product Pages ✅ / in progress
 
-Large 4:5 images, gallery, zoom, related products, shipping/handmade copy, processing time, inventory status. Future: live personalization preview.
+- Large 4:5 images
+- Multiple images + image zoom
+- Related products
+- Shipping / handmade / estimated processing copy
+- Inventory status
+
+Future: live personalization preview
 
 ---
 
