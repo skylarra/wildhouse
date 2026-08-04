@@ -4,7 +4,7 @@
 
 ### Done
 - PNG-layer, data-driven configurator (`content/studio.json`)
-- Product-photo 4:5 preview composition (clasp / main / mini / curved beads)
+- Reference assembly preview: clasp hub → LEFT 3 jump rings + mini · CENTER 1 jump ring + main · RIGHT mini clasp (gold/silver matching rings) then (jump ring → bead)… ending on a bead
 - Uniform option chips; no scroll jump on select; partial layer updates + preload
 - Desktop: config left, preview right · Mobile: sticky preview top, cards below
 - Cart product: “Build Your Own Charm Set” with design note (checkout unchanged)
@@ -12,7 +12,8 @@
 ### Replace placeholders
 Drop real transparent PNGs over:
 - `assets/studio/clasps/`
-- `assets/studio/jump-rings/`
+- `assets/studio/jump-rings/gold.png` and `silver.png` (user uploading)
+- `assets/studio/mini-clasps/gold.png` and `silver.png`
 - `assets/studio/beads/colors/`
 - `assets/studio/charms/`
 - `assets/studio/mini/`

@@ -1,11 +1,10 @@
 {
-  "_comment": "Keychain Studio — data-driven PNG layer configurator. Add options by dropping transparent PNGs into assets/studio/ and listing them here. Each section maps to a preview slot. Set enabled:false to hide a section while keeping default layers in the composition. catalogVariationId must match Square (or local products.json).",
+  "_comment": "Keychain Studio — PNG layer configurator. Drop transparent PNGs into assets/studio/ and list them here. Assembly (from reference): clasp hub → LEFT 3 jump rings + mini charm → CENTER 1 jump ring + main charm → RIGHT mini clasp (gold/silver only) then (jump ring + bead) repeating, ending on a bead. Jump rings are gold/silver only for now — replace gold.png / silver.png when you upload.",
   "title": "Keychain Studio",
   "intro": "Build your own charm set — clasp, rings, beads, and charms arranged like the real piece.",
   "catalogVariationId": "VAR_CUSTOM_KEYCHAIN",
   "productHandle": "custom-keychain",
   "productName": "Build Your Own Charm Set",
-  "_productNote": "Square checkout uses catalogVariationId; keep productName in sync with the Square item title when possible.",
   "basePriceCents": 2800,
   "beadedAddonCents": 600,
   "currency": "USD",
@@ -15,23 +14,25 @@
     "aspectRatio": "4 / 5",
     "miniCharmSide": "left",
     "beadSide": "right",
-    "beadCount": 7,
+    "miniCharmJumpRings": 3,
+    "mainCharmJumpRings": 1,
+    "beadCount": 5,
     "crossfadeMs": 200,
-    "background": "soft"
+    "background": "white"
   },
   "defaults": {
     "clasp": "gold-clasp",
     "jumpRing": "gold-ring",
     "bead": "cream",
     "mainCharm": "evergreen",
-    "miniCharm": "heart"
+    "miniCharm": "star"
   },
   "sections": [
     {
       "id": "clasp",
       "slot": "clasp",
       "title": "Choose Clasp",
-      "body": "The hardware that holds your set together.",
+      "body": "The lobster clasp at the top of your set.",
       "enabled": true,
       "selection": "single",
       "options": [
@@ -46,22 +47,19 @@
       "id": "jumpRing",
       "slot": "jumpRing",
       "title": "Choose Jump Ring",
-      "body": "Connecting rings between clasp, charms, and beads.",
+      "body": "Gold or silver rings that connect everything — and match the mini clasp on the bead strand. Drop your PNGs over assets/studio/jump-rings/gold.png and silver.png.",
       "enabled": true,
       "selection": "single",
       "options": [
-        { "id": "gold-ring", "name": "Gold", "image": "./assets/studio/jump-rings/gold.png" },
-        { "id": "silver-ring", "name": "Silver", "image": "./assets/studio/jump-rings/silver.png" },
-        { "id": "black-ring", "name": "Black", "image": "./assets/studio/jump-rings/black.png" },
-        { "id": "rose-ring", "name": "Rose gold", "image": "./assets/studio/jump-rings/rose.png" },
-        { "id": "brass-ring", "name": "Antique brass", "image": "./assets/studio/jump-rings/brass.png" }
+        { "id": "gold-ring", "name": "Gold", "image": "./assets/studio/jump-rings/gold.png", "metal": "gold" },
+        { "id": "silver-ring", "name": "Silver", "image": "./assets/studio/jump-rings/silver.png", "metal": "silver" }
       ]
     },
     {
       "id": "bead",
       "slot": "beads",
       "title": "Choose Beads",
-      "body": "A curved strand of color down the side of your main charm.",
+      "body": "Strand color. Pattern: mini clasp → jump ring → bead → jump ring → … ending on a bead.",
       "enabled": true,
       "selection": "single",
       "addonPrice": true,
@@ -80,7 +78,7 @@
       "id": "mainCharm",
       "slot": "mainCharm",
       "title": "Choose Main Charm",
-      "body": "The centerpiece of your set.",
+      "body": "Hangs from the clasp on a single jump ring.",
       "enabled": true,
       "selection": "single",
       "options": [
@@ -96,16 +94,21 @@
       "id": "miniCharm",
       "slot": "miniCharm",
       "title": "Choose Mini Charm",
-      "body": "A small companion tucked beside the main charm.",
+      "body": "Attached with three jump rings from the clasp.",
       "enabled": true,
       "selection": "single",
       "options": [
-        { "id": "heart", "name": "Heart", "image": "./assets/studio/mini/heart.png" },
         { "id": "star", "name": "Star", "image": "./assets/studio/mini/star.png" },
+        { "id": "heart", "name": "Heart", "image": "./assets/studio/mini/heart.png" },
         { "id": "leaf", "name": "Leaf", "image": "./assets/studio/mini/leaf.png" },
         { "id": "drop", "name": "Drop", "image": "./assets/studio/mini/drop.png" },
         { "id": "moon", "name": "Moon", "image": "./assets/studio/mini/moon.png" }
       ]
     }
-  ]
+  ],
+  "miniClasps": {
+    "_comment": "Bead-strand mini clasp — only gold/silver, always matches the selected jump ring metal.",
+    "gold": "./assets/studio/mini-clasps/gold.png",
+    "silver": "./assets/studio/mini-clasps/silver.png"
+  }
 }
