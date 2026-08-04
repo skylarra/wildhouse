@@ -121,7 +121,9 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
       id: it.id,
       item_data: {
         name: d.name,
-        description: d.description || "",
+        // Prefer Square's HTML description when present so spacing/lists/bold match the dashboard.
+        description: d.description_plaintext || d.description || "",
+        description_html: d.description_html || "",
         category_id: categoryId,
         image_ids: d.image_ids || [],
         variations: (d.variations || []).map((v) => ({

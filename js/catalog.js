@@ -100,6 +100,8 @@ function normalize(raw) {
         id: obj.id,
         name: d.name,
         description: d.description || "",
+        // Square dashboard formatting (paragraphs, line breaks, lists, bold).
+        descriptionHtml: d.description_html || obj.custom?.description_html || "",
         handle: obj.custom?.handle || obj.id,
         tags: obj.custom?.tags || [],
         featured: Boolean(obj.custom?.featured),

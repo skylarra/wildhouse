@@ -42,6 +42,7 @@
 - Shared shipping, handmade, and processing copy lives in `content/product-info.json` so studio messaging can change without touching JS. Free-shipping threshold still reads from `content/site.json` when present.
 - Inventory status is variation-aware (in stock / low / sold out); quantity is capped to available stock on add-to-cart.
 - Multi-axis Square variations named like `Black / M` render as separate sections: **Color** (image swatches) then **Size** (chips). Parsing lives in `js/variants.js`. Color photos come from Square variation `image_ids` when present, else `custom.colorImages` / `content/variant-media.json`, else product image order.
+- Product descriptions prefer Square `description_html` (sanitized to Square’s supported tags) so dashboard spacing/lists/bold match the site. Plain-text descriptions keep `\n` / `\n\n` as `<br>` / paragraphs via `formatProductDescription()` in `js/ui.js`.
 
 ## 2026-07-26 (Sprint 5 — launch hardening)
 

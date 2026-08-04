@@ -2,7 +2,7 @@
 import { getProductByHandle, getRelated, formatMoney } from "./catalog.js";
 import { loadJSON, loadSite } from "./content.js";
 import { addToCart, pushRecentlyViewed, isFavorite, toggleFavorite } from "./store.js";
-import { productCardHTML, wireFavorites, toast, escapeHtml } from "./ui.js";
+import { productCardHTML, wireFavorites, toast, escapeHtml, formatProductDescription } from "./ui.js";
 import {
   buildVariantModel,
   defaultSelection,
@@ -387,7 +387,10 @@ function render() {
         <h1>${escapeHtml(product.name)}</h1>
         <p class="product-price" id="product-price"></p>
         <p class="product-stock" id="product-stock" aria-live="polite"></p>
-        <p class="product-description">${escapeHtml(product.description)}</p>
+        <div class="product-description">${formatProductDescription({
+          html: product.descriptionHtml,
+          text: product.description,
+        })}</div>
         ${renderVariations()}
         <div class="product-actions">
           <label class="field qty-field">
