@@ -28,14 +28,24 @@ export async function onRequestPost({ request, env }) {
   const items = Array.isArray(payload?.items) ? payload.items : [];
   const lineItems = items
     .filter((l) => l && l.variationId)
-    .map((l) => ({
-      quantity: String(Math.max(1, parseInt(l.qty, 10) || 1)),
-      catalog_object_id: l.variationId,
-    }));
+    .map((l) => {
+      const item = {
+        quantity: String(Math.max(1, parseInt(l.qty, 10) || 1)),
+        catalog_object_id: l.variationId,
+      };
+      // Keychain Studio (and other custom builds) pass a human-readable design note.
+      const note = String(l.note || "").trim();
+      if (note) item.note = note.slice(0, 500);
+      return item;
+    });
 
   if (!lineItems.length) return json({ error: "Cart is empty" }, 400);
 
   const origin = new URL(request.url).origin;
+  const studioNotes = lineItems.map((l) => l.note).filter(Boolean);
+  const orderNote = studioNotes.length
+    ? studioNotes.join(" | ").slice(0, 500)
+    : undefined;
 
   try {
     const res = await squareFetch(cfg, "/v2/online-checkout/payment-links", {
@@ -45,6 +55,7 @@ export async function onRequestPost({ request, env }) {
         order: {
           location_id: cfg.locationId,
           line_items: lineItems,
+          ...(orderNote ? { note: orderNote } : {}),
         },
         checkout_options: {
           redirect_url: `${origin}/order-confirmation.html`,

@@ -26,8 +26,8 @@
       "id": "keychain-studio",
       "eyebrow": "Build your own",
       "heading": "Keychain Studio",
-      "body": "Mix hardware, beads, and charms into a one-of-a-kind keep-close companion. A full builder is on the way — peek at what's coming.",
-      "cta": { "label": "Visit the Studio", "href": "./keychain-studio.html" },
+      "body": "Mix hardware, beads, and charms into a one-of-a-kind keep-close companion — with a live preview as you build.",
+      "cta": { "label": "Open Keychain Studio", "href": "./keychain-studio.html" },
       "image": { "src": "./assets/fake-product2.jpg", "alt": "Handmade keychain charms" }
     },
     {

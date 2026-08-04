@@ -35,6 +35,7 @@ function emit(name, detail) {
 
 /* ----------------------------- Cart ----------------------------- */
 // A cart line: { variationId, itemId, name, variationName, priceCents, image, handle, qty }
+// Optional studio fields: catalogVariationId (Square id), note, studioDesign
 
 export function getCart() {
   return read(KEYS.cart, []);
@@ -50,7 +51,10 @@ export function cartSubtotalCents() {
 
 export function addToCart(line, qty = 1) {
   const cart = getCart();
-  const existing = cart.find((l) => l.variationId === line.variationId);
+  // Unique studio designs use distinct variationIds; identical catalog lines still merge.
+  const existing = cart.find(
+    (l) => l.variationId === line.variationId && (l.note || "") === (line.note || "")
+  );
   if (existing) {
     existing.qty += qty;
   } else {

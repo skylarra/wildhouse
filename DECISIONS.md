@@ -44,6 +44,13 @@
 - Multi-axis Square variations named like `Black / M` render as separate sections: **Color** (image swatches) then **Size** (chips). Parsing lives in `js/variants.js`. Color photos come from Square variation `image_ids` when present, else `custom.colorImages` / `content/variant-media.json`, else product image order.
 - Product descriptions prefer Square `description_html` (sanitized to Square’s supported tags) so dashboard spacing/lists/bold match the site. Plain-text descriptions keep `\n` / `\n\n` as `<br>` / paragraphs via `formatProductDescription()` in `js/ui.js`.
 
+## 2026-08-04 (Phase 4 — Keychain Studio)
+
+- Studio V1 uses **stacked SVG/PNG layers** (`assets/studio/`), not Canvas or 3D, for fast reliable previews.
+- Options, prices, and layer paths are data-driven via `content/studio.json` so charms/beads/hardware can be edited without code.
+- Cart lines for studio builds use a unique local `variationId` plus `catalogVariationId` (Square variation) and a human-readable `note` describing the design. Checkout sends the note on the Square order/line item.
+- Until Square has a Custom Keychain variation, local fallback uses `VAR_CUSTOM_KEYCHAIN` in `data/products.json`.
+
 ## 2026-07-26 (Sprint 5 — launch hardening)
 
 - Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.

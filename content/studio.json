@@ -1,0 +1,138 @@
+{
+  "_comment": "Keychain Studio configuration. Edit options, prices, and copy here. Layer paths point at assets/studio/*.svg — swap in photographic PNGs anytime without code changes. catalogVariationId must match a Square (or products.json) variation used at checkout.",
+  "title": "Keychain Studio",
+  "intro": "Build a keep-close companion — hardware, beads, and charms stacked into something that feels like yours.",
+  "catalogVariationId": "VAR_CUSTOM_KEYCHAIN",
+  "productHandle": "custom-keychain",
+  "productName": "Custom Keychain",
+  "basePriceCents": 2800,
+  "beadedAddonCents": 600,
+  "maxBeads": 10,
+  "currency": "USD",
+  "previewHint": "Your preview updates as you choose.",
+  "addToCartLabel": "Add to cart",
+  "steps": {
+    "hardware": {
+      "heading": "1. Hardware color",
+      "body": "Choose the clasp and jump-ring finish."
+    },
+    "style": {
+      "heading": "2. Style",
+      "body": "Standard stacks charms on a short chain. Beaded adds a lettered strand."
+    },
+    "beads": {
+      "heading": "3. Bead sequence",
+      "body": "Add letters, colors, and shapes — up to 10 beads. Tap a bead below to remove it."
+    },
+    "mainCharm": {
+      "heading": "4. Main charm",
+      "body": "The star of the stack."
+    },
+    "miniCharm": {
+      "heading": "5. Mini charm",
+      "body": "A little companion dangling below."
+    }
+  },
+  "hardware": [
+    { "id": "gold", "label": "Gold", "layer": "./assets/studio/hardware/gold.svg" },
+    { "id": "silver", "label": "Silver", "layer": "./assets/studio/hardware/silver.svg" },
+    { "id": "rose", "label": "Rose gold", "layer": "./assets/studio/hardware/rose.svg" },
+    { "id": "brass", "label": "Antique brass", "layer": "./assets/studio/hardware/brass.svg" },
+    { "id": "copper", "label": "Copper", "layer": "./assets/studio/hardware/copper.svg" },
+    { "id": "black", "label": "Black", "layer": "./assets/studio/hardware/black.svg" }
+  ],
+  "styles": [
+    { "id": "standard", "label": "Standard", "description": "Hardware + main charm + mini charm" },
+    { "id": "beaded", "label": "Beaded", "description": "Hardware + custom bead strand + charms" }
+  ],
+  "beadTabs": [
+    {
+      "id": "letters",
+      "label": "Letters",
+      "items": [
+        { "id": "A", "label": "A", "layer": "./assets/studio/beads/letter-A.svg", "kind": "letter" },
+        { "id": "B", "label": "B", "layer": "./assets/studio/beads/letter-B.svg", "kind": "letter" },
+        { "id": "C", "label": "C", "layer": "./assets/studio/beads/letter-C.svg", "kind": "letter" },
+        { "id": "D", "label": "D", "layer": "./assets/studio/beads/letter-D.svg", "kind": "letter" },
+        { "id": "E", "label": "E", "layer": "./assets/studio/beads/letter-E.svg", "kind": "letter" },
+        { "id": "F", "label": "F", "layer": "./assets/studio/beads/letter-F.svg", "kind": "letter" },
+        { "id": "G", "label": "G", "layer": "./assets/studio/beads/letter-G.svg", "kind": "letter" },
+        { "id": "H", "label": "H", "layer": "./assets/studio/beads/letter-H.svg", "kind": "letter" },
+        { "id": "I", "label": "I", "layer": "./assets/studio/beads/letter-I.svg", "kind": "letter" },
+        { "id": "J", "label": "J", "layer": "./assets/studio/beads/letter-J.svg", "kind": "letter" },
+        { "id": "K", "label": "K", "layer": "./assets/studio/beads/letter-K.svg", "kind": "letter" },
+        { "id": "L", "label": "L", "layer": "./assets/studio/beads/letter-L.svg", "kind": "letter" },
+        { "id": "M", "label": "M", "layer": "./assets/studio/beads/letter-M.svg", "kind": "letter" },
+        { "id": "N", "label": "N", "layer": "./assets/studio/beads/letter-N.svg", "kind": "letter" },
+        { "id": "O", "label": "O", "layer": "./assets/studio/beads/letter-O.svg", "kind": "letter" },
+        { "id": "P", "label": "P", "layer": "./assets/studio/beads/letter-P.svg", "kind": "letter" },
+        { "id": "Q", "label": "Q", "layer": "./assets/studio/beads/letter-Q.svg", "kind": "letter" },
+        { "id": "R", "label": "R", "layer": "./assets/studio/beads/letter-R.svg", "kind": "letter" },
+        { "id": "S", "label": "S", "layer": "./assets/studio/beads/letter-S.svg", "kind": "letter" },
+        { "id": "T", "label": "T", "layer": "./assets/studio/beads/letter-T.svg", "kind": "letter" },
+        { "id": "U", "label": "U", "layer": "./assets/studio/beads/letter-U.svg", "kind": "letter" },
+        { "id": "V", "label": "V", "layer": "./assets/studio/beads/letter-V.svg", "kind": "letter" },
+        { "id": "W", "label": "W", "layer": "./assets/studio/beads/letter-W.svg", "kind": "letter" },
+        { "id": "X", "label": "X", "layer": "./assets/studio/beads/letter-X.svg", "kind": "letter" },
+        { "id": "Y", "label": "Y", "layer": "./assets/studio/beads/letter-Y.svg", "kind": "letter" },
+        { "id": "Z", "label": "Z", "layer": "./assets/studio/beads/letter-Z.svg", "kind": "letter" },
+        { "id": "0", "label": "0", "layer": "./assets/studio/beads/letter-0.svg", "kind": "letter" },
+        { "id": "1", "label": "1", "layer": "./assets/studio/beads/letter-1.svg", "kind": "letter" },
+        { "id": "2", "label": "2", "layer": "./assets/studio/beads/letter-2.svg", "kind": "letter" },
+        { "id": "3", "label": "3", "layer": "./assets/studio/beads/letter-3.svg", "kind": "letter" },
+        { "id": "4", "label": "4", "layer": "./assets/studio/beads/letter-4.svg", "kind": "letter" },
+        { "id": "5", "label": "5", "layer": "./assets/studio/beads/letter-5.svg", "kind": "letter" },
+        { "id": "6", "label": "6", "layer": "./assets/studio/beads/letter-6.svg", "kind": "letter" },
+        { "id": "7", "label": "7", "layer": "./assets/studio/beads/letter-7.svg", "kind": "letter" },
+        { "id": "8", "label": "8", "layer": "./assets/studio/beads/letter-8.svg", "kind": "letter" },
+        { "id": "9", "label": "9", "layer": "./assets/studio/beads/letter-9.svg", "kind": "letter" }
+      ]
+    },
+    {
+      "id": "colors",
+      "label": "Colors",
+      "items": [
+        { "id": "blush", "label": "Blush", "layer": "./assets/studio/beads/color-blush.svg", "kind": "color" },
+        { "id": "cream", "label": "Cream", "layer": "./assets/studio/beads/color-cream.svg", "kind": "color" },
+        { "id": "sage", "label": "Sage", "layer": "./assets/studio/beads/color-sage.svg", "kind": "color" },
+        { "id": "forest", "label": "Forest", "layer": "./assets/studio/beads/color-forest.svg", "kind": "color" },
+        { "id": "walnut", "label": "Walnut", "layer": "./assets/studio/beads/color-walnut.svg", "kind": "color" },
+        { "id": "gold", "label": "Gold", "layer": "./assets/studio/beads/color-gold.svg", "kind": "color" },
+        { "id": "sky", "label": "Sky", "layer": "./assets/studio/beads/color-sky.svg", "kind": "color" },
+        { "id": "plum", "label": "Plum", "layer": "./assets/studio/beads/color-plum.svg", "kind": "color" }
+      ]
+    },
+    {
+      "id": "shapes",
+      "label": "Shapes",
+      "items": [
+        { "id": "heart", "label": "Heart", "layer": "./assets/studio/beads/shape-heart.svg", "kind": "shape" },
+        { "id": "star", "label": "Star", "layer": "./assets/studio/beads/shape-star.svg", "kind": "shape" },
+        { "id": "moon", "label": "Moon", "layer": "./assets/studio/beads/shape-moon.svg", "kind": "shape" },
+        { "id": "flower", "label": "Flower", "layer": "./assets/studio/beads/shape-flower.svg", "kind": "shape" }
+      ]
+    }
+  ],
+  "mainCharms": [
+    { "id": "tree", "label": "Evergreen", "layer": "./assets/studio/charms/tree.svg" },
+    { "id": "moth", "label": "Moth", "layer": "./assets/studio/charms/moth.svg" },
+    { "id": "moon", "label": "Moon", "layer": "./assets/studio/charms/moon.svg" },
+    { "id": "mushroom", "label": "Toadstool", "layer": "./assets/studio/charms/mushroom.svg" },
+    { "id": "sun", "label": "Sun", "layer": "./assets/studio/charms/sun.svg" },
+    { "id": "shell", "label": "Shell", "layer": "./assets/studio/charms/shell.svg" }
+  ],
+  "miniCharms": [
+    { "id": "heart", "label": "Heart", "layer": "./assets/studio/mini/heart.svg" },
+    { "id": "star", "label": "Star", "layer": "./assets/studio/mini/star.svg" },
+    { "id": "leaf", "label": "Leaf", "layer": "./assets/studio/mini/leaf.svg" },
+    { "id": "drop", "label": "Drop", "layer": "./assets/studio/mini/drop.svg" },
+    { "id": "moon", "label": "Moon", "layer": "./assets/studio/mini/moon.svg" }
+  ],
+  "defaults": {
+    "hardwareId": "gold",
+    "styleId": "standard",
+    "mainCharmId": "tree",
+    "miniCharmId": "heart",
+    "beads": []
+  }
+}
