@@ -36,8 +36,8 @@
       "enabled": true,
       "selection": "single",
       "options": [
-        { "id": "gold-clasp", "name": "Gold", "image": "./assets/studio/clasps/gold-lobster-clasp.png" },
-        { "id": "silver-clasp", "name": "Silver", "image": "./assets/studio/clasps/silver-lobster-clasp.png" },
+        { "id": "gold-clasp", "name": "Gold", "image": "./assets/studio/clasps/gold-lobster-clasp.png", "metal": "gold" },
+        { "id": "silver-clasp", "name": "Silver", "image": "./assets/studio/clasps/silver-lobster-clasp.png", "metal": "silver" },
         { "id": "bright-blue-clasp", "name": "Bright & blue", "image": "./assets/studio/clasps/bright-and-blue-lobster-clasp.png" },
         { "id": "bubblegum-pink-clasp", "name": "Bubblegum pink", "image": "./assets/studio/clasps/bubblegum-pink-lobster-clasp.png" },
         { "id": "butter-yellow-clasp", "name": "Butter yellow", "image": "./assets/studio/clasps/butter-yellow-lobster-clasp.png" },
@@ -52,7 +52,7 @@
       "id": "jumpRing",
       "slot": "jumpRing",
       "title": "Choose Jump Ring",
-      "body": "Gold or silver rings that connect everything — and match the mini clasp on the bead strand.",
+      "body": "Gold or silver connecting rings. Choosing a gold or silver clasp auto-matches rings and the mini clasp.",
       "enabled": true,
       "selection": "single",
       "options": [

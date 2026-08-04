@@ -280,21 +280,42 @@ function syncPreview({ animate = true } = {}) {
   if (price) price.textContent = formatMoney(priceCents());
 }
 
+function jumpRingIdForMetal(metal) {
+  const section = sectionById("jumpRing");
+  const match = (section?.options || []).find((o) => o.metal === metal);
+  return match?.id || null;
+}
+
+/** Update chip selected state without remounting the card grid. */
+function paintChipSelection(sectionId, optionId) {
+  const grid = root.querySelector(`[data-card="${sectionId}"] .studio-chip-grid`);
+  if (!grid) return;
+  grid.querySelectorAll(".studio-chip").forEach((btn) => {
+    const on = btn.dataset.option === optionId;
+    btn.classList.toggle("is-selected", on);
+    btn.setAttribute("aria-pressed", String(on));
+  });
+}
+
 function selectOption(sectionId, optionId) {
   const section = sectionById(sectionId);
   if (!section || !optionById(section, optionId)) return;
   if (state[sectionId] === optionId) return;
 
   state[sectionId] = optionId;
+  paintChipSelection(sectionId, optionId);
 
-  // Update selected styles in-place — equal-size chips, no reflow of card structure.
-  const grid = root.querySelector(`[data-card="${sectionId}"] .studio-chip-grid`);
-  if (grid) {
-    grid.querySelectorAll(".studio-chip").forEach((btn) => {
-      const on = btn.dataset.option === optionId;
-      btn.classList.toggle("is-selected", on);
-      btn.setAttribute("aria-pressed", String(on));
-    });
+  // Gold / silver clasp hardware auto-selects matching jump rings
+  // (mini clasps follow jump-ring metal in syncPreview).
+  if (sectionId === "clasp") {
+    const clasp = optionById(section, optionId);
+    if (clasp?.metal === "gold" || clasp?.metal === "silver") {
+      const ringId = jumpRingIdForMetal(clasp.metal);
+      if (ringId && state.jumpRing !== ringId) {
+        state.jumpRing = ringId;
+        paintChipSelection("jumpRing", ringId);
+      }
+    }
   }
 
   syncPreview({ animate: true });
