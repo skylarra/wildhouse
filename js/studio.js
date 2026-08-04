@@ -1,5 +1,6 @@
-// Keychain Studio — layered SVG/PNG builder (no Canvas / 3D).
-// Config lives in content/studio.json. Preview is stacked <img> layers.
+// Keychain Studio — premium PNG-layer configurator.
+// Data-driven via content/studio.json. Preview is a stable 4:5 composition;
+// option changes crossfade a single layer (no full re-render, no scroll jump).
 import { loadJSON } from "./content.js";
 import { formatMoney } from "./catalog.js";
 import { addToCart } from "./store.js";
@@ -8,353 +9,294 @@ import { escapeHtml, toast } from "./ui.js";
 const root = document.getElementById("studio-root");
 
 let config = null;
-let state = null;
-let activeBeadTab = "letters";
+/** @type {Record<string, string>} sectionId → optionId */
+let state = {};
+const imageCache = new Map();
 
-function byId(list, id) {
-  return (list || []).find((item) => item.id === id) || null;
+function sections() {
+  return (config.sections || []).filter((s) => s.enabled !== false);
 }
 
-function allBeads() {
-  return (config.beadTabs || []).flatMap((tab) => tab.items || []);
+function sectionById(id) {
+  return (config.sections || []).find((s) => s.id === id) || null;
+}
+
+function optionById(section, optionId) {
+  return (section?.options || []).find((o) => o.id === optionId) || null;
+}
+
+function selectedOption(sectionId) {
+  const section = sectionById(sectionId);
+  return optionById(section, state[sectionId]);
 }
 
 function priceCents() {
   let total = config.basePriceCents || 0;
-  if (state.styleId === "beaded") total += config.beadedAddonCents || 0;
+  // Bead section currently acts as the “beaded strand” addon when present.
+  if (sectionById("bead")?.enabled !== false && state.bead) {
+    total += config.beadedAddonCents || 0;
+  }
   return total;
 }
 
 function designSummary() {
-  const hardware = byId(config.hardware, state.hardwareId)?.label || state.hardwareId;
-  const style = byId(config.styles, state.styleId)?.label || state.styleId;
-  const main = byId(config.mainCharms, state.mainCharmId)?.label || state.mainCharmId;
-  const mini = byId(config.miniCharms, state.miniCharmId)?.label || state.miniCharmId;
-  const beadLabels = state.beads
-    .map((id) => allBeads().find((b) => b.id === id)?.label || id)
-    .join("");
-  const parts = [`Hardware: ${hardware}`, `Style: ${style}`];
-  if (state.styleId === "beaded") {
-    parts.push(`Beads: ${beadLabels || "(none)"}`);
-  }
-  parts.push(`Main: ${main}`, `Mini: ${mini}`);
-  return parts.join(" · ");
-}
-
-function designNote() {
-  return designSummary();
+  return sections()
+    .map((section) => {
+      const opt = selectedOption(section.id);
+      return `${section.title.replace(/^Choose\s+/i, "")}: ${opt?.name || "—"}`;
+    })
+    .join(" · ");
 }
 
 function variationLabel() {
-  const hardware = byId(config.hardware, state.hardwareId)?.label || "";
-  const style = byId(config.styles, state.styleId)?.label || "";
-  const main = byId(config.mainCharms, state.mainCharmId)?.label || "";
-  if (state.styleId === "beaded" && state.beads.length) {
-    const word = state.beads
-      .map((id) => allBeads().find((b) => b.id === id))
-      .filter((b) => b && b.kind === "letter")
-      .map((b) => b.label)
-      .join("");
-    return [hardware, style, word || "beaded", main].filter(Boolean).join(" · ");
-  }
-  return [hardware, style, main].filter(Boolean).join(" · ");
-}
-
-function optionCard({ id, label, layer, description, selected, group }) {
-  const media = layer
-    ? `<span class="studio-option__media"><img src="${layer}" alt="" loading="lazy"></span>`
-    : "";
-  const desc = description
-    ? `<span class="studio-option__desc">${escapeHtml(description)}</span>`
-    : "";
-  return `
-    <button type="button"
-      class="studio-option${selected ? " is-selected" : ""}"
-      data-group="${group}"
-      data-id="${escapeHtml(id)}"
-      aria-pressed="${selected}">
-      ${media}
-      <span class="studio-option__label">${escapeHtml(label)}</span>
-      ${desc}
-    </button>`;
-}
-
-function renderPreview() {
-  const hardware = byId(config.hardware, state.hardwareId);
-  const main = byId(config.mainCharms, state.mainCharmId);
-  const mini = byId(config.miniCharms, state.miniCharmId);
-  const beadLayers = state.beads
-    .map((id) => allBeads().find((b) => b.id === id))
+  const parts = ["clasp", "bead", "mainCharm"]
+    .map((id) => selectedOption(id)?.name)
     .filter(Boolean);
+  return parts.join(" · ");
+}
 
-  const beadHTML =
-    state.styleId === "beaded"
-      ? `<div class="studio-preview__beads" aria-hidden="true">
-          ${beadLayers
-            .map(
-              (b, i) =>
-                `<img class="studio-preview__bead" src="${b.layer}" alt="" style="--i:${i}" loading="lazy">`
-            )
-            .join("")}
-        </div>`
-      : "";
+function preloadImages() {
+  const urls = new Set();
+  for (const section of config.sections || []) {
+    for (const opt of section.options || []) {
+      if (opt.image) urls.add(opt.image);
+    }
+  }
+  return Promise.all(
+    [...urls].map(
+      (src) =>
+        new Promise((resolve) => {
+          if (imageCache.has(src)) return resolve(src);
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => {
+            imageCache.set(src, img);
+            resolve(src);
+          };
+          img.onerror = () => resolve(src);
+          img.src = src;
+        })
+    )
+  );
+}
+
+function beadCount() {
+  return config.composition?.beadCount || 7;
+}
+
+function beadSide() {
+  return config.composition?.beadSide === "left" ? "left" : "right";
+}
+
+function miniSide() {
+  return config.composition?.miniCharmSide === "right" ? "right" : "left";
+}
+
+function crossfadeMs() {
+  return config.composition?.crossfadeMs || 200;
+}
+
+/** Build stable preview layer DOM once. */
+function previewHTML() {
+  const beads = Array.from({ length: beadCount() }, (_, i) => {
+    return `<span class="studio-layer studio-layer--bead" data-bead-index="${i}" style="--i:${i}">
+      <img class="studio-layer__img is-active" alt="" draggable="false">
+      <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+    </span>`;
+  }).join("");
 
   return `
-    <div class="studio-preview" aria-label="Live keychain preview">
-      <div class="studio-preview__stage${state.styleId === "beaded" ? " is-beaded" : ""}">
-        ${
-          hardware
-            ? `<img class="studio-preview__layer studio-preview__hardware" src="${hardware.layer}" alt="" loading="lazy">`
-            : ""
-        }
-        ${beadHTML}
-        ${
-          main
-            ? `<img class="studio-preview__layer studio-preview__main" src="${main.layer}" alt="" loading="lazy">`
-            : ""
-        }
-        ${
-          mini
-            ? `<img class="studio-preview__layer studio-preview__mini" src="${mini.layer}" alt="" loading="lazy">`
-            : ""
-        }
+    <div class="studio-preview" aria-label="Live charm set preview">
+      <div class="studio-preview__frame">
+        <div class="studio-preview__compose studio-preview__compose--beads-${beadSide()} studio-preview__compose--mini-${miniSide()}">
+          <span class="studio-layer studio-layer--clasp" data-slot="clasp">
+            <img class="studio-layer__img is-active" alt="" draggable="false">
+            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+          </span>
+          <span class="studio-layer studio-layer--ring-top" data-slot="jumpRingTop">
+            <img class="studio-layer__img is-active" alt="" draggable="false">
+            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+          </span>
+          <span class="studio-layer studio-layer--main" data-slot="mainCharm">
+            <img class="studio-layer__img is-active" alt="" draggable="false">
+            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+          </span>
+          <span class="studio-layer studio-layer--ring-mini" data-slot="jumpRingMini">
+            <img class="studio-layer__img is-active" alt="" draggable="false">
+            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+          </span>
+          <span class="studio-layer studio-layer--mini" data-slot="miniCharm">
+            <img class="studio-layer__img is-active" alt="" draggable="false">
+            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+          </span>
+          <span class="studio-layer studio-layer--ring-bead" data-slot="jumpRingBead">
+            <img class="studio-layer__img is-active" alt="" draggable="false">
+            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
+          </span>
+          <div class="studio-beads" data-slot="beads" aria-hidden="true">${beads}</div>
+        </div>
       </div>
       <p class="studio-preview__hint">${escapeHtml(config.previewHint || "")}</p>
-      <p class="studio-preview__summary" id="studio-summary">${escapeHtml(designSummary())}</p>
+      <p class="studio-preview__summary" id="studio-summary"></p>
     </div>`;
 }
 
-function renderBeadBuilder() {
-  if (state.styleId !== "beaded") return "";
-  const steps = config.steps.beads;
-  const tab = (config.beadTabs || []).find((t) => t.id === activeBeadTab) || config.beadTabs[0];
-  const tabs = (config.beadTabs || [])
-    .map(
-      (t) =>
-        `<button type="button" class="studio-tab${t.id === tab.id ? " is-active" : ""}" data-bead-tab="${t.id}">${escapeHtml(t.label)}</button>`
-    )
-    .join("");
-  const palette = (tab?.items || [])
-    .map(
-      (item) => `
-      <button type="button" class="studio-bead-pick" data-add-bead="${escapeHtml(item.id)}" aria-label="Add ${escapeHtml(item.label)} bead">
-        <img src="${item.layer}" alt="" loading="lazy">
-        <span>${escapeHtml(item.label)}</span>
-      </button>`
-    )
-    .join("");
-  const sequence = state.beads.length
-    ? state.beads
-        .map((id, index) => {
-          const bead = allBeads().find((b) => b.id === id);
-          if (!bead) return "";
-          return `
-            <button type="button" class="studio-bead-slot" data-remove-bead="${index}" aria-label="Remove ${escapeHtml(bead.label)}">
-              <img src="${bead.layer}" alt="">
-            </button>`;
-        })
-        .join("")
-    : `<p class="studio-empty">No beads yet — pick letters, colors, or shapes.</p>`;
-
+function optionButtonHTML(section, opt, selected) {
   return `
-    <section class="studio-step" id="step-beads">
-      <h2>${escapeHtml(steps.heading)}</h2>
-      <p>${escapeHtml(steps.body)}</p>
-      <div class="studio-sequence" aria-label="Current bead sequence">${sequence}</div>
-      <p class="studio-count">${state.beads.length} / ${config.maxBeads} beads</p>
-      <div class="studio-tabs" role="tablist">${tabs}</div>
-      <div class="studio-bead-palette">${palette}</div>
+    <button type="button"
+      class="studio-chip${selected ? " is-selected" : ""}"
+      data-section="${escapeHtml(section.id)}"
+      data-option="${escapeHtml(opt.id)}"
+      aria-pressed="${selected}">
+      <span class="studio-chip__swatch">
+        <img src="${opt.image}" alt="" width="40" height="40" decoding="async">
+      </span>
+      <span class="studio-chip__name">${escapeHtml(opt.name)}</span>
+    </button>`;
+}
+
+function sectionCardHTML(section) {
+  const selected = state[section.id];
+  return `
+    <section class="studio-card" data-card="${escapeHtml(section.id)}">
+      <h2 class="studio-card__title">${escapeHtml(section.title)}</h2>
+      <p class="studio-card__body">${escapeHtml(section.body || "")}</p>
+      <div class="studio-chip-grid" role="group" aria-label="${escapeHtml(section.title)}">
+        ${(section.options || [])
+          .map((opt) => optionButtonHTML(section, opt, opt.id === selected))
+          .join("")}
+      </div>
     </section>`;
 }
 
-function render() {
-  const hw = config.steps.hardware;
-  const st = config.steps.style;
-  const main = config.steps.mainCharm;
-  const mini = config.steps.miniCharm;
-
-  root.innerHTML = `
+function shellHTML() {
+  return `
     <div class="studio-hero page-wrap">
       <h1 class="page-title">${escapeHtml(config.title)}</h1>
       <p class="studio-intro">${escapeHtml(config.intro)}</p>
     </div>
     <div class="studio-layout page-wrap">
-      <aside class="studio-preview-col" aria-live="polite">
-        ${renderPreview()}
+      <div class="studio-config" id="studio-config">
+        ${sections().map(sectionCardHTML).join("")}
+      </div>
+      <aside class="studio-preview-col" id="studio-preview-col">
+        ${previewHTML()}
         <div class="studio-checkout">
           <p class="studio-price" id="studio-price">${formatMoney(priceCents())}</p>
           <button type="button" class="btn secondary" id="studio-add">${escapeHtml(config.addToCartLabel || "Add to cart")}</button>
         </div>
       </aside>
-      <div class="studio-steps">
-        <section class="studio-step">
-          <h2>${escapeHtml(hw.heading)}</h2>
-          <p>${escapeHtml(hw.body)}</p>
-          <div class="studio-options studio-options--hardware">
-            ${config.hardware
-              .map((item) =>
-                optionCard({
-                  ...item,
-                  selected: item.id === state.hardwareId,
-                  group: "hardware",
-                })
-              )
-              .join("")}
-          </div>
-        </section>
-
-        <section class="studio-step">
-          <h2>${escapeHtml(st.heading)}</h2>
-          <p>${escapeHtml(st.body)}</p>
-          <div class="studio-options studio-options--style">
-            ${config.styles
-              .map((item) =>
-                optionCard({
-                  id: item.id,
-                  label: item.label,
-                  description: item.description,
-                  selected: item.id === state.styleId,
-                  group: "style",
-                })
-              )
-              .join("")}
-          </div>
-        </section>
-
-        ${renderBeadBuilder()}
-
-        <section class="studio-step">
-          <h2>${escapeHtml(main.heading)}</h2>
-          <p>${escapeHtml(main.body)}</p>
-          <div class="studio-options studio-options--charms">
-            ${config.mainCharms
-              .map((item) =>
-                optionCard({
-                  ...item,
-                  selected: item.id === state.mainCharmId,
-                  group: "main",
-                })
-              )
-              .join("")}
-          </div>
-        </section>
-
-        <section class="studio-step">
-          <h2>${escapeHtml(mini.heading)}</h2>
-          <p>${escapeHtml(mini.body)}</p>
-          <div class="studio-options studio-options--mini">
-            ${config.miniCharms
-              .map((item) =>
-                optionCard({
-                  ...item,
-                  selected: item.id === state.miniCharmId,
-                  group: "mini",
-                })
-              )
-              .join("")}
-          </div>
-        </section>
-      </div>
     </div>`;
-
-  wire();
 }
 
-function refreshPreviewOnly() {
-  const col = root.querySelector(".studio-preview-col");
-  if (!col) return;
-  const checkout = col.querySelector(".studio-checkout")?.outerHTML || "";
-  col.innerHTML = `${renderPreview()}${checkout}`;
+/**
+ * Crossfade a layer’s active image to a new src without remounting the tree.
+ * Preserves scroll — never touches layout outside the layer.
+ */
+function setLayerImage(layerEl, src, { animate = true } = {}) {
+  if (!layerEl || !src) return;
+  const active = layerEl.querySelector(".studio-layer__img.is-active");
+  const next = layerEl.querySelector(".studio-layer__img.studio-layer__next");
+  if (!active) return;
+
+  if (!animate || active.getAttribute("src") === src || !active.getAttribute("src")) {
+    active.src = src;
+    if (next) {
+      next.src = src;
+      next.classList.remove("is-visible");
+    }
+    return;
+  }
+
+  if (!next) {
+    active.src = src;
+    return;
+  }
+
+  next.src = src;
+  next.classList.add("is-visible");
+  window.setTimeout(() => {
+    active.src = src;
+    next.classList.remove("is-visible");
+  }, crossfadeMs());
+}
+
+function syncPreview({ animate = true } = {}) {
+  const clasp = selectedOption("clasp");
+  const ring = selectedOption("jumpRing");
+  const bead = selectedOption("bead");
+  const main = selectedOption("mainCharm");
+  const mini = selectedOption("miniCharm");
+
+  setLayerImage(root.querySelector('[data-slot="clasp"]'), clasp?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="jumpRingTop"]'), ring?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="jumpRingMini"]'), ring?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="jumpRingBead"]'), ring?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="mainCharm"]'), main?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="miniCharm"]'), mini?.image, { animate });
+
+  root.querySelectorAll("[data-bead-index]").forEach((el) => {
+    setLayerImage(el, bead?.image, { animate });
+  });
+
+  const summary = document.getElementById("studio-summary");
+  if (summary) summary.textContent = designSummary();
   const price = document.getElementById("studio-price");
   if (price) price.textContent = formatMoney(priceCents());
-  document.getElementById("studio-add")?.addEventListener("click", addDesignToCart);
+}
+
+function selectOption(sectionId, optionId) {
+  const section = sectionById(sectionId);
+  if (!section || !optionById(section, optionId)) return;
+  if (state[sectionId] === optionId) return;
+
+  state[sectionId] = optionId;
+
+  // Update selected styles in-place — equal-size chips, no reflow of card structure.
+  const grid = root.querySelector(`[data-card="${sectionId}"] .studio-chip-grid`);
+  if (grid) {
+    grid.querySelectorAll(".studio-chip").forEach((btn) => {
+      const on = btn.dataset.option === optionId;
+      btn.classList.toggle("is-selected", on);
+      btn.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  syncPreview({ animate: true });
 }
 
 function wire() {
-  root.querySelectorAll(".studio-option").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const group = btn.dataset.group;
-      const id = btn.dataset.id;
-      if (group === "hardware") state.hardwareId = id;
-      if (group === "style") {
-        state.styleId = id;
-        if (id !== "beaded") state.beads = [];
-        render();
-        return;
-      }
-      if (group === "main") state.mainCharmId = id;
-      if (group === "mini") state.miniCharmId = id;
-      root.querySelectorAll(`.studio-option[data-group="${group}"]`).forEach((el) => {
-        const on = el.dataset.id === id;
-        el.classList.toggle("is-selected", on);
-        el.setAttribute("aria-pressed", String(on));
-      });
-      refreshPreviewOnly();
-    });
-  });
-
-  root.querySelectorAll("[data-bead-tab]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      activeBeadTab = btn.dataset.beadTab;
-      render();
-      document.getElementById("step-beads")?.scrollIntoView({ block: "nearest" });
-    });
-  });
-
-  root.querySelectorAll("[data-add-bead]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      if (state.beads.length >= (config.maxBeads || 10)) {
-        toast(`You can add up to ${config.maxBeads} beads.`);
-        return;
-      }
-      state.beads.push(btn.dataset.addBead);
-      render();
-      document.getElementById("step-beads")?.scrollIntoView({ block: "nearest" });
-    });
-  });
-
-  root.querySelectorAll("[data-remove-bead]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.removeBead);
-      state.beads.splice(index, 1);
-      render();
-      document.getElementById("step-beads")?.scrollIntoView({ block: "nearest" });
-    });
+  const configEl = document.getElementById("studio-config");
+  // Event delegation — avoids rebinding; clicks never call scrollIntoView.
+  configEl?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".studio-chip");
+    if (!btn || !configEl.contains(btn)) return;
+    e.preventDefault();
+    selectOption(btn.dataset.section, btn.dataset.option);
   });
 
   document.getElementById("studio-add")?.addEventListener("click", addDesignToCart);
 }
 
 function addDesignToCart() {
-  if (state.styleId === "beaded" && !state.beads.length) {
-    toast("Add at least one bead, or switch to Standard.");
-    return;
-  }
   const designId = `studio-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-  const main = byId(config.mainCharms, state.mainCharmId);
+  const main = selectedOption("mainCharm");
   addToCart(
     {
-      // Unique per design so different builds don't merge in the cart.
       variationId: designId,
       catalogVariationId: config.catalogVariationId,
       itemId: "ITEM_CUSTOM_KEYCHAIN",
-      name: config.productName || "Custom Keychain",
+      name: config.productName || "Build Your Own Charm Set",
       variationName: variationLabel(),
-      note: designNote(),
+      note: designSummary(),
       priceCents: priceCents(),
-      image: main?.layer || "./assets/studio/charms/tree.svg",
+      image: main?.image || selectedOption("clasp")?.image || "./assets/studio/clasps/gold.png",
       handle: config.productHandle || "custom-keychain",
-      studioDesign: {
-        hardwareId: state.hardwareId,
-        styleId: state.styleId,
-        beads: [...state.beads],
-        mainCharmId: state.mainCharmId,
-        miniCharmId: state.miniCharmId,
-      },
+      studioDesign: { ...state },
     },
     1
   );
-  toast("Added your keychain design to cart");
+  toast("Added your charm set to cart");
 }
 
 async function init() {
@@ -366,17 +308,21 @@ async function init() {
     return;
   }
 
-  const d = config.defaults || {};
-  state = {
-    hardwareId: d.hardwareId || config.hardware[0]?.id,
-    styleId: d.styleId || "standard",
-    mainCharmId: d.mainCharmId || config.mainCharms[0]?.id,
-    miniCharmId: d.miniCharmId || config.miniCharms[0]?.id,
-    beads: Array.isArray(d.beads) ? [...d.beads] : [],
-  };
+  const defaults = config.defaults || {};
+  state = {};
+  for (const section of config.sections || []) {
+    if (section.enabled === false) continue;
+    state[section.id] =
+      defaults[section.id] ||
+      section.options?.[0]?.id ||
+      "";
+  }
 
   document.title = `${config.title} | Wildhouse Lane`;
-  render();
+  root.innerHTML = shellHTML();
+  wire();
+  syncPreview({ animate: false });
+  preloadImages();
 }
 
 init();

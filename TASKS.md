@@ -1,24 +1,26 @@
 # Current Sprint
 
-## Phase 4 — Keychain Studio
+## Phase 4 — Keychain Studio redesign
 
-### In this pass
-- Interactive builder on `keychain-studio.html`
-- Hardware → Standard/Beaded → bead sequence → main charm → mini charm
-- Live layered SVG preview (`assets/studio/`)
-- Config in `content/studio.json` (options + prices)
-- Add to cart with unique design + note for Square checkout
-- Local catalog item `VAR_CUSTOM_KEYCHAIN` for fallback checkout wiring
+### Done
+- PNG-layer, data-driven configurator (`content/studio.json`)
+- Product-photo 4:5 preview composition (clasp / main / mini / curved beads)
+- Uniform option chips; no scroll jump on select; partial layer updates + preload
+- Desktop: config left, preview right · Mobile: sticky preview top, cards below
+- Cart product: “Build Your Own Charm Set” with design note (checkout unchanged)
 
-### Ops follow-up
-- Create matching “Custom Keychain” item/variation in Square and set `catalogVariationId` in `content/studio.json`
-- Optionally replace SVG placeholders with photographic PNGs using the same paths
+### Replace placeholders
+Drop real transparent PNGs over:
+- `assets/studio/clasps/`
+- `assets/studio/jump-rings/`
+- `assets/studio/beads/colors/`
+- `assets/studio/charms/`
+- `assets/studio/mini/`
 
-### Out of scope
-- Save / share designs
-- Auto-generated design names
-- Canvas / 3D preview
-- Custom Creations inquiry backend (Phase 5)
+Keep filenames or update paths in `content/studio.json`.
+
+### Ops
+- Point `catalogVariationId` at the Square “Build Your Own Charm Set” variation
 
 ---
 
