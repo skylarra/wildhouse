@@ -10,14 +10,20 @@ let freeShippingThresholdCents = 7500;
 
 function lineHTML(line) {
   const variant = line.variationName ? `<p class="cart-line__variant">${escapeHtml(line.variationName)}</p>` : "";
+  const note = line.note ? `<p class="cart-line__note">${escapeHtml(line.note)}</p>` : "";
+  const href =
+    line.handle === "custom-keychain" || line.studioDesign
+      ? "./keychain-studio.html"
+      : `./product.html?handle=${encodeURIComponent(line.handle)}`;
   return `
     <div class="cart-line" data-variation-id="${line.variationId}">
-      <a href="./product.html?handle=${encodeURIComponent(line.handle)}" class="cart-line__media">
+      <a href="${href}" class="cart-line__media">
         <img src="${line.image}" alt="${escapeHtml(line.name)}" loading="lazy">
       </a>
       <div class="cart-line__info">
-        <a href="./product.html?handle=${encodeURIComponent(line.handle)}"><h3>${escapeHtml(line.name)}</h3></a>
+        <a href="${href}"><h3>${escapeHtml(line.name)}</h3></a>
         ${variant}
+        ${note}
         <p class="cart-line__price">${formatMoney(line.priceCents)}</p>
       </div>
       <div class="cart-line__qty">
@@ -110,7 +116,12 @@ async function startCheckout(button) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        items: cart.map((l) => ({ variationId: l.variationId, qty: l.qty })),
+        items: cart.map((l) => ({
+          // Studio designs use a local unique variationId; checkout needs the Square catalog id.
+          variationId: l.catalogVariationId || l.variationId,
+          qty: l.qty,
+          note: l.note || "",
+        })),
       }),
     });
     const data = await res.json().catch(() => ({}));

@@ -546,6 +546,12 @@
 .cart-line__info { flex: 1 1 45%; }
 .cart-line__info h3 { margin: 0 0 4px; color: var(--brown); font-size: 1rem; }
 .cart-line__variant { margin: 0; color: var(--green); font-size: 0.85rem; }
+.cart-line__note {
+  margin: 4px 0 0;
+  color: #5a4443;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
 .cart-line__price { margin: 4px 0 0; color: #5a4443; }
 .cart-line__qty { display: inline-flex; align-items: center; gap: 6px; }
 .qty-btn {
@@ -897,6 +903,286 @@
 .order-total { font-weight: 700; color: var(--brown); }
 .confirmation-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
 .confirmation--warning .order-ref { color: var(--brown); }
+
+/* ------------------------- Keychain Studio ------------------------- */
+.studio-hero { padding-bottom: 8px; }
+.studio-intro {
+  max-width: 40rem;
+  color: #5a4443;
+  line-height: 1.65;
+  margin: 0;
+}
+.studio-layout {
+  display: grid;
+  gap: 28px;
+  padding-top: 12px;
+  padding-bottom: 60px;
+}
+.studio-preview-col {
+  position: relative;
+}
+.studio-preview {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(244, 178, 173, 0.45), transparent 55%),
+    var(--light-pink);
+  border-radius: 12px;
+  padding: 20px 16px 16px;
+  text-align: center;
+}
+.studio-preview__stage {
+  position: relative;
+  width: min(100%, 280px);
+  aspect-ratio: 3 / 5;
+  margin: 0 auto;
+}
+.studio-preview__layer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.studio-preview__hardware {
+  top: 0;
+  width: 42%;
+  z-index: 4;
+}
+.studio-preview__beads {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 3;
+}
+.studio-preview__bead {
+  width: 34px;
+  height: 34px;
+  display: block;
+  animation: studio-bead-in 0.28s ease both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+.studio-preview__main {
+  top: 34%;
+  width: 58%;
+  z-index: 2;
+}
+.studio-preview__stage.is-beaded .studio-preview__main {
+  top: 48%;
+}
+.studio-preview__mini {
+  top: 72%;
+  width: 28%;
+  z-index: 1;
+}
+.studio-preview__stage.is-beaded .studio-preview__mini {
+  top: 78%;
+}
+@keyframes studio-bead-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+.studio-preview__hint {
+  margin: 14px 0 4px;
+  color: var(--green);
+  font-size: 0.9rem;
+}
+.studio-preview__summary {
+  margin: 0;
+  color: #5a4443;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  min-height: 2.6em;
+}
+.studio-checkout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.studio-price {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--brown);
+}
+.studio-step {
+  padding: 22px 0;
+  border-top: 1px solid rgba(78, 40, 41, 0.1);
+}
+.studio-step:first-child { border-top: 0; padding-top: 0; }
+.studio-step h2 {
+  margin: 0 0 6px;
+  color: var(--brown);
+  font-size: 1.25rem;
+}
+.studio-step > p {
+  margin: 0 0 14px;
+  color: #5a4443;
+  line-height: 1.55;
+}
+.studio-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px;
+}
+.studio-options--style {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 520px) {
+  .studio-options--style { grid-template-columns: 1fr 1fr; }
+}
+.studio-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: #fffaf8;
+  color: var(--brown);
+  cursor: pointer;
+  text-align: center;
+}
+.studio-option__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: var(--light-pink);
+  overflow: hidden;
+}
+.studio-option__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.studio-option__label {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.studio-option__desc {
+  font-size: 0.8rem;
+  color: #5a4443;
+  line-height: 1.35;
+}
+.studio-option.is-selected {
+  border-color: var(--brown);
+  box-shadow: 0 0 0 1px var(--brown);
+}
+.studio-option:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 2px;
+}
+.studio-sequence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 52px;
+  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--light-pink);
+}
+.studio-bead-slot {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(78, 40, 41, 0.2);
+  border-radius: 50%;
+  background: #fffaf8;
+  cursor: pointer;
+  overflow: hidden;
+}
+.studio-bead-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.studio-empty {
+  margin: 0;
+  color: var(--green);
+  font-size: 0.9rem;
+}
+.studio-count {
+  margin: 0 0 12px;
+  color: var(--green);
+  font-size: 0.85rem;
+}
+.studio-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.studio-tab {
+  padding: 8px 14px;
+  border: 1px solid var(--brown);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--brown);
+  font-weight: 700;
+  cursor: pointer;
+}
+.studio-tab.is-active {
+  background: var(--brown);
+  color: var(--light-pink);
+}
+.studio-bead-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.studio-bead-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #fffaf8;
+  color: var(--brown);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+.studio-bead-pick img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.studio-bead-pick:hover,
+.studio-bead-pick:focus-visible {
+  border-color: var(--brown);
+}
+
+@media (min-width: 900px) {
+  .studio-layout {
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .studio-preview-col {
+    position: sticky;
+    top: 88px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-preview__bead { animation: none; }
+  .studio-preview__layer { transition: none; }
+}
 
 /* Respect reduced-motion preferences. */
 @media (prefers-reduced-motion: reduce) {

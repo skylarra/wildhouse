@@ -1,20 +1,24 @@
 # Current Sprint
 
-## Phase 3 — Product Pages
+## Phase 4 — Keychain Studio
 
 ### In this pass
-- Large 4:5 product gallery with multi-image thumbs
-- Accessible image zoom (dialog lightbox)
-- Inventory status (in stock / low / sold out) with clearer copy
-- Shipping, handmade, and estimated processing notes from `content/product-info.json`
-- Related products section polish
-- Keep collection breadcrumbs from Phase 2
-- Split Color (photo swatches) + Size (chips) option sections for apparel-style variants
+- Interactive builder on `keychain-studio.html`
+- Hardware → Standard/Beaded → bead sequence → main charm → mini charm
+- Live layered SVG preview (`assets/studio/`)
+- Config in `content/studio.json` (options + prices)
+- Add to cart with unique design + note for Square checkout
+- Local catalog item `VAR_CUSTOM_KEYCHAIN` for fallback checkout wiring
+
+### Ops follow-up
+- Create matching “Custom Keychain” item/variation in Square and set `catalogVariationId` in `content/studio.json`
+- Optionally replace SVG placeholders with photographic PNGs using the same paths
 
 ### Out of scope
-- Live personalization preview (later)
-- Back-in-stock notify (Phase 7)
-- Keychain Studio builder (Phase 4)
+- Save / share designs
+- Auto-generated design names
+- Canvas / 3D preview
+- Custom Creations inquiry backend (Phase 5)
 
 ---
 

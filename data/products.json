@@ -21,7 +21,8 @@
     "IMG_EVERGREEN_PATCH": { "url": "./assets/fake-product1.jpg" },
     "IMG_TEE_1": { "url": "./assets/Wildhouse.png" },
     "IMG_TEE_2": { "url": "./assets/wildhouselogo-pink-brown.png" },
-    "IMG_LUNA_1": { "url": "./assets/fake-product2.jpg" }
+    "IMG_LUNA_1": { "url": "./assets/fake-product2.jpg" },
+    "IMG_CUSTOM_KEY": { "url": "./assets/studio/charms/tree.svg" }
   },
   "inventory": {
     "VAR_SUNNY_DEFAULT": 14,
@@ -40,7 +41,8 @@
     "VAR_TEE_SAND_S": 5,
     "VAR_TEE_SAND_M": 7,
     "VAR_TEE_SAND_L": 3,
-    "VAR_TEE_SAND_XL": 0
+    "VAR_TEE_SAND_XL": 0,
+    "VAR_CUSTOM_KEYCHAIN": 999
   },
   "objects": [
     {
@@ -197,6 +199,30 @@
           "Sand": "./assets/wildhouselogo-pink-brown.png"
         }
       }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_CUSTOM_KEYCHAIN",
+      "item_data": {
+        "name": "Custom Keychain",
+        "description": "Design your own in Keychain Studio — hardware, optional beads, main charm, and mini charm, handmade to order.",
+        "category_id": "CAT_KEYCHAINS",
+        "image_ids": ["IMG_CUSTOM_KEY"],
+        "variations": [
+          {
+            "type": "ITEM_VARIATION",
+            "id": "VAR_CUSTOM_KEYCHAIN",
+            "item_variation_data": {
+              "item_id": "ITEM_CUSTOM_KEYCHAIN",
+              "name": "Studio design",
+              "sku": "WHL-KEY-CUSTOM",
+              "pricing_type": "FIXED_PRICING",
+              "price_money": { "amount": 2800, "currency": "USD" }
+            }
+          }
+        ]
+      },
+      "custom": { "handle": "custom-keychain", "tags": ["custom", "studio", "handmade"], "featured": false }
     }
   ]
 }

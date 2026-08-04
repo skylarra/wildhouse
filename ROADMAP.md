@@ -2,42 +2,36 @@
 
 ## Phase 1 — Foundation & Shopping Experience ✅
 
-Goal: Finish the storefront so it's polished and ready for customers.
-
 Homepage hero, A Little Note, featured collections, best sellers, destination previews, footer. Shop with 4:5 cards, search/sort, dynamic categories, related products.
 
 ---
 
 ## Phase 2 — Collections ✅
 
-Collections come entirely from Square categories, enriched by `content/collections.json`:
-
-- Auto-create from Square Categories (live collections only when products exist)
-- Custom display order
-- Collection hero image
-- Collection description
-- Featured collection section on homepage (`featured` flags)
-- Dedicated collection pages (`collection.html?handle=…`)
-
-Future Square category names (copy ready): Moon, Sun & Stars · Ocean Wonders · Coastal Carolina · Pet Keepsakes · Family & Home · Holiday Collection · Haunted Hollow
+Square categories → storefront collections, order/descriptions/heroes via `content/collections.json`, dedicated collection pages, homepage featured strip.
 
 ---
 
-## Phase 3 — Product Pages ✅ / in progress
+## Phase 3 — Product Pages ✅
 
-- Large 4:5 images
-- Multiple images + image zoom
-- Related products
-- Shipping / handmade / estimated processing copy
-- Inventory status
+Large 4:5 gallery, zoom, related products, shipping/handmade/processing notes, inventory status, Color + Size option sections, Square-matching description spacing.
 
-Future: live personalization preview
+Future: live personalization preview.
 
 ---
 
-## Phase 4 — Keychain Studio
+## Phase 4 — Keychain Studio ✅ / in progress
 
-Dedicated builder (hardware → beaded sequence → charms → live preview → cart). Version 1: layered PNG/SVG — not Canvas/3D.
+Dedicated builder:
+
+- Hardware color
+- Standard or Beaded
+- Beaded: letter / color / shape sequence
+- Main charm → Mini charm
+- Live layered SVG/PNG preview (not Canvas/3D)
+- Add to cart with design note for Square checkout
+
+Future: save/share designs, auto-generated names, photographic PNG layers, 3D-printed beads.
 
 ---
 
