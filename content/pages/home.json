@@ -28,7 +28,7 @@
       "heading": "Keychain Studio",
       "body": "Build your own charm set — clasp, rings, beads, and charms — with a live product-style preview.",
       "cta": { "label": "Open Keychain Studio", "href": "./keychain-studio.html" },
-      "image": { "src": "./assets/fake-product2.jpg", "alt": "Handmade keychain charms" }
+      "image": { "src": "./assets/coming-soon.png", "alt": "Handmade keychain charms" }
     },
     {
       "id": "custom-creations",
@@ -36,7 +36,7 @@
       "heading": "Custom Creations",
       "body": "Have something entirely your own in mind? Share a sketch of the idea and we'll talk materials, size, and timeline.",
       "cta": { "label": "Start a custom project", "href": "./custom-creations.html" },
-      "image": { "src": "./assets/fake-product3.jpg", "alt": "Custom handmade piece" }
+      "image": { "src": "./assets/coming-soon.png", "alt": "Custom handmade piece" }
     },
     {
       "id": "post-office",
@@ -44,7 +44,7 @@
       "heading": "Post Office",
       "body": "Join Wildhouse Post for studio notes and launches — or the snail mail list for occasional postcards and small surprises.",
       "cta": { "label": "Visit the Post Office", "href": "./post-office.html" },
-      "image": { "src": "./assets/fake-product4.jpg", "alt": "Studio notes and mail" }
+      "image": { "src": "./assets/coming-soon.png", "alt": "Studio notes and mail" }
     }
   ],
   "welcome": {

@@ -12,16 +12,16 @@
   "images": {
     "IMG_SUNNY_1": { "url": "./assets/sunny-mirror.jpg" },
     "IMG_SUNNY_2": { "url": "./assets/1.png" },
-    "IMG_TREE_KEY": { "url": "./assets/fake-product1.jpg" },
-    "IMG_TOADSTOOL_KEY": { "url": "./assets/fake-product2.jpg" },
-    "IMG_MOTH_STICKER": { "url": "./assets/fake-product3.jpg" },
+    "IMG_TREE_KEY": { "url": "./assets/coming-soon.png" },
+    "IMG_TOADSTOOL_KEY": { "url": "./assets/coming-soon.png" },
+    "IMG_MOTH_STICKER": { "url": "./assets/coming-soon.png" },
     "IMG_STICKER_PACK": { "url": "./assets/2.jpg" },
-    "IMG_MUSHROOM_MAGNET": { "url": "./assets/fake-product4.jpg" },
+    "IMG_MUSHROOM_MAGNET": { "url": "./assets/coming-soon.png" },
     "IMG_WILDFLOWER_MAGNET": { "url": "./assets/1.png" },
-    "IMG_EVERGREEN_PATCH": { "url": "./assets/fake-product1.jpg" },
-    "IMG_TEE_1": { "url": "./assets/Wildhouse.png" },
-    "IMG_TEE_2": { "url": "./assets/wildhouselogo-pink-brown.png" },
-    "IMG_LUNA_1": { "url": "./assets/fake-product2.jpg" },
+    "IMG_EVERGREEN_PATCH": { "url": "./assets/coming-soon.png" },
+    "IMG_TEE_1": { "url": "./assets/coming-soon.png" },
+    "IMG_TEE_2": { "url": "./assets/WILDHOUSE-logomark-pink.svg" },
+    "IMG_LUNA_1": { "url": "./assets/coming-soon.png" },
     "IMG_CUSTOM_KEY": { "url": "./assets/studio/charms/tree.svg" }
   },
   "inventory": {
@@ -195,8 +195,8 @@
         "tags": ["apparel", "unisex", "tree"],
         "featured": true,
         "colorImages": {
-          "Black": "./assets/Wildhouse.png",
-          "Sand": "./assets/wildhouselogo-pink-brown.png"
+          "Black": "./assets/coming-soon.png",
+          "Sand": "./assets/WILDHOUSE-logomark-pink.svg"
         }
       }
     },

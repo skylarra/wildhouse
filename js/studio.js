@@ -325,7 +325,7 @@ function addDesignToCart() {
       variationName: variationLabel(),
       note: designSummary(),
       priceCents: priceCents(),
-      image: main?.image || selectedOption("clasp")?.image || "./assets/studio/clasps/gold.png",
+      image: main?.image || selectedOption("clasp")?.image || "./assets/studio/clasps/gold-lobster-clasp.png",
       handle: config.productHandle || "custom-keychain",
       studioDesign: { ...state },
     },
