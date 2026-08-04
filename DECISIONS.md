@@ -46,10 +46,12 @@
 
 ## 2026-08-04 (Phase 4 — Keychain Studio)
 
-- Studio V1 uses **stacked SVG/PNG layers** (`assets/studio/`), not Canvas or 3D, for fast reliable previews.
-- Options, prices, and layer paths are data-driven via `content/studio.json` so charms/beads/hardware can be edited without code.
-- Cart lines for studio builds use a unique local `variationId` plus `catalogVariationId` (Square variation) and a human-readable `note` describing the design. Checkout sends the note on the Square order/line item.
-- Until Square has a Custom Keychain variation, local fallback uses `VAR_CUSTOM_KEYCHAIN` in `data/products.json`.
+- Studio V1 uses **stacked transparent PNG layers** (`assets/studio/`), not Canvas or 3D, for fast reliable previews.
+- Options, prices, and layer paths are data-driven via `content/studio.json` sections → slots. Add a PNG + JSON option to extend; set `enabled: false` to hide a section.
+- Preview is a fixed **4:5** product-photo composition (clasp above, main centered, mini to one side, beads curving down the other) with slight rotations/overlap.
+- Option changes **crossfade a single layer** (~200ms) without re-rendering the page or changing scroll position. Images are preloaded.
+- Cart lines for studio builds use a unique local `variationId` plus `catalogVariationId` (Square variation) and a human-readable `note`. Checkout is unchanged aside from passing that note. Product title: **Build Your Own Charm Set**.
+- Until Square has a matching variation, local fallback uses `VAR_CUSTOM_KEYCHAIN` in `data/products.json`.
 
 ## 2026-07-26 (Sprint 5 — launch hardening)
 

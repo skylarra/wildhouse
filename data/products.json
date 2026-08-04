@@ -204,8 +204,8 @@
       "type": "ITEM",
       "id": "ITEM_CUSTOM_KEYCHAIN",
       "item_data": {
-        "name": "Custom Keychain",
-        "description": "Design your own in Keychain Studio — hardware, optional beads, main charm, and mini charm, handmade to order.",
+        "name": "Build Your Own Charm Set",
+        "description": "Design your own in Keychain Studio — clasp, jump rings, beads, main charm, and mini charm, handmade to order.",
         "category_id": "CAT_KEYCHAINS",
         "image_ids": ["IMG_CUSTOM_KEY"],
         "variations": [
@@ -222,7 +222,7 @@
           }
         ]
       },
-      "custom": { "handle": "custom-keychain", "tags": ["custom", "studio", "handmade"], "featured": false }
+      "custom": { "handle": "custom-keychain", "tags": ["custom", "studio", "handmade", "charm-set"], "featured": false }
     }
   ]
 }
