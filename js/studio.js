@@ -62,6 +62,10 @@ function preloadImages() {
       if (opt.image) urls.add(opt.image);
     }
   }
+  // Bead-strand mini clasps (gold/silver) are not section options.
+  for (const src of Object.values(config.miniClasps || {})) {
+    if (typeof src === "string" && src.endsWith(".png")) urls.add(src);
+  }
   return Promise.all(
     [...urls].map(
       (src) =>
@@ -81,7 +85,15 @@ function preloadImages() {
 }
 
 function beadCount() {
-  return config.composition?.beadCount || 7;
+  return Math.max(1, Number(config.composition?.beadCount) || 5);
+}
+
+function miniCharmJumpRings() {
+  return Math.max(1, Number(config.composition?.miniCharmJumpRings) || 3);
+}
+
+function mainCharmJumpRings() {
+  return Math.max(1, Number(config.composition?.mainCharmJumpRings) || 1);
 }
 
 function beadSide() {
@@ -96,44 +108,57 @@ function crossfadeMs() {
   return config.composition?.crossfadeMs || 200;
 }
 
-/** Build stable preview layer DOM once. */
-function previewHTML() {
-  const beads = Array.from({ length: beadCount() }, (_, i) => {
-    return `<span class="studio-layer studio-layer--bead" data-bead-index="${i}" style="--i:${i}">
+/** Dual-img layer used for crossfades without remounting. */
+function layerSlot(slot, extraClass = "", style = "") {
+  return `
+    <span class="studio-layer ${extraClass}" data-slot="${slot}"${style ? ` style="${style}"` : ""}>
       <img class="studio-layer__img is-active" alt="" draggable="false">
       <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
     </span>`;
-  }).join("");
+}
+
+/**
+ * Stable preview DOM matching the reference assembly:
+ * clasp hub → LEFT 3 jump rings + mini charm
+ *           → CENTER 1 jump ring + main charm
+ *           → RIGHT mini clasp (gold/silver) then (jump ring → bead)… ending on a bead
+ */
+function previewHTML() {
+  const miniRings = Array.from({ length: miniCharmJumpRings() }, (_, i) =>
+    layerSlot(`miniRing-${i}`, "studio-layer--ring studio-layer--mini-ring", `--i:${i}`)
+  ).join("");
+
+  const mainRings = Array.from({ length: mainCharmJumpRings() }, (_, i) =>
+    layerSlot(`mainRing-${i}`, "studio-layer--ring studio-layer--main-ring", `--i:${i}`)
+  ).join("");
+
+  // Pattern: mini clasp → jump ring → bead → jump ring → bead … end on bead
+  const beadStrand = [layerSlot("beadMiniClasp", "studio-layer--mini-clasp")];
+  for (let i = 0; i < beadCount(); i++) {
+    beadStrand.push(
+      layerSlot(`beadRing-${i}`, "studio-layer--ring studio-layer--bead-ring", `--i:${i}`)
+    );
+    beadStrand.push(
+      layerSlot(`bead-${i}`, "studio-layer--bead", `--i:${i}`)
+    );
+  }
 
   return `
     <div class="studio-preview" aria-label="Live charm set preview">
       <div class="studio-preview__frame">
         <div class="studio-preview__compose studio-preview__compose--beads-${beadSide()} studio-preview__compose--mini-${miniSide()}">
-          <span class="studio-layer studio-layer--clasp" data-slot="clasp">
-            <img class="studio-layer__img is-active" alt="" draggable="false">
-            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
-          </span>
-          <span class="studio-layer studio-layer--ring-top" data-slot="jumpRingTop">
-            <img class="studio-layer__img is-active" alt="" draggable="false">
-            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
-          </span>
-          <span class="studio-layer studio-layer--main" data-slot="mainCharm">
-            <img class="studio-layer__img is-active" alt="" draggable="false">
-            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
-          </span>
-          <span class="studio-layer studio-layer--ring-mini" data-slot="jumpRingMini">
-            <img class="studio-layer__img is-active" alt="" draggable="false">
-            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
-          </span>
-          <span class="studio-layer studio-layer--mini" data-slot="miniCharm">
-            <img class="studio-layer__img is-active" alt="" draggable="false">
-            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
-          </span>
-          <span class="studio-layer studio-layer--ring-bead" data-slot="jumpRingBead">
-            <img class="studio-layer__img is-active" alt="" draggable="false">
-            <img class="studio-layer__img studio-layer__next" alt="" draggable="false" aria-hidden="true">
-          </span>
-          <div class="studio-beads" data-slot="beads" aria-hidden="true">${beads}</div>
+          ${layerSlot("clasp", "studio-layer--clasp")}
+          <div class="studio-branch studio-branch--mini" aria-hidden="true">
+            ${miniRings}
+            ${layerSlot("miniCharm", "studio-layer--mini")}
+          </div>
+          <div class="studio-branch studio-branch--main" aria-hidden="true">
+            ${mainRings}
+            ${layerSlot("mainCharm", "studio-layer--main")}
+          </div>
+          <div class="studio-branch studio-branch--beads" aria-hidden="true">
+            ${beadStrand.join("")}
+          </div>
         </div>
       </div>
       <p class="studio-preview__hint">${escapeHtml(config.previewHint || "")}</p>
@@ -228,14 +253,24 @@ function syncPreview({ animate = true } = {}) {
   const main = selectedOption("mainCharm");
   const mini = selectedOption("miniCharm");
 
+  // Bead-strand mini clasp matches jump-ring metal (gold / silver only).
+  const metal = ring?.metal || (ring?.id?.includes("silver") ? "silver" : "gold");
+  const miniClaspSrc = config.miniClasps?.[metal] || config.miniClasps?.gold || null;
+
   setLayerImage(root.querySelector('[data-slot="clasp"]'), clasp?.image, { animate });
-  setLayerImage(root.querySelector('[data-slot="jumpRingTop"]'), ring?.image, { animate });
-  setLayerImage(root.querySelector('[data-slot="jumpRingMini"]'), ring?.image, { animate });
-  setLayerImage(root.querySelector('[data-slot="jumpRingBead"]'), ring?.image, { animate });
   setLayerImage(root.querySelector('[data-slot="mainCharm"]'), main?.image, { animate });
   setLayerImage(root.querySelector('[data-slot="miniCharm"]'), mini?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="beadMiniClasp"]'), miniClaspSrc, { animate });
 
-  root.querySelectorAll("[data-bead-index]").forEach((el) => {
+  // All jump rings share the selected metal PNG.
+  root.querySelectorAll(
+    '[data-slot^="miniRing-"], [data-slot^="mainRing-"], [data-slot^="beadRing-"]'
+  ).forEach((el) => {
+    setLayerImage(el, ring?.image, { animate });
+  });
+
+  root.querySelectorAll('[data-slot^="bead-"]').forEach((el) => {
+    if (el.dataset.slot === "beadMiniClasp") return;
     setLayerImage(el, bead?.image, { animate });
   });
 

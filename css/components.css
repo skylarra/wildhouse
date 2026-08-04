@@ -1023,13 +1023,20 @@
 }
 .studio-preview__compose {
   position: absolute;
-  inset: 6% 8% 8%;
+  inset: 4% 6% 6%;
+}
+
+.studio-branch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .studio-layer {
   position: absolute;
   display: block;
   pointer-events: none;
+  filter: drop-shadow(0 1px 1.5px rgba(60, 40, 30, 0.18));
 }
 .studio-layer__img {
   position: absolute;
@@ -1044,81 +1051,114 @@
 .studio-layer__img.studio-layer__next { opacity: 0; z-index: 2; }
 .studio-layer__img.studio-layer__next.is-visible { opacity: 1; }
 
-/* Product-photo composition with slight natural rotation */
+/* —— Reference assembly (hub = clasp ring) —— */
 .studio-layer--clasp {
-  left: 38%;
+  left: 36%;
   top: 0;
-  width: 24%;
-  height: 28%;
-  z-index: 50;
-  transform: rotate(-3deg);
+  width: 28%;
+  height: 30%;
+  z-index: 60;
+  transform: rotate(-2deg);
 }
-.studio-layer--ring-top {
+
+/* LEFT: 3 jump rings cascading to mini charm */
+.studio-layer--mini-ring {
+  width: 8%;
+  height: 7%;
+  z-index: calc(52 - var(--i));
+}
+.studio-preview__compose--mini-left .studio-layer--mini-ring {
+  left: calc(34% - (var(--i) * 7%));
+  top: calc(24% + (var(--i) * 5.5%));
+  transform: rotate(calc(-8deg + (var(--i) * 6deg)));
+}
+.studio-preview__compose--mini-right .studio-layer--mini-ring {
+  left: calc(58% + (var(--i) * 7%));
+  top: calc(24% + (var(--i) * 5.5%));
+  transform: rotate(calc(8deg - (var(--i) * 6deg)));
+}
+
+.studio-layer--mini {
+  width: 20%;
+  height: 18%;
+  z-index: 48;
+  transform: rotate(-14deg);
+}
+.studio-preview__compose--mini-left .studio-layer--mini {
+  left: 8%;
+  top: 38%;
+}
+.studio-preview__compose--mini-right .studio-layer--mini {
+  left: 72%;
+  top: 38%;
+  transform: rotate(14deg);
+}
+
+/* CENTER: 1 jump ring + main charm */
+.studio-layer--main-ring {
   left: 46%;
-  top: 20%;
+  top: calc(24% + (var(--i) * 4%));
   width: 9%;
-  height: 9%;
-  z-index: 45;
-  transform: rotate(4deg);
+  height: 8%;
+  z-index: 44;
+  transform: rotate(3deg);
 }
 .studio-layer--main {
   left: 22%;
-  top: 26%;
-  width: 52%;
-  height: 52%;
-  z-index: 30;
-  transform: rotate(3.5deg);
-}
-.studio-layer--mini {
-  width: 22%;
-  height: 22%;
-  z-index: 40;
   top: 30%;
-  transform: rotate(-7deg);
+  width: 52%;
+  height: 50%;
+  z-index: 30;
+  transform: rotate(3deg);
 }
-.studio-preview__compose--mini-left .studio-layer--mini { left: 10%; }
-.studio-preview__compose--mini-right .studio-layer--mini { left: 66%; transform: rotate(7deg); }
 
-.studio-layer--ring-mini {
-  width: 7%;
-  height: 7%;
-  z-index: 42;
-  top: 36%;
-  transform: rotate(-2deg);
+/* RIGHT: mini clasp → (jump ring → bead)… ending on bead */
+.studio-layer--mini-clasp {
+  width: 11%;
+  height: 12%;
+  z-index: 46;
+  transform: rotate(12deg);
 }
-.studio-preview__compose--mini-left .studio-layer--ring-mini { left: 28%; }
-.studio-preview__compose--mini-right .studio-layer--ring-mini { left: 62%; }
+.studio-preview__compose--beads-right .studio-layer--mini-clasp {
+  left: 62%;
+  top: 23%;
+}
+.studio-preview__compose--beads-left .studio-layer--mini-clasp {
+  left: 26%;
+  top: 23%;
+  transform: rotate(-12deg);
+}
 
-.studio-layer--ring-bead {
-  width: 7%;
-  height: 7%;
-  z-index: 36;
-  top: 34%;
-  transform: rotate(6deg);
+.studio-layer--bead-ring {
+  width: 7.5%;
+  height: 6.5%;
+  z-index: calc(40 - var(--i));
 }
-.studio-preview__compose--beads-right .studio-layer--ring-bead { left: 66%; }
-.studio-preview__compose--beads-left .studio-layer--ring-bead { left: 26%; }
+.studio-preview__compose--beads-right .studio-layer--bead-ring {
+  left: calc(66% + (var(--i) * 2.4%));
+  top: calc(32% + (var(--i) * 9.5%));
+  transform: rotate(calc(4deg + (var(--i) * 4deg)));
+}
+.studio-preview__compose--beads-left .studio-layer--bead-ring {
+  left: calc(26% - (var(--i) * 2.4%));
+  top: calc(32% + (var(--i) * 9.5%));
+  transform: rotate(calc(-4deg - (var(--i) * 4deg)));
+}
 
-.studio-beads {
-  position: absolute;
-  inset: 0;
-  z-index: 35;
-}
 .studio-layer--bead {
-  width: 12%;
-  height: 10%;
-  z-index: 35;
+  width: 13%;
+  height: 11%;
+  z-index: calc(39 - var(--i));
 }
-/* Curve beads down the side of the main charm */
 .studio-preview__compose--beads-right .studio-layer--bead {
-  left: calc(68% + (var(--i) * 1.2%));
-  top: calc(38% + (var(--i) * 7.2%));
-  transform: rotate(calc(-8deg + (var(--i) * 3.5deg)));
+  left: calc(68% + (var(--i) * 2.4%));
+  top: calc(36% + (var(--i) * 9.5%));
+  transform: rotate(calc(-6deg + (var(--i) * 3deg)));
 }
 .studio-preview__compose--beads-left .studio-layer--bead {
-  left: calc(18% - (var(--i) * 1.2%));
-  top: calc(38% + (var(--i) * 7.2%));
-  transform: rotate(calc(8deg - (var(--i) * 3.5deg)));
+  left: calc(18% - (var(--i) * 2.4%));
+  top: calc(36% + (var(--i) * 9.5%));
+  transform: rotate(calc(6deg - (var(--i) * 3deg)));
 }
 
 .studio-preview__hint {
