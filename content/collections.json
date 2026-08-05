@@ -63,7 +63,7 @@
       "name": "Keychains",
       "handle": "keychains",
       "description": "Everyday carry charms — wood, acrylic, and little companions for keys and bags.",
-      "heroImage": "./assets/fake-product2.jpg",
+      "heroImage": "./assets/coming-soon.png",
       "featured": true
     },
     {
@@ -77,28 +77,28 @@
       "name": "Stickers",
       "handle": "stickers",
       "description": "Weatherproof vinyl art for bottles, laptops, journals, and anywhere that needs a little wild.",
-      "heroImage": "./assets/fake-product3.jpg",
+      "heroImage": "./assets/coming-soon.png",
       "featured": true
     },
     {
       "name": "Magnets",
       "handle": "magnets",
       "description": "Fridge-friendly woodland finds — small, sturdy, and ready to hold notes and memories.",
-      "heroImage": "./assets/fake-product4.jpg",
+      "heroImage": "./assets/coming-soon.png",
       "featured": false
     },
     {
       "name": "Patches",
       "handle": "patches",
       "description": "Stitch-on emblems for jackets, bags, and denim that wants a forest story.",
-      "heroImage": "./assets/fake-product1.jpg",
+      "heroImage": "./assets/coming-soon.png",
       "featured": false
     },
     {
       "name": "T-Shirts",
       "handle": "t-shirts",
       "description": "Soft tees with Wildhouse Lane artwork — wearable reminders of the woods and the weird.",
-      "heroImage": "./assets/Wildhouse.png",
+      "heroImage": "./assets/coming-soon.png",
       "featured": false
     },
     {

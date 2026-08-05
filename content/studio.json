@@ -1,5 +1,5 @@
 {
-  "_comment": "Keychain Studio — PNG layer configurator. Drop transparent PNGs into assets/studio/ and list them here. Assembly (from reference): clasp hub → LEFT 3 jump rings + mini charm → CENTER 1 jump ring + main charm → RIGHT mini clasp (gold/silver only) then (jump ring + bead) repeating, ending on a bead. Jump rings are gold/silver only for now — replace gold.png / silver.png when you upload.",
+  "_comment": "Keychain Studio — PNG layer configurator. Assembly: clasp hub → LEFT 3 jump rings + mini charm → CENTER 1 jump ring + main charm → RIGHT mini clasp (gold/silver matching jump rings) then (jump ring + bead) repeating, ending on a bead.",
   "title": "Keychain Studio",
   "intro": "Build your own charm set — clasp, rings, beads, and charms arranged like the real piece.",
   "catalogVariationId": "VAR_CUSTOM_KEYCHAIN",
@@ -36,23 +36,28 @@
       "enabled": true,
       "selection": "single",
       "options": [
-        { "id": "gold-clasp", "name": "Gold", "image": "./assets/studio/clasps/gold.png" },
-        { "id": "silver-clasp", "name": "Silver", "image": "./assets/studio/clasps/silver.png" },
-        { "id": "black-clasp", "name": "Black", "image": "./assets/studio/clasps/black.png" },
-        { "id": "rose-clasp", "name": "Rose gold", "image": "./assets/studio/clasps/rose.png" },
-        { "id": "brass-clasp", "name": "Antique brass", "image": "./assets/studio/clasps/brass.png" }
+        { "id": "gold-clasp", "name": "Gold", "image": "./assets/studio/clasps/gold-lobster-clasp.png", "metal": "gold" },
+        { "id": "silver-clasp", "name": "Silver", "image": "./assets/studio/clasps/silver-lobster-clasp.png", "metal": "silver" },
+        { "id": "bright-blue-clasp", "name": "Bright & blue", "image": "./assets/studio/clasps/bright-and-blue-lobster-clasp.png" },
+        { "id": "bubblegum-pink-clasp", "name": "Bubblegum pink", "image": "./assets/studio/clasps/bubblegum-pink-lobster-clasp.png" },
+        { "id": "butter-yellow-clasp", "name": "Butter yellow", "image": "./assets/studio/clasps/butter-yellow-lobster-clasp.png" },
+        { "id": "candy-apple-red-clasp", "name": "Candy apple red", "image": "./assets/studio/clasps/candy-apple-red-lobster-clasp.png" },
+        { "id": "candy-purple-clasp", "name": "Candy purple", "image": "./assets/studio/clasps/candy-purple-lobster-clasp.png" },
+        { "id": "cutesy-grey-clasp", "name": "Cutesy grey", "image": "./assets/studio/clasps/cutesy-grey-lobster-clasp.png" },
+        { "id": "lake-green-clasp", "name": "Lake green", "image": "./assets/studio/clasps/lake-green-lobster-clasp.png" },
+        { "id": "orangey-orange-clasp", "name": "Orangey orange", "image": "./assets/studio/clasps/orangey-orange-lobster-clasp.png" }
       ]
     },
     {
       "id": "jumpRing",
       "slot": "jumpRing",
       "title": "Choose Jump Ring",
-      "body": "Gold or silver rings that connect everything — and match the mini clasp on the bead strand. Drop your PNGs over assets/studio/jump-rings/gold.png and silver.png.",
+      "body": "Gold or silver connecting rings. Choosing a gold or silver clasp auto-matches rings and the mini clasp.",
       "enabled": true,
       "selection": "single",
       "options": [
-        { "id": "gold-ring", "name": "Gold", "image": "./assets/studio/jump-rings/gold.png", "metal": "gold" },
-        { "id": "silver-ring", "name": "Silver", "image": "./assets/studio/jump-rings/silver.png", "metal": "silver" }
+        { "id": "gold-ring", "name": "Gold", "image": "./assets/studio/jump-rings/gold-jump-ring.png", "metal": "gold" },
+        { "id": "silver-ring", "name": "Silver", "image": "./assets/studio/jump-rings/silver-jump-ring.png", "metal": "silver" }
       ]
     },
     {
@@ -108,7 +113,7 @@
   ],
   "miniClasps": {
     "_comment": "Bead-strand mini clasp — only gold/silver, always matches the selected jump ring metal.",
-    "gold": "./assets/studio/mini-clasps/gold.png",
-    "silver": "./assets/studio/mini-clasps/silver.png"
+    "gold": "./assets/studio/mini-clasps/gold-mini-clasp.png",
+    "silver": "./assets/studio/mini-clasps/silver-mini-clasp.png"
   }
 }

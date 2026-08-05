@@ -147,7 +147,7 @@ export function resolveOptionImage({
   const withImage = variationsForValue.find((v) => v.image);
   if (withImage?.image) return withImage.image;
   if (productImages[valueIndex]) return productImages[valueIndex];
-  return productImages[0] || "./assets/Wildhouse.png";
+  return productImages[0] || "./assets/coming-soon.png";
 }
 
 export function defaultSelection(model, variations) {

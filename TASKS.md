@@ -1,24 +1,18 @@
 # Current Sprint
 
-## Phase 4 — Keychain Studio redesign
+## Phase 4 — Keychain Studio assets wired
 
 ### Done
 - PNG-layer, data-driven configurator (`content/studio.json`)
 - Reference assembly preview: clasp hub → LEFT 3 jump rings + mini · CENTER 1 jump ring + main · RIGHT mini clasp (gold/silver matching rings) then (jump ring → bead)… ending on a bead
-- Uniform option chips; no scroll jump on select; partial layer updates + preload
-- Desktop: config left, preview right · Mobile: sticky preview top, cards below
+- Real clasp colors, gold/silver jump rings, and mini clasps from `assets/studio/`
+- Placeholder fallbacks point at `assets/coming-soon.png` (renamed from Wildhouse.png)
 - Cart product: “Build Your Own Charm Set” with design note (checkout unchanged)
 
-### Replace placeholders
-Drop real transparent PNGs over:
-- `assets/studio/clasps/`
-- `assets/studio/jump-rings/gold.png` and `silver.png` (user uploading)
-- `assets/studio/mini-clasps/gold.png` and `silver.png`
+### Still placeholders
 - `assets/studio/beads/colors/`
 - `assets/studio/charms/`
 - `assets/studio/mini/`
-
-Keep filenames or update paths in `content/studio.json`.
 
 ### Ops
 - Point `catalogVariationId` at the Square “Build Your Own Charm Set” variation

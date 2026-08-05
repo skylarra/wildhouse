@@ -87,7 +87,7 @@ function colorImagesForProduct() {
 }
 
 function imagesForSelection() {
-  const base = product.images.length ? [...product.images] : ["./assets/Wildhouse.png"];
+  const base = product.images.length ? [...product.images] : ["./assets/coming-soon.png"];
   const colorAxis = variantModel?.axes?.find((a) => a.key === "color");
   if (!colorAxis) return base;
   const color = selection.color;
@@ -497,7 +497,7 @@ function wireControls() {
       galleryImages[0] ||
       selectedVariation?.image ||
       product.images[0] ||
-      "./assets/Wildhouse.png";
+      "./assets/coming-soon.png";
     addToCart(
       {
         variationId: selectedVariation.id,
@@ -590,7 +590,7 @@ function syncProductMeta(product) {
     ? product.images[0].startsWith("http")
       ? product.images[0]
       : `${origin}/${product.images[0].replace(/^\.\//, "")}`
-    : `${origin}/assets/wildhouselogo-pink-brown.png`;
+    : `/assets/coming-soon.png`;
   const description = (product.description || `${product.name} from Wildhouse Lane.`).slice(0, 160);
 
   const desc = document.querySelector('meta[name="description"]');

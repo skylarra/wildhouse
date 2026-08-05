@@ -8,7 +8,7 @@ import { loadSite, loadJSON } from "./content.js";
 let cache = null;
 let collectionsMetaCache = null;
 
-const DEFAULT_COLLECTION_IMAGE = "./assets/Wildhouse.png";
+const DEFAULT_COLLECTION_IMAGE = "./assets/coming-soon.png";
 
 export function formatMoney(cents, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
