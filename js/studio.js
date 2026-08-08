@@ -42,7 +42,16 @@ function selectedOption(sectionId) {
 }
 
 function maxBeads() {
-  return Math.max(1, Number(config.composition?.maxBeads) || 8);
+  return Math.max(1, Number(config.composition?.maxBeads) || 16);
+}
+
+/** Beads included in the strand addon before per-bead extras kick in. */
+function includedBeads() {
+  return Math.max(0, Number(config.composition?.includedBeads) || 8);
+}
+
+function extraBeadCents() {
+  return Math.max(0, Number(config.extraBeadCents) || 10);
 }
 
 function beadWord() {
@@ -51,8 +60,12 @@ function beadWord() {
 
 function priceCents() {
   let total = config.basePriceCents || 0;
-  if (sectionById("beads")?.enabled !== false && beadWord().length > 0) {
+  const count = beadWord().length;
+  if (sectionById("beads")?.enabled !== false && count > 0) {
     total += config.beadedAddonCents || 0;
+    // Beads beyond the included count are +10¢ each.
+    const extras = Math.max(0, count - includedBeads());
+    total += extras * extraBeadCents();
   }
   return total;
 }

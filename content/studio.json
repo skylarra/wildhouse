@@ -7,6 +7,7 @@
   "productName": "Build Your Own Charm Set",
   "basePriceCents": 2800,
   "beadedAddonCents": 600,
+  "extraBeadCents": 10,
   "currency": "USD",
   "addToCartLabel": "Add to cart",
   "previewHint": "Flip the charm to edit the back. Type beads like a tiny keyboard.",
@@ -16,7 +17,8 @@
     "beadSide": "right",
     "miniCharmJumpRings": 3,
     "mainCharmJumpRings": 1,
-    "maxBeads": 8,
+    "includedBeads": 8,
+    "maxBeads": 16,
     "crossfadeMs": 200,
     "background": "white"
   },
@@ -188,7 +190,7 @@
       "id": "beads",
       "step": 5,
       "title": "5. Type Beads",
-      "body": "Spell your strand on the keyboard — up to 8 beads. Ends on a bead.",
+      "body": "Spell your strand on the keyboard. First 8 beads are in the strand price; each extra bead is +$0.10.",
       "enabled": true,
       "layout": "beadKeyboard",
       "addonPrice": true
