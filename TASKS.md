@@ -1,18 +1,17 @@
 # Current Sprint
 
-## Phase 4 — Keychain Studio assets wired
+## Phase 4 — Main charm layers
 
 ### Done
-- PNG-layer, data-driven configurator (`content/studio.json`)
-- Reference assembly preview: clasp hub → LEFT 3 jump rings + mini · CENTER 1 jump ring + main · RIGHT mini clasp (gold/silver matching rings) then (jump ring → bead)… ending on a bead
-- Real clasp colors, gold/silver jump rings, and mini clasps from `assets/studio/`
-- Placeholder fallbacks point at `assets/coming-soon.png` (renamed from Wildhouse.png)
-- Cart product: “Build Your Own Charm Set” with design note (checkout unchanged)
+- Main charm is three pickers: **shape** (wood blank) · **engraved border** · **artwork**
+- Preview stacks shape → artwork → border
+- Letter/number bead assets wired (replacing removed color beads)
+- Border file renamed: `leaves-clovers-and-hearts.svg` (no spaces)
 
-### Still placeholders
-- `assets/studio/beads/colors/`
-- `assets/studio/charms/`
-- `assets/studio/mini/`
+### Still open
+- More charm shapes beyond square maple/walnut
+- More letter artwork beyond handdrawn R
+- Per-bead letter spelling (strand currently repeats one chosen bead)
 
 ### Ops
 - Point `catalogVariationId` at the Square “Build Your Own Charm Set” variation

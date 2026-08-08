@@ -24,8 +24,8 @@ Future: live personalization preview.
 
 Premium PNG-layer configurator (4:5 product-photo preview):
 
-- Clasp · Jump ring · Beads · Main charm · Mini charm
-- Data-driven `content/studio.json` + transparent PNGs in `assets/studio/`
+- Clasp · Jump ring · Beads · Main charm (shape + artwork + engraved border) · Mini charm
+- Data-driven `content/studio.json` + assets in `assets/studio/`
 - Partial layer crossfades, stable mobile chips, no scroll jump
 - Adds **Build Your Own Charm Set** to cart with design note (checkout unchanged)
 
