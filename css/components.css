@@ -909,44 +909,54 @@
 .studio-intro {
   max-width: 40rem;
   color: #5a4443;
-  line-height: 1.65;
+  line-height: 1.55;
   margin: 0;
+  font-size: 0.98rem;
 }
 .studio-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   padding-top: 8px;
-  padding-bottom: 64px;
+  padding-bottom: 72px;
 }
 
-/* Mobile: preview first (DOM order swapped via flex), config below */
+/* Mobile: sticky preview first, config below */
 .studio-preview-col { order: -1; }
-.studio-config { order: 1; display: grid; gap: 14px; }
+.studio-config { order: 1; display: grid; gap: 12px; }
 
 .studio-card {
   background: #fffaf8;
   border: 1px solid rgba(78, 40, 41, 0.1);
   border-radius: 12px;
-  padding: 18px 16px;
+  padding: 14px 12px;
 }
 .studio-card__title {
-  margin: 0 0 4px;
+  margin: 0 0 2px;
   color: var(--brown);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
 }
 .studio-card__body {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   color: #5a4443;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.studio-card__body--tight { margin-bottom: 8px; font-size: 0.85rem; }
+.studio-subhead {
+  margin: 14px 0 8px;
+  font-size: 0.92rem;
+  color: var(--brown);
 }
 
-/* Uniform option chips — fixed height, no resize on select */
 .studio-chip-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 8px;
+}
+.studio-chip-grid--compact {
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 6px;
 }
 .studio-chip {
   box-sizing: border-box;
@@ -954,11 +964,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  height: 96px;
-  min-height: 96px;
-  max-height: 96px;
-  padding: 10px 8px;
+  gap: 4px;
+  height: 84px;
+  min-height: 84px;
+  max-height: 84px;
+  padding: 8px 6px;
   margin: 0;
   border: 2px solid rgba(78, 40, 41, 0.14);
   border-radius: 10px;
@@ -968,13 +978,28 @@
   text-align: center;
   overflow: hidden;
 }
+.studio-chip--compact {
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+}
+.studio-chip--plain {
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
+}
 .studio-chip__swatch {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
   border-radius: 8px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.55);
+}
+.studio-chip--compact .studio-chip__swatch {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
 }
 .studio-chip__swatch img {
   width: 100%;
@@ -983,9 +1008,9 @@
   display: block;
 }
 .studio-chip__name {
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -1001,13 +1026,127 @@
   outline-offset: 2px;
 }
 
-/* Preview — fixed 4:5 product frame */
+.studio-side-toggle {
+  display: inline-flex;
+  border: 1px solid rgba(78, 40, 41, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.65);
+}
+.studio-side-toggle--card { margin: 12px 0 4px; }
+.studio-side-toggle__btn {
+  border: 0;
+  background: transparent;
+  color: var(--brown);
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.studio-side-toggle__btn.is-active {
+  background: var(--brown);
+  color: #fffaf8;
+}
+.studio-side-toggle__btn:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 2px;
+}
+
+.studio-text-field {
+  display: block;
+  margin-top: 8px;
+}
+.studio-text-field.is-hidden { display: none; }
+.studio-text-field input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(78, 40, 41, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--brown);
+  background: #fff;
+}
+
+/* Bead QWERTY keyboard */
+.studio-bead-word {
+  margin: 0 0 10px;
+  min-height: 1.4em;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--brown);
+  font-size: 1.05rem;
+}
+.studio-bead-word__empty {
+  letter-spacing: normal;
+  font-weight: 500;
+  color: #8a6f6e;
+  font-size: 0.9rem;
+}
+.studio-keyboard {
+  display: grid;
+  gap: 6px;
+  user-select: none;
+}
+.studio-keyboard__row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+.studio-key {
+  box-sizing: border-box;
+  width: clamp(28px, 8.2vw, 40px);
+  height: clamp(34px, 9vw, 42px);
+  padding: 2px;
+  margin: 0;
+  border: 1px solid rgba(78, 40, 41, 0.16);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--brown);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.studio-key img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+}
+.studio-key--wide {
+  width: auto;
+  min-width: 72px;
+  flex: 1;
+  max-width: 140px;
+  font-size: 0.8rem;
+}
+.studio-key:active { background: var(--light-pink); }
+.studio-key:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 1px;
+}
+
+/* Preview */
 .studio-preview {
   border-radius: 12px;
-  padding: 12px 12px 10px;
+  padding: 10px 10px 8px;
   background:
-    radial-gradient(circle at 35% 18%, rgba(244, 178, 173, 0.4), transparent 50%),
+    radial-gradient(circle at 35% 18%, rgba(244, 178, 173, 0.35), transparent 50%),
     linear-gradient(180deg, #f7ebe6 0%, var(--light-pink) 100%);
+}
+.studio-preview__toolbar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 .studio-preview__frame {
   width: 100%;
@@ -1018,26 +1157,25 @@
   overflow: hidden;
   border-radius: 10px;
   background:
-    radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.55), transparent 60%),
-    rgba(255, 250, 248, 0.35);
+    radial-gradient(ellipse at 50% 72%, rgba(255,255,255,0.7), transparent 58%),
+    #fff;
 }
 .studio-preview__compose {
   position: absolute;
-  inset: 4% 6% 6%;
+  inset: 3% 5% 5%;
 }
-
 .studio-branch {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-
 .studio-layer {
   position: absolute;
   display: block;
   pointer-events: none;
-  filter: drop-shadow(0 1px 1.5px rgba(60, 40, 30, 0.18));
+  filter: drop-shadow(0 1px 1.5px rgba(60, 40, 30, 0.16));
 }
+.studio-layer.is-empty { visibility: hidden; }
 .studio-layer__img {
   position: absolute;
   inset: 0;
@@ -1051,213 +1189,238 @@
 .studio-layer__img.studio-layer__next { opacity: 0; z-index: 2; }
 .studio-layer__img.studio-layer__next.is-visible { opacity: 1; }
 
-/* —— Reference assembly (hub = clasp ring at bottom of flipped lobster) —— */
-/* Assets are authored hook-down; flip so the clip sits at the top. */
+/* Natural hang — clasp hub, left chain, center charm, right bead cascade */
 .studio-layer--clasp {
-  left: 36%;
-  top: 0;
-  width: 28%;
-  height: 30%;
+  left: 38%;
+  top: -1%;
+  width: 24%;
+  height: 26%;
   z-index: 50;
-  transform: rotate(180deg) rotate(-2deg);
+  transform: rotate(180deg) rotate(-1.5deg);
 }
-[data-card="clasp"] .studio-chip__swatch img {
+[data-card="clasp"] .studio-chip__swatch img,
+[data-section="clasp"] .studio-chip__swatch img {
   transform: rotate(180deg);
 }
 
-/* LEFT: 3 tightly overlapping jump rings (chain) + mini charm on the last ring */
 .studio-layer--mini-ring {
-  width: 9.5%;
-  height: 8.5%;
+  width: 8.5%;
+  height: 7.5%;
   z-index: calc(44 - var(--i));
 }
 .studio-preview__compose--mini-left .studio-layer--mini-ring {
-  left: calc(31% - (var(--i) * 3.6%));
-  top: calc(21% + (var(--i) * 3%));
-  transform: rotate(calc(-10deg + (var(--i) * 7deg)));
+  left: calc(33% - (var(--i) * 4.2%));
+  top: calc(18% + (var(--i) * 3.4%));
+  transform: rotate(calc(-14deg + (var(--i) * 9deg)));
 }
 .studio-preview__compose--mini-right .studio-layer--mini-ring {
-  left: calc(59% + (var(--i) * 3.6%));
-  top: calc(21% + (var(--i) * 3%));
-  transform: rotate(calc(10deg - (var(--i) * 7deg)));
+  left: calc(58% + (var(--i) * 4.2%));
+  top: calc(18% + (var(--i) * 3.4%));
+  transform: rotate(calc(14deg - (var(--i) * 9deg)));
 }
-
 .studio-layer--mini {
-  width: 18%;
-  height: 16%;
+  width: 16%;
+  height: 15%;
   z-index: 42;
 }
-/* Sit the mini charm on the last chain ring (i = 2) so it looks attached */
 .studio-preview__compose--mini-left .studio-layer--mini {
-  left: calc(31% - (2 * 3.6%) - 6%);
-  top: calc(21% + (2 * 3%) + 1.5%);
-  transform: rotate(-12deg);
+  left: calc(33% - (2 * 4.2%) - 7%);
+  top: calc(18% + (2 * 3.4%) + 2%);
+  transform: rotate(-16deg);
 }
 .studio-preview__compose--mini-right .studio-layer--mini {
-  left: calc(59% + (2 * 3.6%) + 2%);
-  top: calc(21% + (2 * 3%) + 1.5%);
-  transform: rotate(12deg);
+  left: calc(58% + (2 * 4.2%) + 1%);
+  top: calc(18% + (2 * 3.4%) + 2%);
+  transform: rotate(16deg);
 }
 
-/* CENTER: 1 jump ring + layered main charm (shape → artwork → border) */
 .studio-layer--main-ring {
-  left: 45.5%;
-  top: calc(22% + (var(--i) * 3.5%));
-  width: 9%;
-  height: 8%;
-  z-index: 35;
-  transform: rotate(3deg);
+  left: 46%;
+  top: 19%;
+  width: 8%;
+  height: 7%;
+  z-index: 36;
+  transform: rotate(4deg);
 }
 .studio-main-charm {
   position: absolute;
-  left: 22%;
-  top: 28%;
-  width: 52%;
-  height: 50%;
-  z-index: 20;
-  transform: rotate(3deg);
+  left: 24%;
+  top: 24%;
+  width: 48%;
+  height: 48%;
+  z-index: 22;
+  transform: rotate(2.5deg);
   pointer-events: none;
 }
-.studio-main-charm .studio-layer {
-  position: absolute;
-  filter: none;
-}
+.studio-main-charm .studio-layer { position: absolute; filter: none; }
 .studio-layer--main-shape {
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: 1;
-  filter: drop-shadow(0 2px 3px rgba(60, 40, 30, 0.22));
+  filter: drop-shadow(0 2px 3px rgba(60, 40, 30, 0.2));
 }
-/* Artwork sits inside the engraved border area */
 .studio-layer--main-artwork {
-  left: 18%;
-  top: 22%;
-  width: 64%;
-  height: 56%;
+  left: 20%;
+  top: 24%;
+  width: 60%;
+  height: 48%;
   z-index: 2;
+}
+.studio-layer--main-letter {
+  left: 22%;
+  top: 26%;
+  width: 56%;
+  height: 48%;
+  z-index: 3;
+}
+.studio-layer--main-text {
+  left: 18%;
+  top: 28%;
+  width: 64%;
+  height: 44%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  filter: none;
+}
+.studio-main-text {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.1rem, 4.2vw, 1.8rem);
+  font-weight: 700;
+  color: rgba(55, 35, 30, 0.82);
+  text-align: center;
+  line-height: 1.05;
+  word-break: break-word;
 }
 .studio-layer--main-border {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 3;
+  z-index: 4;
 }
 
-/* RIGHT: mini clasp overlaps lobster hub; first jump ring overlaps mini clasp */
 .studio-layer--mini-clasp {
-  width: 12%;
-  height: 13%;
+  width: 11%;
+  height: 12%;
   z-index: 55;
-  transform: rotate(18deg);
+  transform: rotate(22deg);
 }
 .studio-preview__compose--beads-right .studio-layer--mini-clasp {
-  left: 56%;
-  top: 16%;
+  left: 57%;
+  top: 15%;
 }
 .studio-preview__compose--beads-left .studio-layer--mini-clasp {
   left: 30%;
-  top: 16%;
-  transform: rotate(-18deg);
+  top: 15%;
+  transform: rotate(-22deg);
 }
 
 .studio-layer--bead-ring {
-  width: 8%;
-  height: 7%;
+  width: 7.5%;
+  height: 6.5%;
   z-index: calc(48 - var(--i));
 }
 .studio-preview__compose--beads-right .studio-layer--bead-ring {
-  left: calc(58% + (var(--i) * 2.6%));
-  top: calc(24% + (var(--i) * 9.2%));
-  transform: rotate(calc(6deg + (var(--i) * 3.5deg)));
+  left: calc(59% + (var(--i) * 3.1%));
+  top: calc(23% + (var(--i) * 8.4%));
+  transform: rotate(calc(8deg + (var(--i) * 4deg)));
 }
 .studio-preview__compose--beads-left .studio-layer--bead-ring {
-  left: calc(32% - (var(--i) * 2.6%));
-  top: calc(24% + (var(--i) * 9.2%));
-  transform: rotate(calc(-6deg - (var(--i) * 3.5deg)));
+  left: calc(31% - (var(--i) * 3.1%));
+  top: calc(23% + (var(--i) * 8.4%));
+  transform: rotate(calc(-8deg - (var(--i) * 4deg)));
 }
 
-/* Beads always sit above jump rings */
 .studio-layer--bead {
-  width: 13%;
-  height: 11%;
+  width: 12.5%;
+  height: 10.5%;
   z-index: calc(90 - var(--i));
 }
 .studio-preview__compose--beads-right .studio-layer--bead {
-  left: calc(60% + (var(--i) * 2.6%));
-  top: calc(28% + (var(--i) * 9.2%));
-  transform: rotate(calc(-5deg + (var(--i) * 3deg)));
+  left: calc(61% + (var(--i) * 3.1%));
+  top: calc(26.5% + (var(--i) * 8.4%));
+  transform: rotate(calc(-4deg + (var(--i) * 2.5deg)));
 }
 .studio-preview__compose--beads-left .studio-layer--bead {
-  left: calc(24% - (var(--i) * 2.6%));
-  top: calc(28% + (var(--i) * 9.2%));
-  transform: rotate(calc(5deg - (var(--i) * 3deg)));
+  left: calc(24% - (var(--i) * 3.1%));
+  top: calc(26.5% + (var(--i) * 8.4%));
+  transform: rotate(calc(4deg - (var(--i) * 2.5deg)));
 }
 
 .studio-preview__hint {
-  margin: 10px 0 2px;
+  margin: 8px 0 2px;
   text-align: center;
   color: var(--green);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
 }
 .studio-preview__summary {
   margin: 0;
   text-align: center;
   color: #5a4443;
-  font-size: 0.82rem;
-  line-height: 1.4;
-  min-height: 2.4em;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  min-height: 2.2em;
 }
 .studio-checkout {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
 .studio-price {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--brown);
 }
 
-/* Sticky preview on mobile — capped so it never owns the viewport */
 @media (max-width: 899px) {
   .studio-preview-col {
     position: sticky;
-    top: 64px;
+    top: 56px;
     z-index: 5;
-    background: linear-gradient(180deg, #f7ebe6 70%, transparent);
-    padding-bottom: 4px;
+    background: linear-gradient(180deg, #f7ebe6 78%, transparent);
+    padding-bottom: 2px;
   }
   .studio-preview__frame {
-    max-height: 42vh;
+    max-height: min(38vh, 320px);
     width: auto;
     margin: 0 auto;
-    max-width: min(420px, 100%);
+    max-width: min(320px, 100%);
   }
+  .studio-preview__hint { display: none; }
+  .studio-preview__summary {
+    font-size: 0.72rem;
+    min-height: 0;
+    max-height: 2.6em;
+    overflow: hidden;
+  }
+  .studio-key span { font-size: 0.58rem; }
+  .studio-checkout .btn { flex: 1; min-width: 140px; }
 }
 
-/* Desktop: configurator left, large preview right */
 @media (min-width: 900px) {
   .studio-layout {
     display: grid;
     grid-template-columns: minmax(300px, 1fr) minmax(320px, 420px);
-    gap: 36px;
+    gap: 28px;
     align-items: start;
   }
   .studio-preview-col,
   .studio-config { order: initial; }
-  .studio-preview-col {
-    position: sticky;
-    top: 88px;
-  }
+  .studio-preview-col { position: sticky; top: 88px; }
   .studio-preview__frame { max-width: none; }
   .studio-chip-grid {
-    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
+  .studio-key {
+    width: 40px;
+    height: 44px;
+  }
+  .studio-key img { width: 18px; height: 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

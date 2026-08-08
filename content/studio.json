@@ -1,7 +1,7 @@
 {
-  "_comment": "Keychain Studio — layered configurator. Assembly: clasp hub → LEFT 3 jump rings + mini charm → CENTER 1 jump ring + main charm (shape → artwork → engraved border) → RIGHT mini clasp (gold/silver matching jump rings) then (jump ring + bead)… ending on a bead.",
+  "_comment": "Keychain Studio. Flow: 1 Clasp · 2 Jump ring · 3 Main charm (shape + front/back border·artwork·letter) · 4 Mini charm · 5 Type beads. Assembly matches reference hang.",
   "title": "Keychain Studio",
-  "intro": "Build your own charm set — clasp, rings, beads, and a layered main charm with wood, artwork, and engraved border.",
+  "intro": "Build your own charm set — hardware, a double-sided main charm, mini charm, and letter beads.",
   "catalogVariationId": "VAR_CUSTOM_KEYCHAIN",
   "productHandle": "custom-keychain",
   "productName": "Build Your Own Charm Set",
@@ -9,34 +9,88 @@
   "beadedAddonCents": 600,
   "currency": "USD",
   "addToCartLabel": "Add to cart",
-  "previewHint": "Preview updates as you choose.",
+  "previewHint": "Flip the charm to edit the back. Type beads like a tiny keyboard.",
   "composition": {
     "aspectRatio": "4 / 5",
     "miniCharmSide": "left",
     "beadSide": "right",
     "miniCharmJumpRings": 3,
     "mainCharmJumpRings": 1,
-    "beadCount": 5,
+    "maxBeads": 8,
     "crossfadeMs": 200,
     "background": "white"
   },
   "defaults": {
     "clasp": "gold-clasp",
     "jumpRing": "gold-ring",
-    "bead": "bead-r",
     "mainShape": "walnut-square",
-    "mainBorder": "wavy",
-    "mainArtwork": "letter-r",
-    "miniCharm": "star"
+    "frontBorder": "leaves-clovers-hearts",
+    "frontArtwork": "none",
+    "frontLetter": "letter-r",
+    "frontText": "",
+    "backBorder": "none",
+    "backArtwork": "none",
+    "backLetter": "none",
+    "backText": "",
+    "miniCharm": "star",
+    "beadWord": "AAAAA"
+  },
+  "beadKeyboard": {
+    "rows": [
+      ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+      ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+      ["z", "x", "c", "v", "b", "n", "m"],
+      ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+      ["heart"]
+    ],
+    "assets": {
+      "a": "./assets/studio/beads/bead-a.png",
+      "b": "./assets/studio/beads/bead-b.png",
+      "c": "./assets/studio/beads/bead-c.png",
+      "d": "./assets/studio/beads/bead-d.png",
+      "e": "./assets/studio/beads/bead-e.png",
+      "f": "./assets/studio/beads/bead-f.png",
+      "g": "./assets/studio/beads/bead-g.png",
+      "h": "./assets/studio/beads/bead-h.png",
+      "i": "./assets/studio/beads/bead-i.png",
+      "j": "./assets/studio/beads/bead-j.png",
+      "k": "./assets/studio/beads/bead-k.png",
+      "l": "./assets/studio/beads/bead-l.png",
+      "m": "./assets/studio/beads/bead-m.png",
+      "n": "./assets/studio/beads/bead-n.png",
+      "o": "./assets/studio/beads/bead-o.png",
+      "p": "./assets/studio/beads/bead-p.png",
+      "q": "./assets/studio/beads/bead-q.png",
+      "r": "./assets/studio/beads/bead-r.png",
+      "s": "./assets/studio/beads/bead-s.png",
+      "t": "./assets/studio/beads/bead-t.png",
+      "u": "./assets/studio/beads/bead-u.png",
+      "v": "./assets/studio/beads/bead-v.png",
+      "w": "./assets/studio/beads/bead-w.png",
+      "x": "./assets/studio/beads/bead-x.png",
+      "y": "./assets/studio/beads/bead-y.png",
+      "z": "./assets/studio/beads/bead-z.png",
+      "0": "./assets/studio/beads/bead-0.png",
+      "1": "./assets/studio/beads/bead-1.png",
+      "2": "./assets/studio/beads/bead-2.png",
+      "3": "./assets/studio/beads/bead-3.png",
+      "4": "./assets/studio/beads/bead-4.png",
+      "5": "./assets/studio/beads/bead-5.png",
+      "6": "./assets/studio/beads/bead-6.png",
+      "7": "./assets/studio/beads/bead-7.png",
+      "8": "./assets/studio/beads/bead-8.png",
+      "9": "./assets/studio/beads/bead-9.png",
+      "heart": "./assets/studio/beads/bead-heart.png"
+    }
   },
   "sections": [
     {
       "id": "clasp",
-      "slot": "clasp",
-      "title": "Choose Clasp",
+      "step": 1,
+      "title": "1. Choose Clasp",
       "body": "The lobster clasp at the top of your set.",
       "enabled": true,
-      "selection": "single",
+      "layout": "chips",
       "options": [
         { "id": "gold-clasp", "name": "Gold", "image": "./assets/studio/clasps/gold-lobster-clasp.png", "metal": "gold" },
         { "id": "silver-clasp", "name": "Silver", "image": "./assets/studio/clasps/silver-lobster-clasp.png", "metal": "silver" },
@@ -52,123 +106,76 @@
     },
     {
       "id": "jumpRing",
-      "slot": "jumpRing",
-      "title": "Choose Jump Ring",
-      "body": "Gold or silver connecting rings. Choosing a gold or silver clasp auto-matches rings and the mini clasp.",
+      "step": 2,
+      "title": "2. Choose Jump Ring",
+      "body": "Gold or silver connecting rings. Gold/silver clasps auto-match rings and the mini clasp.",
       "enabled": true,
-      "selection": "single",
+      "layout": "chips",
       "options": [
         { "id": "gold-ring", "name": "Gold", "image": "./assets/studio/jump-rings/gold-jump-ring.png", "metal": "gold" },
         { "id": "silver-ring", "name": "Silver", "image": "./assets/studio/jump-rings/silver-jump-ring.png", "metal": "silver" }
       ]
     },
     {
-      "id": "bead",
-      "slot": "beads",
-      "title": "Choose Beads",
-      "body": "Letter or shape for the strand. Pattern: mini clasp → jump ring → bead → … ending on a bead.",
+      "id": "mainCharm",
+      "step": 3,
+      "title": "3. Main Charm",
+      "body": "Wood shape plus front and back: border, artwork, and letter or typed text.",
       "enabled": true,
-      "selection": "single",
-      "addonPrice": true,
-      "options": [
-        { "id": "bead-a", "name": "A", "image": "./assets/studio/beads/bead-a.png" },
-        { "id": "bead-b", "name": "B", "image": "./assets/studio/beads/bead-b.png" },
-        { "id": "bead-c", "name": "C", "image": "./assets/studio/beads/bead-c.png" },
-        { "id": "bead-d", "name": "D", "image": "./assets/studio/beads/bead-d.png" },
-        { "id": "bead-e", "name": "E", "image": "./assets/studio/beads/bead-e.png" },
-        { "id": "bead-f", "name": "F", "image": "./assets/studio/beads/bead-f.png" },
-        { "id": "bead-g", "name": "G", "image": "./assets/studio/beads/bead-g.png" },
-        { "id": "bead-h", "name": "H", "image": "./assets/studio/beads/bead-h.png" },
-        { "id": "bead-i", "name": "I", "image": "./assets/studio/beads/bead-i.png" },
-        { "id": "bead-j", "name": "J", "image": "./assets/studio/beads/bead-j.png" },
-        { "id": "bead-k", "name": "K", "image": "./assets/studio/beads/bead-k.png" },
-        { "id": "bead-l", "name": "L", "image": "./assets/studio/beads/bead-l.png" },
-        { "id": "bead-m", "name": "M", "image": "./assets/studio/beads/bead-m.png" },
-        { "id": "bead-n", "name": "N", "image": "./assets/studio/beads/bead-n.png" },
-        { "id": "bead-o", "name": "O", "image": "./assets/studio/beads/bead-o.png" },
-        { "id": "bead-p", "name": "P", "image": "./assets/studio/beads/bead-p.png" },
-        { "id": "bead-q", "name": "Q", "image": "./assets/studio/beads/bead-q.png" },
-        { "id": "bead-r", "name": "R", "image": "./assets/studio/beads/bead-r.png" },
-        { "id": "bead-s", "name": "S", "image": "./assets/studio/beads/bead-s.png" },
-        { "id": "bead-t", "name": "T", "image": "./assets/studio/beads/bead-t.png" },
-        { "id": "bead-u", "name": "U", "image": "./assets/studio/beads/bead-u.png" },
-        { "id": "bead-v", "name": "V", "image": "./assets/studio/beads/bead-v.png" },
-        { "id": "bead-w", "name": "W", "image": "./assets/studio/beads/bead-w.png" },
-        { "id": "bead-x", "name": "X", "image": "./assets/studio/beads/bead-x.png" },
-        { "id": "bead-y", "name": "Y", "image": "./assets/studio/beads/bead-y.png" },
-        { "id": "bead-z", "name": "Z", "image": "./assets/studio/beads/bead-z.png" },
-        { "id": "bead-0", "name": "0", "image": "./assets/studio/beads/bead-0.png" },
-        { "id": "bead-1", "name": "1", "image": "./assets/studio/beads/bead-1.png" },
-        { "id": "bead-2", "name": "2", "image": "./assets/studio/beads/bead-2.png" },
-        { "id": "bead-3", "name": "3", "image": "./assets/studio/beads/bead-3.png" },
-        { "id": "bead-4", "name": "4", "image": "./assets/studio/beads/bead-4.png" },
-        { "id": "bead-5", "name": "5", "image": "./assets/studio/beads/bead-5.png" },
-        { "id": "bead-6", "name": "6", "image": "./assets/studio/beads/bead-6.png" },
-        { "id": "bead-7", "name": "7", "image": "./assets/studio/beads/bead-7.png" },
-        { "id": "bead-8", "name": "8", "image": "./assets/studio/beads/bead-8.png" },
-        { "id": "bead-9", "name": "9", "image": "./assets/studio/beads/bead-9.png" },
-        { "id": "bead-heart", "name": "Heart", "image": "./assets/studio/beads/bead-heart.png" }
-      ]
-    },
-    {
-      "id": "mainShape",
-      "slot": "mainShape",
-      "title": "Charm Shape",
-      "body": "The wood blank for your main charm.",
-      "enabled": true,
-      "selection": "single",
-      "group": "mainCharm",
-      "options": [
-        { "id": "walnut-square", "name": "Walnut", "image": "./assets/studio/charms/shape/square/walnut-keychain-base.svg" },
-        { "id": "maple-square", "name": "Maple", "image": "./assets/studio/charms/shape/square/maple-keychain-base.svg" }
-      ]
-    },
-    {
-      "id": "mainBorder",
-      "slot": "mainBorder",
-      "title": "Engraved Border",
-      "body": "Decorative border engraved around the charm.",
-      "enabled": true,
-      "selection": "single",
-      "group": "mainCharm",
-      "options": [
-        { "id": "wavy", "name": "Wavy", "image": "./assets/studio/charms/shape/square/design-frames/wavy.svg" },
-        { "id": "heavy-wavy", "name": "Heavy wavy", "image": "./assets/studio/charms/shape/square/design-frames/heavy-wavy.svg" },
-        { "id": "hearts", "name": "Hearts", "image": "./assets/studio/charms/shape/square/design-frames/hearts.svg" },
-        { "id": "filled-star", "name": "Filled star", "image": "./assets/studio/charms/shape/square/design-frames/filled-star.svg" },
-        { "id": "flash-flowers", "name": "Flash flowers", "image": "./assets/studio/charms/shape/square/design-frames/flash-flowers.svg" },
-        { "id": "leaves-clovers-hearts", "name": "Leaves & clovers", "image": "./assets/studio/charms/shape/square/design-frames/leaves-clovers-and-hearts.svg" },
-        { "id": "spooky-surprise", "name": "Spooky surprise", "image": "./assets/studio/charms/shape/square/design-frames/spooky-surprise-v1.svg" }
-      ]
-    },
-    {
-      "id": "mainArtwork",
-      "slot": "mainArtwork",
-      "title": "Charm Artwork",
-      "body": "Design engraved inside the border.",
-      "enabled": true,
-      "selection": "single",
-      "group": "mainCharm",
-      "options": [
-        { "id": "letter-r", "name": "Letter R", "image": "./assets/studio/charms/artwork/letters/handdrawn/letter-r.svg" },
-        { "id": "stars", "name": "Stars", "image": "./assets/studio/charms/artwork/stars.svg" },
-        { "id": "dancing-stars", "name": "Dancing stars", "image": "./assets/studio/charms/artwork/dancing-stars.svg" },
-        { "id": "montserra-star", "name": "Montserrat star", "image": "./assets/studio/charms/artwork/montserra-star.svg" },
-        { "id": "bow", "name": "Bow", "image": "./assets/studio/charms/artwork/bow.svg" },
-        { "id": "dog-paw", "name": "Dog paw", "image": "./assets/studio/charms/artwork/dog-paw.svg" },
-        { "id": "lucky-hearts", "name": "Lucky hearts", "image": "./assets/studio/charms/artwork/lucky-hearts.svg" },
-        { "id": "plain-clover", "name": "Clover", "image": "./assets/studio/charms/artwork/plain-clover.svg" },
-        { "id": "wish-bone", "name": "Wishbone", "image": "./assets/studio/charms/artwork/wish-bone.svg" },
-        { "id": "wildhouse-merch", "name": "Wildhouse", "image": "./assets/studio/charms/artwork/wildhouse-merch.svg" }
-      ]
+      "layout": "mainCharm",
+      "shape": {
+        "id": "mainShape",
+        "title": "Shape",
+        "options": [
+          { "id": "walnut-square", "name": "Walnut", "image": "./assets/studio/charms/shape/square/walnut-keychain-base.svg" },
+          { "id": "maple-square", "name": "Maple", "image": "./assets/studio/charms/shape/square/maple-keychain-base.svg" }
+        ]
+      },
+      "borders": {
+        "title": "Engraved border",
+        "options": [
+          { "id": "none", "name": "No border", "image": null },
+          { "id": "wavy", "name": "Wavy", "image": "./assets/studio/charms/shape/square/design-frames/wavy.svg" },
+          { "id": "heavy-wavy", "name": "Heavy wavy", "image": "./assets/studio/charms/shape/square/design-frames/heavy-wavy.svg" },
+          { "id": "hearts", "name": "Hearts", "image": "./assets/studio/charms/shape/square/design-frames/hearts.svg" },
+          { "id": "filled-star", "name": "Filled star", "image": "./assets/studio/charms/shape/square/design-frames/filled-star.svg" },
+          { "id": "flash-flowers", "name": "Flash flowers", "image": "./assets/studio/charms/shape/square/design-frames/flash-flowers.svg" },
+          { "id": "leaves-clovers-hearts", "name": "Leaves & clovers", "image": "./assets/studio/charms/shape/square/design-frames/leaves-clovers-and-hearts.svg" }
+        ]
+      },
+      "artwork": {
+        "title": "Artwork",
+        "options": [
+          { "id": "none", "name": "None", "image": null },
+          { "id": "stars", "name": "Stars", "image": "./assets/studio/charms/artwork/stars.svg" },
+          { "id": "dancing-stars", "name": "Dancing stars", "image": "./assets/studio/charms/artwork/dancing-stars.svg" },
+          { "id": "montserra-star", "name": "Montserrat star", "image": "./assets/studio/charms/artwork/montserra-star.svg" },
+          { "id": "bow", "name": "Bow", "image": "./assets/studio/charms/artwork/bow.svg" },
+          { "id": "dog-paw", "name": "Dog paw", "image": "./assets/studio/charms/artwork/dog-paw.svg" },
+          { "id": "lucky-hearts", "name": "Lucky hearts", "image": "./assets/studio/charms/artwork/lucky-hearts.svg" },
+          { "id": "plain-clover", "name": "Clover", "image": "./assets/studio/charms/artwork/plain-clover.svg" },
+          { "id": "wish-bone", "name": "Wishbone", "image": "./assets/studio/charms/artwork/wish-bone.svg" },
+          { "id": "wildhouse-merch", "name": "Wildhouse", "image": "./assets/studio/charms/artwork/wildhouse-merch.svg" },
+          { "id": "spooky-surprise", "name": "Spooky surprise", "image": "./assets/studio/charms/artwork/spooky-surprise.svg" }
+        ]
+      },
+      "letters": {
+        "title": "Letter / text",
+        "body": "Pick an engraved letter, or type custom text for this side.",
+        "options": [
+          { "id": "none", "name": "None", "image": null },
+          { "id": "letter-r", "name": "R", "image": "./assets/studio/charms/artwork/letters/handdrawn/letter-r.svg" },
+          { "id": "custom", "name": "Type…", "image": null, "customText": true }
+        ]
+      }
     },
     {
       "id": "miniCharm",
-      "slot": "miniCharm",
-      "title": "Choose Mini Charm",
+      "step": 4,
+      "title": "4. Mini Charm",
       "body": "Attached with three jump rings from the clasp.",
       "enabled": true,
-      "selection": "single",
+      "layout": "chips",
       "options": [
         { "id": "star", "name": "Star", "image": "./assets/studio/mini/star.png" },
         { "id": "heart", "name": "Heart", "image": "./assets/studio/mini/heart.png" },
@@ -176,10 +183,18 @@
         { "id": "drop", "name": "Drop", "image": "./assets/studio/mini/drop.png" },
         { "id": "moon", "name": "Moon", "image": "./assets/studio/mini/moon.png" }
       ]
+    },
+    {
+      "id": "beads",
+      "step": 5,
+      "title": "5. Type Beads",
+      "body": "Spell your strand on the keyboard — up to 8 beads. Ends on a bead.",
+      "enabled": true,
+      "layout": "beadKeyboard",
+      "addonPrice": true
     }
   ],
   "miniClasps": {
-    "_comment": "Bead-strand mini clasp — only gold/silver, always matches the selected jump ring metal.",
     "gold": "./assets/studio/mini-clasps/gold-mini-clasp.png",
     "silver": "./assets/studio/mini-clasps/silver-mini-clasp.png"
   }
