@@ -1099,7 +1099,7 @@
   transform: rotate(12deg);
 }
 
-/* CENTER: 1 jump ring + main charm */
+/* CENTER: 1 jump ring + layered main charm (shape → artwork → border) */
 .studio-layer--main-ring {
   left: 45.5%;
   top: calc(22% + (var(--i) * 3.5%));
@@ -1108,13 +1108,40 @@
   z-index: 35;
   transform: rotate(3deg);
 }
-.studio-layer--main {
+.studio-main-charm {
+  position: absolute;
   left: 22%;
   top: 28%;
   width: 52%;
   height: 50%;
   z-index: 20;
   transform: rotate(3deg);
+  pointer-events: none;
+}
+.studio-main-charm .studio-layer {
+  position: absolute;
+  filter: none;
+}
+.studio-layer--main-shape {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  filter: drop-shadow(0 2px 3px rgba(60, 40, 30, 0.22));
+}
+/* Artwork sits inside the engraved border area */
+.studio-layer--main-artwork {
+  left: 18%;
+  top: 22%;
+  width: 64%;
+  height: 56%;
+  z-index: 2;
+}
+.studio-layer--main-border {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
 }
 
 /* RIGHT: mini clasp overlaps lobster hub; first jump ring overlaps mini clasp */

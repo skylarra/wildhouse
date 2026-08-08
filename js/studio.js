@@ -49,7 +49,7 @@ function designSummary() {
 }
 
 function variationLabel() {
-  const parts = ["clasp", "bead", "mainCharm"]
+  const parts = ["clasp", "bead", "mainShape", "mainArtwork", "mainBorder"]
     .map((id) => selectedOption(id)?.name)
     .filter(Boolean);
   return parts.join(" · ");
@@ -64,7 +64,7 @@ function preloadImages() {
   }
   // Bead-strand mini clasps (gold/silver) are not section options.
   for (const src of Object.values(config.miniClasps || {})) {
-    if (typeof src === "string" && src.endsWith(".png")) urls.add(src);
+    if (typeof src === "string" && /\.(png|svg|webp|jpe?g)$/i.test(src)) urls.add(src);
   }
   return Promise.all(
     [...urls].map(
@@ -120,7 +120,7 @@ function layerSlot(slot, extraClass = "", style = "") {
 /**
  * Stable preview DOM matching the reference assembly:
  * clasp hub → LEFT 3 jump rings + mini charm
- *           → CENTER 1 jump ring + main charm
+ *           → CENTER 1 jump ring + main charm (shape → artwork → border)
  *           → RIGHT mini clasp (gold/silver) then (jump ring → bead)… ending on a bead
  */
 function previewHTML() {
@@ -154,7 +154,11 @@ function previewHTML() {
           </div>
           <div class="studio-branch studio-branch--main" aria-hidden="true">
             ${mainRings}
-            ${layerSlot("mainCharm", "studio-layer--main")}
+            <div class="studio-main-charm">
+              ${layerSlot("mainShape", "studio-layer--main-shape")}
+              ${layerSlot("mainArtwork", "studio-layer--main-artwork")}
+              ${layerSlot("mainBorder", "studio-layer--main-border")}
+            </div>
           </div>
           <div class="studio-branch studio-branch--beads" aria-hidden="true">
             ${beadStrand.join("")}
@@ -250,7 +254,9 @@ function syncPreview({ animate = true } = {}) {
   const clasp = selectedOption("clasp");
   const ring = selectedOption("jumpRing");
   const bead = selectedOption("bead");
-  const main = selectedOption("mainCharm");
+  const shape = selectedOption("mainShape");
+  const border = selectedOption("mainBorder");
+  const artwork = selectedOption("mainArtwork");
   const mini = selectedOption("miniCharm");
 
   // Bead-strand mini clasp matches jump-ring metal (gold / silver only).
@@ -258,7 +264,9 @@ function syncPreview({ animate = true } = {}) {
   const miniClaspSrc = config.miniClasps?.[metal] || config.miniClasps?.gold || null;
 
   setLayerImage(root.querySelector('[data-slot="clasp"]'), clasp?.image, { animate });
-  setLayerImage(root.querySelector('[data-slot="mainCharm"]'), main?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="mainShape"]'), shape?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="mainArtwork"]'), artwork?.image, { animate });
+  setLayerImage(root.querySelector('[data-slot="mainBorder"]'), border?.image, { animate });
   setLayerImage(root.querySelector('[data-slot="miniCharm"]'), mini?.image, { animate });
   setLayerImage(root.querySelector('[data-slot="beadMiniClasp"]'), miniClaspSrc, { animate });
 
@@ -336,7 +344,7 @@ function wire() {
 
 function addDesignToCart() {
   const designId = `studio-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-  const main = selectedOption("mainCharm");
+  const shape = selectedOption("mainShape");
   addToCart(
     {
       variationId: designId,
@@ -346,7 +354,10 @@ function addDesignToCart() {
       variationName: variationLabel(),
       note: designSummary(),
       priceCents: priceCents(),
-      image: main?.image || selectedOption("clasp")?.image || "./assets/studio/clasps/gold-lobster-clasp.png",
+      image:
+        shape?.image ||
+        selectedOption("clasp")?.image ||
+        "./assets/studio/clasps/gold-lobster-clasp.png",
       handle: config.productHandle || "custom-keychain",
       studioDesign: { ...state },
     },
