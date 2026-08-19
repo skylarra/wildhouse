@@ -1,18 +1,44 @@
 {
-  "_comment": "Contact page. Edit intro/note copy here. The form is a component; connect it to a provider before launch.",
+  "_comment": "Contact page — simple channels for launch. Form opens a mailto draft to skylar@wildhouselane.com.",
   "title": "Contact",
+  "intro": "Say hello — whether you have a question about an order, a custom idea, or just want to share something kind.",
   "blocks": [
-    { "type": "note", "html": "Placeholder — replace copy and connect the form to a provider before launch." },
-    { "type": "paragraph", "html": "Questions about an order, a custom piece, or a vendor event? Send a note and we'll get back to you." }
+    {
+      "type": "paragraph",
+      "html": "The fastest way to reach me is email. You can also find Wildhouse Lane on social media."
+    }
+  ],
+  "channels": [
+    {
+      "label": "Email",
+      "value": "skylar@wildhouselane.com",
+      "href": "mailto:skylar@wildhouselane.com"
+    },
+    {
+      "label": "Instagram",
+      "value": "@wildhousemkt",
+      "href": "https://www.instagram.com/wildhousemkt/"
+    },
+    {
+      "label": "TikTok",
+      "value": "@wildhousemarket",
+      "href": "https://www.tiktok.com/@wildhousemarket"
+    },
+    {
+      "label": "Pinterest",
+      "value": "Wildhouse Lane",
+      "href": "https://www.pinterest.com/wildhouselane/"
+    }
   ],
   "form": {
-    "successMessage": "Thanks! Your message has been received.",
+    "heading": "Send a note",
+    "successMessage": "Your email app should open with a draft — press send when you’re ready.",
     "errorMessage": "Please fill in your name, a valid email, and a message.",
     "fields": {
       "name": "Name",
       "email": "Email",
       "message": "Message",
-      "submit": "Send message"
+      "submit": "Open email draft"
     }
   }
 }

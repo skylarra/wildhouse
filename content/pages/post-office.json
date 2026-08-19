@@ -1,8 +1,11 @@
 {
   "_comment": "Post Office landing (Phase 1 preview). Kit/ConvertKit integration arrives in Phase 6.",
   "title": "Post Office",
+  "archived": true,
+  "archiveNotice": "Post Office is temporarily archived for the September launch and will return after go-live.",
   "intro": "Two quiet ways to stay close to the studio — digital notes when something new blooms, and the occasional letter you can hold.",
   "blocks": [
+    { "type": "note", "html": "Post Office is temporarily archived for the September launch and will return after go-live." },
     { "type": "heading", "text": "Wildhouse Post" },
     {
       "type": "paragraph",

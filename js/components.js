@@ -143,16 +143,27 @@ function mountNewsletter(n) {
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
     if (!emailRe.test(input.value.trim())) {
       message.textContent = n.errorMessage;
       message.className = "newsletter__message is-error";
       input.focus();
       return;
     }
+    if (btn) {
+      btn.classList.add("is-loading");
+      btn.disabled = true;
+    }
     // UI only for now — no email provider connected yet.
-    message.textContent = n.successMessage;
-    message.className = "newsletter__message is-success";
-    form.reset();
+    window.setTimeout(() => {
+      message.textContent = n.successMessage;
+      message.className = "newsletter__message is-success";
+      form.reset();
+      if (btn) {
+        btn.classList.remove("is-loading");
+        btn.disabled = false;
+      }
+    }, 400);
   });
 }
 
@@ -185,7 +196,7 @@ function mountFooter(site) {
       ${columns}
     </div>
     <div class="footer-bottom">
-      <p>&copy; ${new Date().getFullYear()} ${escapeHtml(site.brand)}. All rights reserved.</p>
+      <p>Copyright ${new Date().getFullYear()} ${escapeHtml(site.brand)}</p>
     </div>`;
 }
 

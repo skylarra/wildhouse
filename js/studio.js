@@ -716,7 +716,11 @@ async function init() {
 
   initState();
   document.title = `${config.title} | Wildhouse Lane`;
-  root.innerHTML = shellHTML();
+  const archiveBanner =
+    config.archived && config.archiveNotice
+      ? `<p class="content-note archive-notice page-wrap" role="status"><em>${escapeHtml(config.archiveNotice)}</em></p>`
+      : "";
+  root.innerHTML = archiveBanner + shellHTML();
   wire();
   syncPreview({ animate: false });
   preloadImages();

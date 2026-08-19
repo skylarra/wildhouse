@@ -1,8 +1,11 @@
 {
   "_comment": "About page. Edit copy and blocks here. Block types: paragraph, heading, image, cta, note.",
   "title": "Our Story",
+  "archived": true,
+  "archiveNotice": "This standalone About page is archived for the September launch. The About story remains on the homepage.",
   "hero": { "src": "./assets/about-me-picture.png", "alt": "Skylar, founder of Wildhouse Lane" },
   "blocks": [
+    { "type": "note", "html": "Archived for the September launch — the About story remains on the homepage." },
     { "type": "note", "html": "Placeholder copy — replace before launch." },
     { "type": "paragraph", "html": "There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride." },
     { "type": "paragraph", "html": "Every piece is designed and finished by hand in South Carolina. 10% of all profits are donated to wildlife conservation efforts, and I share how much is donated along the way." },

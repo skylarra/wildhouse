@@ -13,7 +13,7 @@ function lineHTML(line) {
   const note = line.note ? `<p class="cart-line__note">${escapeHtml(line.note)}</p>` : "";
   const href =
     line.handle === "custom-keychain" || line.studioDesign
-      ? "./keychain-studio.html"
+      ? "./custom-creations.html"
       : `./product.html?handle=${encodeURIComponent(line.handle)}`;
   return `
     <div class="cart-line" data-variation-id="${line.variationId}">
@@ -40,10 +40,13 @@ function render() {
   const cart = getCart();
   if (!cart.length) {
     root.innerHTML = `
-      <div class="cart-empty">
-        <h1>Your cart is empty</h1>
-        <p>Find something handmade to love.</p>
-        <a class="btn secondary" href="./shop.html">Shop all products</a>
+      <div class="cart-empty empty-state">
+        <h1 class="empty-state__title">Your cart is empty</h1>
+        <p class="empty-state__body">Find something handmade to love — or browse collections for a little inspiration.</p>
+        <div class="empty-state__actions">
+          <a class="btn secondary" href="./shop.html">Shop all products</a>
+          <a class="btn" href="./collections.html">Browse collections</a>
+        </div>
       </div>`;
     return;
   }
@@ -109,6 +112,8 @@ async function startCheckout(button) {
 
   const originalLabel = button.textContent;
   button.disabled = true;
+  button.classList.add("is-loading");
+  button.setAttribute("aria-busy", "true");
   button.textContent = "Redirecting…";
 
   try {
@@ -133,6 +138,8 @@ async function startCheckout(button) {
   } catch (err) {
     console.error(err);
     button.disabled = false;
+    button.classList.remove("is-loading");
+    button.removeAttribute("aria-busy");
     button.textContent = originalLabel;
     toast("Checkout isn't available yet. Please try again soon.");
   }

@@ -1,0 +1,85 @@
+{
+  "_comment": "Terms of Service for Wildhouse Lane. Not legal advice — review before launch.",
+  "title": "Terms of Service",
+  "intro": "Welcome to Wildhouse Lane. By browsing or purchasing from wildhouselane.com, you agree to these Terms of Service.",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "<em>Last updated: August 2026</em>"
+    },
+    { "type": "heading", "text": "The short version", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Wildhouse Lane sells handmade goods. Please order thoughtfully, allow time for making and shipping, and treat the artwork and website content as protected creative work."
+    },
+    { "type": "heading", "text": "Handmade products", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Products are designed and handmade by Wildhouse Lane. Materials, finishes, and techniques may evolve as the studio grows. Product pages describe each item as accurately as possible at the time of listing."
+    },
+    { "type": "heading", "text": "Product variation", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Because items are handmade, natural variation is expected. Wood grain, engraving depth, color, texture, and small dimensional differences can vary from photos and from piece to piece. These variations are part of the handmade character of the work and are not considered defects."
+    },
+    { "type": "heading", "text": "Orders and pricing", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "By placing an order, you offer to purchase the listed items at the prices shown at checkout, plus any applicable taxes and shipping. We reserve the right to refuse or cancel an order due to pricing errors, stock issues, suspected fraud, or other reasonable concerns. If we cancel a paid order, you will receive a refund."
+    },
+    { "type": "heading", "text": "Order cancellation", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "If you need to cancel, email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> as soon as possible. If production has not begun, we will do our best to cancel and refund. Once a piece is in production—especially custom or personalized work—cancellation may not be available."
+    },
+    { "type": "heading", "text": "Shipping, returns, and lost packages", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Processing times, return eligibility, and lost-package handling are described in our <a href=\"./shipping-returns.html\">Shipping &amp; Returns</a> policy, which forms part of these Terms."
+    },
+    { "type": "heading", "text": "Intellectual property", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "All original artwork, product designs, logos, photographs, and website content belonging to Wildhouse Lane are protected by copyright and other intellectual property laws. You may not copy, reproduce, redistribute, or create derivative works from Wildhouse Lane designs or site content without prior written permission."
+    },
+    { "type": "heading", "text": "Customer-submitted designs", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "If you request a custom piece or submit artwork, text, or logos for personalization, you confirm that you have the right to use that material. You agree that Wildhouse Lane is not responsible for intellectual-property claims arising from content you provide."
+    },
+    { "type": "heading", "text": "Acceptable use", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "You agree not to misuse the website, attempt unauthorized access, interfere with site operations, or use the site for unlawful purposes."
+    },
+    { "type": "heading", "text": "Limitation of liability", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "To the fullest extent permitted by law, Wildhouse Lane is not liable for indirect, incidental, special, consequential, or punitive damages arising from your use of the site or products. Our total liability related to any order is limited to the amount you paid for that order."
+    },
+    {
+      "type": "paragraph",
+      "html": "Nothing in these Terms limits rights that cannot be limited under applicable law."
+    },
+    { "type": "heading", "text": "Disclaimer", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "The website and products are provided “as is” and “as available.” While we work hard to keep information accurate, we do not guarantee that the site will be uninterrupted or error-free."
+    },
+    { "type": "heading", "text": "Governing law", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "These Terms are governed by the laws of the United States and the state in which Wildhouse Lane principally operates, without regard to conflict-of-law rules. Any disputes will be handled in courts located in that jurisdiction, unless applicable law requires otherwise."
+    },
+    { "type": "heading", "text": "Changes", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "We may update these Terms from time to time. The “Last updated” date will change when we do. Continued use of the site after changes means you accept the updated Terms."
+    },
+    { "type": "heading", "text": "Contact", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Questions about these Terms? Email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a>."
+    }
+  ]
+}

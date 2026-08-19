@@ -1,10 +1,15 @@
 {
-  "_comment": "Global site content. Edit brand text, the announcement bar, navigation, footer, and social links here. Collection order, descriptions, heroes, and featured flags live in content/collections.json. collectionOrder below is a legacy fallback only.",
+  "_comment": "Global site content. Launch nav/footer hide Studio, Post Office, and standalone About (pages kept, noindexed). Homepage About section remains.",
   "brand": "Wildhouse Lane",
   "tagline": "Handmade goods for people who love spooky nature art.",
   "domain": "https://wildhouselane.com",
-  "email": "hello@wildhouselane.com",
+  "email": "skylar@wildhouselane.com",
   "freeShippingThresholdCents": 7500,
+  "archivedPages": [
+    "./keychain-studio.html",
+    "./post-office.html",
+    "./about.html"
+  ],
   "logos": {
     "submark": "./assets/WILDHOUSE-submark.svg",
     "wordmark": "./assets/WILDHOUSE-WordMark.svg",
@@ -15,47 +20,57 @@
     "rotateMs": 4500,
     "messages": [
       "Free shipping on orders over $75",
-      "New Collection Available",
-      "Vendor Event This Weekend"
+      "Handmade with care — please allow 2–3 weeks for processing",
+      "10% of profits support wildlife conservation"
     ]
   },
   "nav": [
     { "label": "SHOP", "href": "./shop.html" },
     { "label": "COLLECTIONS", "href": "./collections.html" },
-    { "label": "STUDIO", "href": "./keychain-studio.html" },
-    { "label": "ABOUT", "href": "./about.html" },
-    { "label": "POST OFFICE", "href": "./post-office.html" }
+    { "label": "CUSTOM", "href": "./custom-creations.html" },
+    { "label": "CONTACT", "href": "./contact.html" }
   ],
   "footerLinks": [
     {
       "heading": "Shop",
       "links": [
-        { "label": "All Products", "href": "./shop.html" },
+        { "label": "Shop", "href": "./shop.html" },
         { "label": "Collections", "href": "./collections.html" },
-        { "label": "Keychain Studio", "href": "./keychain-studio.html" },
-        { "label": "Custom Creations", "href": "./custom-creations.html" },
-        { "label": "Events", "href": "./events.html" }
+        { "label": "Custom Creations", "href": "./custom-creations.html" }
       ]
     },
     {
-      "heading": "About",
+      "heading": "Help",
       "links": [
-        { "label": "Our Story", "href": "./about.html" },
-        { "label": "Post Office", "href": "./post-office.html" },
-        { "label": "Contact", "href": "./contact.html" },
-        { "label": "FAQs", "href": "./faqs.html" }
+        { "label": "FAQ", "href": "./faqs.html" },
+        { "label": "Shipping & Returns", "href": "./shipping-returns.html" },
+        { "label": "Contact", "href": "./contact.html" }
       ]
     },
     {
-      "heading": "Info",
+      "heading": "Policies",
       "links": [
-        { "label": "Shipping & Policies", "href": "./policies.html" }
+        { "label": "Privacy Policy", "href": "./privacy.html" },
+        { "label": "Terms of Service", "href": "./terms.html" }
       ]
     }
   ],
   "social": [
-    { "label": "Instagram @wildhousemkt", "href": "https://www.instagram.com/wildhousemkt/", "icon": "./assets/social1.svg" },
-    { "label": "TikTok @wildhousemarket", "href": "https://www.tiktok.com/@wildhousemarket", "icon": "./assets/social2.svg" }
+    {
+      "label": "Instagram @wildhousemkt",
+      "href": "https://www.instagram.com/wildhousemkt/",
+      "icon": "./assets/social1.svg"
+    },
+    {
+      "label": "TikTok @wildhousemarket",
+      "href": "https://www.tiktok.com/@wildhousemarket",
+      "icon": "./assets/social2.svg"
+    },
+    {
+      "label": "Pinterest Wildhouse Lane",
+      "href": "https://www.pinterest.com/wildhouselane/",
+      "icon": "./assets/social-pinterest.svg"
+    }
   ],
   "newsletter": {
     "heading": "Join the Club",

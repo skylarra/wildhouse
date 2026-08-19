@@ -4,5 +4,11 @@ Disallow: /cart.html
 Disallow: /cart
 Disallow: /order-confirmation.html
 Disallow: /order-confirmation
+Disallow: /about.html
+Disallow: /about
+Disallow: /post-office.html
+Disallow: /post-office
+Disallow: /keychain-studio.html
+Disallow: /keychain-studio
 
 Sitemap: https://wildhouselane.com/sitemap.xml

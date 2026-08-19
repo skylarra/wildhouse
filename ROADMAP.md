@@ -20,28 +20,27 @@ Future: live personalization preview.
 
 ---
 
-## Phase 4 — Keychain Studio ✅ / in progress
+## Phase 4 — Keychain Studio (archived for Sept 11 launch)
 
-Premium PNG-layer configurator (4:5 product-photo preview):
+Premium PNG-layer configurator remains in the repo (`keychain-studio.html`, `content/studio.json`, `js/studio.js`) but is temporarily removed from navigation, sitemap, and robots Allow for launch. Restore after go-live.
 
-- Clasp · Jump ring · Beads · Main charm (shape + artwork + engraved border) · Mini charm
-- Data-driven `content/studio.json` + assets in `assets/studio/`
-- Partial layer crossfades, stable mobile chips, no scroll jump
-- Adds **Build Your Own Charm Set** to cart with design note (checkout unchanged)
+---
 
-Future: save/share designs, auto-generated names, extra bead rows / ribbons / seasonal accessories.
+## Launch Sprint — September 11 ✅ / polish
+
+Customer-trust pages and storefront polish for launch: Contact, FAQ, Shipping & Returns, Privacy, Terms; SEO; empty/loading states; finalized footer. Experimental features (Studio, Post Office, standalone About) archived—not deleted.
 
 ---
 
 ## Phase 5 — Custom Creations
 
-Inquiry form for fully custom projects (details, budget, uploads) with email notify + thank-you page.
+Inquiry form for fully custom projects (details, budget, uploads) with email notify + thank-you page. Launch path: Contact / mailto until the form ships.
 
 ---
 
-## Phase 6 — Post Office
+## Phase 6 — Post Office (archived for Sept 11 launch)
 
-Wildhouse Post (email) + Snail Mail list. Future: Kit/ConvertKit.
+Wildhouse Post (email) + Snail Mail list. Future: Kit/ConvertKit. Page kept offline from nav until after launch.
 
 ---
 
@@ -53,7 +52,7 @@ A Little Note expansion, Random Happy Mail, Back-in-Stock notifications.
 
 ## Phase 8 — About Wildhouse Lane
 
-Story, workspace photos, values, handmade process — short and personal.
+Homepage welcome/About section is live. Standalone About page archived for launch; restore/expand with workspace photos after go-live.
 
 ---
 

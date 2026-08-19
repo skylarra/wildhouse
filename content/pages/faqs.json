@@ -1,15 +1,112 @@
 {
-  "_comment": "FAQs page. Edit questions/answers in the faqs block.",
-  "title": "FAQs",
+  "_comment": "FAQ page for launch. Grouped by section headings + faqs blocks.",
+  "title": "FAQ",
+  "intro": "Quick answers about orders, shipping, returns, custom work, and caring for your handmade pieces.",
   "blocks": [
-    { "type": "note", "html": "Placeholder answers — replace before launch." },
+    { "type": "heading", "text": "Orders", "level": 2 },
     {
       "type": "faqs",
       "items": [
-        { "q": "When will my order ship?", "a": "Orders are handmade to order and typically ship within 3–5 business days." },
-        { "q": "Do you offer free shipping?", "a": "Yes — free shipping on orders over $75." },
-        { "q": "Can I return or exchange an item?", "a": "See our <a href=\"./policies.html\">Shipping &amp; Policies</a> page for full details." },
-        { "q": "Do you do custom pieces or vendor events?", "a": "Yes! Reach out through the <a href=\"./contact.html\">Contact</a> page." }
+        {
+          "q": "How do I place an order?",
+          "a": "Browse the <a href=\"./shop.html\">shop</a>, add items to your cart, and check out securely through Square. You’ll receive an order confirmation by email."
+        },
+        {
+          "q": "Can I change or cancel my order?",
+          "a": "If your order hasn’t entered production yet, email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> as soon as possible. Once production has started, changes may not be possible."
+        },
+        {
+          "q": "Will I receive a tracking number?",
+          "a": "Yes — when your order ships, you’ll receive shipping details and tracking information by email when the carrier provides them."
+        }
+      ]
+    },
+    { "type": "heading", "text": "Shipping", "level": 2 },
+    {
+      "type": "faqs",
+      "items": [
+        {
+          "q": "How long does processing take?",
+          "a": "Please allow up to 2–3 weeks for processing. Handmade pieces are made to order with care, and timelines can vary during busy seasons."
+        },
+        {
+          "q": "Which carrier do you use?",
+          "a": "Orders ship using the carrier that provides the best service and value for your destination."
+        },
+        {
+          "q": "Do you offer free shipping?",
+          "a": "Yes — free shipping is available on qualifying orders over $75 within the supported shipping region."
+        }
+      ]
+    },
+    { "type": "heading", "text": "Returns", "level": 2 },
+    {
+      "type": "faqs",
+      "items": [
+        {
+          "q": "Can I return an item if I change my mind?",
+          "a": "Handmade items are not eligible for returns due to change of mind. Please review product details carefully before ordering."
+        },
+        {
+          "q": "What if my order arrives damaged or incorrect?",
+          "a": "Please report damaged or incorrect orders within 7 days of delivery by emailing <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> with your order number and photos."
+        }
+      ]
+    },
+    { "type": "heading", "text": "Custom Orders", "level": 2 },
+    {
+      "type": "faqs",
+      "items": [
+        {
+          "q": "Do you take custom requests?",
+          "a": "Yes. Visit <a href=\"./custom-creations.html\">Custom Creations</a> to share your idea, and we’ll talk materials, size, and timeline."
+        },
+        {
+          "q": "Are custom pieces returnable?",
+          "a": "Custom and personalized pieces are made specifically for you and are not eligible for return unless they arrive damaged or incorrect."
+        }
+      ]
+    },
+    { "type": "heading", "text": "Handmade Products", "level": 2 },
+    {
+      "type": "faqs",
+      "items": [
+        {
+          "q": "Will my piece look exactly like the photos?",
+          "a": "Each piece is handmade, so small variations in wood grain, finish, engraving, and color are part of what makes it unique. Photos are a close guide, not an identical copy."
+        },
+        {
+          "q": "Are your products made by you?",
+          "a": "Yes. Wildhouse Lane goods are designed and made by Skylar, with care for materials, wildlife-inspired art, and lasting quality."
+        }
+      ]
+    },
+    { "type": "heading", "text": "Product Care", "level": 2 },
+    {
+      "type": "faqs",
+      "items": [
+        {
+          "q": "How should I care for wood charms and keychains?",
+          "a": "Keep wood pieces dry and away from prolonged moisture or extreme heat. Wipe gently with a soft, dry cloth when needed."
+        },
+        {
+          "q": "Can stickers and patches get wet?",
+          "a": "Treat stickers and patches as indoor / everyday accessories unless a product page says otherwise. Avoid soaking and harsh scrubbing."
+        }
+      ]
+    },
+    { "type": "heading", "text": "Contact", "level": 2 },
+    {
+      "type": "faqs",
+      "items": [
+        {
+          "q": "How can I get in touch?",
+          "a": "Email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> or visit the <a href=\"./contact.html\">Contact</a> page for social links."
+        },
+        {
+          "q": "Where can I read your policies?",
+          "a": "See <a href=\"./shipping-returns.html\">Shipping &amp; Returns</a>, <a href=\"./privacy.html\">Privacy Policy</a>, and <a href=\"./terms.html\">Terms of Service</a>."
+        }
       ]
     }
   ]
