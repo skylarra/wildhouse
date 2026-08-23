@@ -1,0 +1,79 @@
+{
+  "_comment": "Privacy Policy for a small handmade ecommerce shop using Square. Not legal advice — review before launch.",
+  "title": "Privacy Policy",
+  "intro": "This Privacy Policy explains how Wildhouse Lane collects, uses, and cares for your information when you shop or visit wildhouselane.com.",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "html": "<em>Last updated: August 2026</em>"
+    },
+    { "type": "heading", "text": "Who we are", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Wildhouse Lane (“we,” “us”) is a small handmade ecommerce business operated by Skylar. You can reach us at <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a>."
+    },
+    { "type": "heading", "text": "Information we collect", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Depending on how you use the site, we may collect:"
+    },
+    {
+      "type": "paragraph",
+      "html": "<ul><li><strong>Contact details</strong> such as your name, email address, and shipping address when you place an order or contact us.</li><li><strong>Order details</strong> such as the items purchased, order notes, and communication related to your order.</li><li><strong>Payment information</strong> processed securely by Square (we do not store full payment card numbers on our servers).</li><li><strong>Email signup information</strong> if you join our mailing list.</li><li><strong>Basic technical data</strong> such as browser type, device type, and pages visited, which may be collected through hosting analytics or similar tools.</li></ul>"
+    },
+    { "type": "heading", "text": "Payment processing through Square", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Checkout and payments are handled by <strong>Square</strong>. When you pay, Square processes your payment information according to Square’s own privacy policy and security practices. Wildhouse Lane receives order and fulfillment details needed to complete your purchase, but does not receive or store your full card number."
+    },
+    { "type": "heading", "text": "How we use your information", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "We use your information to:"
+    },
+    {
+      "type": "paragraph",
+      "html": "<ul><li>Process and fulfill orders</li><li>Communicate about shipping, questions, or order issues</li><li>Improve the website and shopping experience</li><li>Send email updates if you have opted in</li><li>Meet legal, tax, and accounting requirements</li></ul>"
+    },
+    { "type": "heading", "text": "Cookies and similar technologies", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Our storefront may use cookies or local browser storage for essential shopping features (for example, remembering your cart, favorites, and basic preferences). These help the site work as expected. If additional analytics or marketing cookies are added later, we will update this policy."
+    },
+    { "type": "heading", "text": "Email signup", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "If you join our newsletter or mailing list, we use your email to send studio notes, launches, and related updates. You can unsubscribe at any time using the link in an email or by contacting us."
+    },
+    { "type": "heading", "text": "Sharing your information", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "We do not sell your personal information. We may share information with trusted service providers who help us run the shop—such as Square for payments and checkout, email tools for newsletters, and shipping carriers for delivery. These providers may only use your information to perform services for us."
+    },
+    { "type": "heading", "text": "Data retention", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "We keep order and customer records as long as needed for fulfillment, customer support, legal obligations, and business records. You may ask us about the information we hold related to your orders."
+    },
+    { "type": "heading", "text": "Your rights", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Depending on where you live, you may have rights to access, correct, or delete certain personal information, or to opt out of marketing emails. To make a request, email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a>. We may need to verify your request before responding."
+    },
+    { "type": "heading", "text": "Children’s privacy", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Wildhouse Lane is not directed to children under 13, and we do not knowingly collect personal information from children under 13."
+    },
+    { "type": "heading", "text": "Changes to this policy", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "We may update this Privacy Policy from time to time. The “Last updated” date at the top will change when we do. Continued use of the site after an update means you acknowledge the revised policy."
+    },
+    { "type": "heading", "text": "Contact", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Questions about privacy? Email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> or visit our <a href=\"./contact.html\">Contact</a> page."
+    }
+  ]
+}

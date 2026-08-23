@@ -5,7 +5,7 @@ import {
   getProducts,
   queryProducts,
 } from "./catalog.js";
-import { productCardHTML, wireFavorites, escapeHtml } from "./ui.js";
+import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml } from "./ui.js";
 
 const mount = document.getElementById("collection-page");
 const state = { sort: "featured" };
@@ -42,10 +42,19 @@ function renderProducts() {
     sort: state.sort,
   });
   if (!results.length) {
-    grid.innerHTML = `<p class="empty">No products in this collection yet.</p>`;
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h2 class="empty-state__title">This collection is empty</h2>
+        <p class="empty-state__body">Nothing is listed here yet. Explore other collections or the full shop.</p>
+        <div class="empty-state__actions">
+          <a class="btn secondary" href="./collections.html">All collections</a>
+          <a class="btn" href="./shop.html">Shop all</a>
+        </div>
+      </div>`;
   } else {
     grid.innerHTML = results.map(productCardHTML).join("");
     wireFavorites(grid);
+    wireImagePlaceholders(grid);
   }
   if (countEl) {
     countEl.textContent = `${results.length} ${results.length === 1 ? "piece" : "pieces"}`;
@@ -103,9 +112,20 @@ async function init() {
   if (!mount) return;
   const handle = handleFromUrl();
   if (!handle) {
-    mount.innerHTML = `<div class="page-wrap"><p class="error">No collection selected. <a href="./collections.html">Browse all collections</a>.</p></div>`;
+    mount.innerHTML = `<div class="page-wrap">
+      <div class="empty-state">
+        <h2 class="empty-state__title">No collection selected</h2>
+        <p class="empty-state__body">Pick a collection to browse handmade pieces by theme.</p>
+        <div class="empty-state__actions">
+          <a class="btn secondary" href="./collections.html">Browse collections</a>
+        </div>
+      </div>
+    </div>`;
     return;
   }
+
+  mount.innerHTML = `<div class="page-wrap"><div class="skeleton-grid" aria-hidden="true">${Array.from({ length: 8 }, () => `
+    <div class="skeleton-card"><div class="skeleton-card__media"></div><div class="skeleton-card__line"></div><div class="skeleton-card__line skeleton-card__line--short"></div></div>`).join("")}</div></div>`;
 
   try {
     [collection, products] = await Promise.all([
@@ -113,13 +133,31 @@ async function init() {
       getProducts(),
     ]);
   } catch (err) {
-    mount.innerHTML = `<div class="page-wrap"><p class="error">Could not load this collection right now.</p></div>`;
+    mount.innerHTML = `<div class="page-wrap">
+      <div class="empty-state">
+        <h2 class="empty-state__title">Couldn’t load this collection</h2>
+        <p class="empty-state__body">Please try again in a moment.</p>
+        <div class="empty-state__actions">
+          <a class="btn secondary" href="./collections.html">All collections</a>
+          <a class="btn" href="./shop.html">Shop all</a>
+        </div>
+      </div>
+    </div>`;
     console.error(err);
     return;
   }
 
   if (!collection) {
-    mount.innerHTML = `<div class="page-wrap"><p class="empty">We couldn't find that collection. <a href="./collections.html">See what's available</a>.</p></div>`;
+    mount.innerHTML = `<div class="page-wrap">
+      <div class="empty-state">
+        <h2 class="empty-state__title">Collection not found</h2>
+        <p class="empty-state__body">That collection may have moved. See what’s available now.</p>
+        <div class="empty-state__actions">
+          <a class="btn secondary" href="./collections.html">See collections</a>
+          <a class="btn" href="./shop.html">Shop all</a>
+        </div>
+      </div>
+    </div>`;
     return;
   }
 

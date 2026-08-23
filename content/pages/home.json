@@ -23,14 +23,6 @@
   },
   "previews": [
     {
-      "id": "keychain-studio",
-      "eyebrow": "Build your own",
-      "heading": "Keychain Studio",
-      "body": "Build your own charm set — clasp, rings, beads, and charms — with a live product-style preview.",
-      "cta": { "label": "Open Keychain Studio", "href": "./keychain-studio.html" },
-      "image": { "src": "./assets/coming-soon.png", "alt": "Handmade keychain charms" }
-    },
-    {
       "id": "custom-creations",
       "eyebrow": "Made just for you",
       "heading": "Custom Creations",
@@ -39,19 +31,27 @@
       "image": { "src": "./assets/coming-soon.png", "alt": "Custom handmade piece" }
     },
     {
-      "id": "post-office",
-      "eyebrow": "Stay connected",
-      "heading": "Post Office",
-      "body": "Join Wildhouse Post for studio notes and launches — or the snail mail list for occasional postcards and small surprises.",
-      "cta": { "label": "Visit the Post Office", "href": "./post-office.html" },
-      "image": { "src": "./assets/coming-soon.png", "alt": "Studio notes and mail" }
+      "id": "collections",
+      "eyebrow": "Explore",
+      "heading": "Collections",
+      "body": "Browse keychains, stickers, suncatchers, and more — grouped into little woodland corners of the shop.",
+      "cta": { "label": "View collections", "href": "./collections.html" },
+      "image": { "src": "./assets/coming-soon.png", "alt": "Wildhouse Lane collections" }
+    },
+    {
+      "id": "contact",
+      "eyebrow": "Say hello",
+      "heading": "Contact",
+      "body": "Questions about an order or a custom idea? Reach out by email or find Wildhouse Lane on social.",
+      "cta": { "label": "Get in touch", "href": "./contact.html" },
+      "image": { "src": "./assets/coming-soon.png", "alt": "Contact Wildhouse Lane" }
     }
   ],
   "welcome": {
     "eyebrow": "Welcome, Friend",
     "heading": "Hi, I'm Skylar!",
     "body": "There are two things I have always wanted to be: an artist and a wildlife conservationist. Wildhouse Lane is my way of living both dreams in hopes people will come along for the ride. 10% of all profits will be donated to wildlife conservation efforts and I can't wait to share how much is donated along the way.",
-    "cta": { "label": "Read our story", "href": "./about.html" },
+    "cta": { "label": "Say hello", "href": "./contact.html" },
     "primaryImage": { "src": "./assets/about-me-picture.png", "alt": "Skylar, founder of Wildhouse Lane" },
     "secondaryImage": { "src": "./assets/welcome1.jpg", "alt": "Handmade Wildhouse Lane goods" }
   },

@@ -18,8 +18,8 @@ export function productCardHTML(product) {
   return `
     <article class="product-card" data-item-id="${product.id}">
       <a class="product-card__link" href="./product.html?handle=${encodeURIComponent(product.handle)}">
-        <div class="product-card__media">
-          <img src="${img}" alt="${escapeHtml(product.name)}" loading="lazy">
+        <div class="product-card__media img-placeholder">
+          <img src="${img}" alt="${escapeHtml(product.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
           ${soldOut}
         </div>
         <h3>${escapeHtml(product.name)}</h3>
@@ -29,6 +29,28 @@ export function productCardHTML(product) {
         data-item-id="${product.id}" aria-pressed="${fav}"
         aria-label="${fav ? "Remove from" : "Add to"} favorites">&#9829;</button>
     </article>`;
+}
+
+/** Remove shimmer placeholders once images load (or fall back on error). */
+export function wireImagePlaceholders(container) {
+  if (!container) return;
+  container.querySelectorAll(".img-placeholder img").forEach((img) => {
+    const parent = img.closest(".img-placeholder");
+    const done = () => parent?.classList.remove("img-placeholder");
+    const onError = () => {
+      const fallback = img.dataset.fallback || FALLBACK_IMG;
+      if (img.src && !img.src.endsWith(fallback.replace("./", ""))) {
+        img.src = fallback;
+      }
+      done();
+    };
+    if (img.complete && img.naturalWidth > 0) {
+      done();
+      return;
+    }
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", onError, { once: true });
+  });
 }
 
 // Delegate favorite clicks for any container that holds product cards.
@@ -173,8 +195,8 @@ export function collectionCardHTML(collection) {
     : `<p>${collection.count} ${collection.count === 1 ? "product" : "products"}</p>`;
   return `
     <a class="collection-card" href="./collection.html?handle=${encodeURIComponent(collection.handle)}">
-      <div class="collection-card__media">
-        <img src="${collection.image}" alt="${escapeHtml(collection.name)}" loading="lazy">
+      <div class="collection-card__media img-placeholder">
+        <img src="${collection.image}" alt="${escapeHtml(collection.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
       </div>
       <h3>${escapeHtml(collection.name)}</h3>
       ${blurb}

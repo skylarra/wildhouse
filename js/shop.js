@@ -1,6 +1,6 @@
 // Shop page — search, category filter, sort, and product grid rendered from the catalog.
 import { getProducts, getCollections, queryProducts } from "./catalog.js";
-import { productCardHTML, wireFavorites } from "./ui.js";
+import { productCardHTML, wireFavorites, wireImagePlaceholders } from "./ui.js";
 
 const state = { search: "", category: "all", sort: "featured" };
 let allProducts = [];
@@ -11,13 +11,43 @@ const searchInput = document.getElementById("shop-search");
 const sortSelect = document.getElementById("shop-sort");
 const categoryList = document.getElementById("category-list");
 
+function emptyStateHTML({ title, body, primary, secondary }) {
+  const second = secondary
+    ? `<a class="btn" href="${secondary.href}">${secondary.label}</a>`
+    : "";
+  return `
+    <div class="empty-state">
+      <h2 class="empty-state__title">${title}</h2>
+      <p class="empty-state__body">${body}</p>
+      <div class="empty-state__actions">
+        <a class="btn secondary" href="${primary.href}">${primary.label}</a>
+        ${second}
+      </div>
+    </div>`;
+}
+
+function skeletonGridHTML(count = 8) {
+  return `<div class="skeleton-grid" aria-hidden="true">${Array.from({ length: count }, () => `
+    <div class="skeleton-card">
+      <div class="skeleton-card__media"></div>
+      <div class="skeleton-card__line"></div>
+      <div class="skeleton-card__line skeleton-card__line--short"></div>
+    </div>`).join("")}</div>`;
+}
+
 function render() {
   const results = queryProducts(allProducts, state);
   if (!results.length) {
-    grid.innerHTML = `<p class="empty">No products match your search. Try clearing filters.</p>`;
+    grid.innerHTML = emptyStateHTML({
+      title: "No products match",
+      body: "Try a different search, clear filters, or browse everything in the shop.",
+      primary: { href: "./shop.html", label: "Clear filters" },
+      secondary: { href: "./collections.html", label: "Browse collections" },
+    });
   } else {
     grid.innerHTML = results.map(productCardHTML).join("");
     wireFavorites(grid);
+    wireImagePlaceholders(grid);
   }
   if (countEl) {
     countEl.textContent = `${results.length} ${results.length === 1 ? "product" : "products"}`;
@@ -69,10 +99,16 @@ function initFromUrl() {
 }
 
 async function init() {
+  if (grid) grid.innerHTML = skeletonGridHTML(8);
   try {
     allProducts = await getProducts();
   } catch (err) {
-    grid.innerHTML = `<p class="error">Could not load products right now.</p>`;
+    grid.innerHTML = emptyStateHTML({
+      title: "Shop is taking a rest",
+      body: "We couldn’t load products right now. Please try again in a moment.",
+      primary: { href: "./index.html", label: "Back to home" },
+      secondary: { href: "./contact.html", label: "Contact us" },
+    });
     console.error(err);
     return;
   }

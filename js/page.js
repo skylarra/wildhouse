@@ -71,6 +71,9 @@ export async function renderContentPage(container) {
   }
 
   const parts = [];
+  if (page.archived && page.archiveNotice) {
+    parts.push(`<p class="content-note archive-notice" role="status"><em>${escapeHtml(page.archiveNotice)}</em></p>`);
+  }
   if (page.title) parts.push(`<h1 class="page-title">${escapeHtml(page.title)}</h1>`);
   if (page.hero) parts.push(`<img class="prose-hero" src="${page.hero.src}" alt="${escapeHtml(page.hero.alt || "")}">`);
   if (page.intro) parts.push(`<p class="prose-intro">${page.intro}</p>`);

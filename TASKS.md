@@ -1,20 +1,25 @@
 # Current Sprint
 
-## Phase 4 — Studio UX: front/back, bead keyboard, mobile
+## Launch Sprint — September 11
 
 ### Done
-- Step order: 1 Clasp · 2 Jump ring · 3 Main charm · 4 Mini charm · 5 Type beads
-- Main charm front **and** back: border, artwork, letter / typed text
-- No-border option; Spooky surprise moved to artwork
-- QWERTY-style bead keyboard (compact, mobile-friendly)
-- More natural hang composition + tighter mobile sticky preview
+- Archived Keychain Studio, Post Office, and standalone About (pages kept, noindexed, removed from nav/sitemap)
+- Homepage About / welcome section retained
+- Contact page with email + Instagram / TikTok / Pinterest
+- FAQ page (Orders, Shipping, Returns, Custom Orders, Handmade, Care, Contact)
+- Shipping & Returns policy page
+- Privacy Policy + Terms of Service
+- Footer: Shop, Collections, Custom Creations, FAQ, Shipping & Returns, Privacy, Terms, Contact, socials, copyright
+- SEO: titles, meta, OG, favicons, canonicals, FAQ/Organization structured data, sitemap, robots
+- Empty states (shop search, collections, cart) + product/collection skeletons and button loading
+- Image placeholders on product/collection cards
 
-### Still open
-- More engraved letter SVGs beyond handdrawn R (Type… covers custom text for now)
-- More charm shapes beyond square maple/walnut
-
-### Ops
-- Point `catalogVariationId` at the Square “Build Your Own Charm Set” variation
+### Still open (ops / launch blockers)
+- Confirm live Pinterest URL if different from `pinterest.com/wildhouselane`
+- Connect newsletter provider (UI-only signup today)
+- Square production credentials after sandbox QA
+- Live checkout + order-confirmation end-to-end on production domain
+- Legal review of Privacy + Terms before publish
 
 ---
 

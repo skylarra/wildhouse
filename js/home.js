@@ -3,7 +3,7 @@
 import { getFeatured, getProducts, getFeaturedCollections } from "./catalog.js";
 import { loadPage, loadJSON } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
-import { productCardHTML, wireFavorites, escapeHtml, collectionCardHTML } from "./ui.js";
+import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml, collectionCardHTML } from "./ui.js";
 
 function ctaHTML(cta, cls = "btn secondary") {
   return cta ? `<a class="${cls}" href="${cta.href}">${escapeHtml(cta.label)}</a>` : "";
@@ -161,6 +161,7 @@ async function renderFeatured() {
     const featured = await getFeatured(4);
     grid.innerHTML = featured.map(productCardHTML).join("");
     wireFavorites(grid);
+    wireImagePlaceholders(grid);
   } catch (err) {
     grid.innerHTML = `<p class="error">Could not load products right now.</p>`;
     console.error(err);
@@ -183,6 +184,7 @@ async function renderHomeCollections(cfg = {}) {
     if (heading && cfg.heading) heading.textContent = cfg.heading;
     if (cta) cta.innerHTML = ctaHTML(cfg.cta);
     grid.innerHTML = featured.map(collectionCardHTML).join("");
+    wireImagePlaceholders(grid);
     section.hidden = false;
   } catch (err) {
     section.hidden = true;
@@ -203,6 +205,7 @@ async function renderRecentlyViewed(heading) {
   if (headingEl && heading) headingEl.textContent = heading;
   grid.innerHTML = items.map(productCardHTML).join("");
   wireFavorites(grid);
+  wireImagePlaceholders(grid);
   section.hidden = false;
 }
 

@@ -1,13 +1,20 @@
 {
-  "_comment": "Shipping & Policies page. Replace with final, legally reviewed copy before launch.",
-  "title": "Shipping & Policies",
+  "_comment": "Policies hub — points to dedicated launch policy pages.",
+  "title": "Policies",
+  "intro": "Everything you need about shopping with Wildhouse Lane.",
   "blocks": [
-    { "type": "note", "html": "Placeholder policies — replace with final, legally reviewed copy before launch." },
-    { "type": "heading", "text": "Shipping" },
-    { "type": "paragraph", "html": "Orders are handmade to order and typically ship within 3–5 business days. Free shipping on orders over $75." },
-    { "type": "heading", "text": "Returns & Exchanges" },
-    { "type": "paragraph", "html": "Reach out within 14 days of delivery for returns or exchanges on unused items." },
-    { "type": "heading", "text": "Privacy" },
-    { "type": "paragraph", "html": "We only use your information to fulfill orders and, if you opt in, to send occasional updates." }
+    {
+      "type": "paragraph",
+      "html": "We’ve split policies into clear pages for launch:"
+    },
+    {
+      "type": "paragraph",
+      "html": "<ul><li><a href=\"./shipping-returns.html\">Shipping &amp; Returns</a> — processing time, carriers, returns, and lost packages</li><li><a href=\"./privacy.html\">Privacy Policy</a> — how we handle customer information and Square checkout</li><li><a href=\"./terms.html\">Terms of Service</a> — handmade goods, IP, and store terms</li></ul>"
+    },
+    {
+      "type": "cta",
+      "label": "Shipping & Returns",
+      "href": "./shipping-returns.html"
+    }
   ]
 }

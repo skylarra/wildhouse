@@ -1,0 +1,44 @@
+{
+  "_comment": "Shipping & Returns policy for September launch.",
+  "title": "Shipping & Returns",
+  "intro": "Clear expectations for processing, shipping, and what happens if something goes wrong.",
+  "blocks": [
+    { "type": "heading", "text": "Processing Time", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Please allow up to <strong>2–3 weeks</strong> for processing. Wildhouse Lane pieces are handmade to order, and careful work takes time—especially during busy seasons or custom projects."
+    },
+    { "type": "heading", "text": "Shipping", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Orders ship using the carrier that provides the best service and value for your destination. When your package is on its way, you’ll receive shipping details by email when tracking is available."
+    },
+    {
+      "type": "paragraph",
+      "html": "Free shipping is available on qualifying orders over $75 within the supported shipping region."
+    },
+    { "type": "heading", "text": "Returns", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "Handmade items are <strong>not eligible for returns</strong> due to change of mind. Please review product details, sizing notes, and photos carefully before you order."
+    },
+    {
+      "type": "paragraph",
+      "html": "Damaged or incorrect orders must be reported within <strong>7 days of delivery</strong>. Email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> with your order number and clear photos of the issue, and we’ll help make it right."
+    },
+    { "type": "heading", "text": "Lost Packages", "level": 2 },
+    {
+      "type": "paragraph",
+      "html": "If a package is officially lost in transit, Wildhouse Lane will work with the carrier to resolve the issue."
+    },
+    {
+      "type": "paragraph",
+      "html": "Packages marked as <strong>delivered</strong> are not eligible for replacement or refund due to theft or misdelivery after delivery confirmation. Please check with neighbors, building staff, and nearby safe places, and contact the carrier if something looks wrong."
+    },
+    {
+      "type": "cta",
+      "label": "Contact us",
+      "href": "./contact.html"
+    }
+  ]
+}

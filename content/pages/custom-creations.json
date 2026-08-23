@@ -1,11 +1,11 @@
 {
-  "_comment": "Custom Creations landing (Phase 1 preview). Full inquiry form + email arrives in Phase 5.",
+  "_comment": "Custom Creations landing for launch. Full inquiry form + uploads arrive later; Contact is the path for now.",
   "title": "Custom Creations",
   "intro": "For projects that aren't already on the shelf — keepsakes, one-offs, and ideas that need a little conversation first.",
   "blocks": [
     {
       "type": "note",
-      "html": "A full inquiry form with photo uploads is coming soon. Until then, email is the best way to start."
+      "html": "There are no custom inquiry submissions here yet — the full request form is coming after launch. Until then, email is the best way to start."
     },
     { "type": "heading", "text": "What to include" },
     {
@@ -19,7 +19,7 @@
     { "type": "heading", "text": "Start the conversation" },
     {
       "type": "paragraph",
-      "html": "Send a note to <a href=\"mailto:hello@wildhouselane.com\">hello@wildhouselane.com</a>, or use the contact page. We'll reply with next steps."
+      "html": "Send a note to <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a>, or use the contact page. We'll reply with next steps."
     },
     { "type": "cta", "label": "Contact Wildhouse Lane", "href": "./contact.html" },
     { "type": "cta", "label": "Shop ready-made pieces", "href": "./shop.html" }
