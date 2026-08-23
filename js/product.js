@@ -370,8 +370,8 @@ function render() {
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="./shop.html">Shop</a> /
       ${
-        product.categoryHandle
-          ? `<a href="./collection.html?handle=${encodeURIComponent(product.categoryHandle)}">${escapeHtml(product.categoryName)}</a> /`
+        product.collectionHandle
+          ? `<a href="./collection.html?handle=${encodeURIComponent(product.collectionHandle)}">${escapeHtml(product.collectionName)}</a> /`
           : ""
       }
       <span>${escapeHtml(product.name)}</span>
@@ -379,11 +379,14 @@ function render() {
     <div class="product-detail">
       ${renderGallery()}
       <div class="product-info">
-        <p class="product-category">${
-          product.categoryHandle
-            ? `<a href="./collection.html?handle=${encodeURIComponent(product.categoryHandle)}">${escapeHtml(product.categoryName)}</a>`
-            : escapeHtml(product.categoryName)
-        }</p>
+        <p class="product-category">${[
+          product.collectionHandle
+            ? `<a href="./collection.html?handle=${encodeURIComponent(product.collectionHandle)}">${escapeHtml(product.collectionName)}</a>`
+            : "",
+          product.categoryName ? `<span class="product-type">${escapeHtml(product.categoryName)}</span>` : "",
+        ]
+          .filter(Boolean)
+          .join('<span class="product-meta-sep" aria-hidden="true"> · </span>')}</p>
         <h1>${escapeHtml(product.name)}</h1>
         <p class="product-price" id="product-price"></p>
         <p class="product-stock" id="product-stock" aria-live="polite"></p>

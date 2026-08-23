@@ -1,5 +1,5 @@
-// Shop page — search, category filter, sort, and product grid rendered from the catalog.
-import { getProducts, getCollections, queryProducts } from "./catalog.js";
+// Shop page — search, product-type filter (Square Category), sort, and product grid.
+import { getProducts, getProductTypes, queryProducts } from "./catalog.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders } from "./ui.js";
 
 const state = { search: "", category: "all", sort: "featured" };
@@ -61,9 +61,9 @@ function render() {
 
 async function renderCategories() {
   if (!categoryList) return;
-  // Sidebar lists only collections that currently have products (+ All Products).
-  const cats = await getCollections();
-  const items = [{ handle: "all", name: "All Products" }, ...cats];
+  // Sidebar lists Square product types (categories), not thematic Collections.
+  const types = await getProductTypes();
+  const items = [{ handle: "all", name: "All Products" }, ...types];
   categoryList.innerHTML = items
     .map(
       (c) =>

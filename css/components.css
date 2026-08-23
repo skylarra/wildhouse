@@ -818,6 +818,41 @@
   font-size: 1.05rem;
   line-height: 1.7;
 }
+.collection-type-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+.filter-chip {
+  appearance: none;
+  border: 1px solid rgba(78, 40, 41, 0.22);
+  background: #fffaf8;
+  color: var(--brown);
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.filter-chip:hover,
+.filter-chip:focus-visible {
+  border-color: var(--brown);
+  outline: none;
+}
+.filter-chip.is-active {
+  background: var(--brown);
+  border-color: var(--brown);
+  color: #fffaf8;
+}
+.collection-card__cta {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--green);
+}
+.product-type { color: inherit; }
+.product-meta-sep { opacity: 0.55; }
 .collection-toolbar {
   display: flex;
   flex-wrap: wrap;

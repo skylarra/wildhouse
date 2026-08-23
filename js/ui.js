@@ -200,5 +200,6 @@ export function collectionCardHTML(collection) {
       </div>
       <h3>${escapeHtml(collection.name)}</h3>
       ${blurb}
+      <span class="collection-card__cta">Shop Collection →</span>
     </a>`;
 }

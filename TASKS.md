@@ -1,25 +1,18 @@
 # Current Sprint
 
-## Launch Sprint — September 11
+## Square Collection attribute → website collections
 
-### Done
-- Archived Keychain Studio, Post Office, and standalone About (pages kept, noindexed, removed from nav/sitemap)
-- Homepage About / welcome section retained
-- Contact page with email + Instagram / TikTok / Pinterest
-- FAQ page (Orders, Shipping, Returns, Custom Orders, Handmade, Care, Contact)
-- Shipping & Returns policy page
-- Privacy Policy + Terms of Service
-- Footer: Shop, Collections, Custom Creations, FAQ, Shipping & Returns, Privacy, Terms, Contact, socials, copyright
-- SEO: titles, meta, OG, favicons, canonicals, FAQ/Organization structured data, sitemap, robots
-- Empty states (shop search, collections, cart) + product/collection skeletons and button loading
-- Image placeholders on product/collection cards
+- Customer-facing collections come from the Square Catalog custom attribute **`Collection`** (not Square Categories)
+- Square Categories remain product types for Shop filters + collection-page type chips
+- Presentation (copy/hero/featured/order) stays in `content/collections.json`
+- Pretty URLs via Cloudflare `_redirects`: `/collections/:handle`
+- Instagram / TikTok handles → `@wildhouselane`
 
-### Still open (ops / launch blockers)
-- Confirm live Pinterest URL if different from `pinterest.com/wildhouselane`
-- Connect newsletter provider (UI-only signup today)
-- Square production credentials after sandbox QA
-- Live checkout + order-confirmation end-to-end on production domain
-- Legal review of Privacy + Terms before publish
+### Still open (ops)
+
+- Assign `Collection` custom attribute values on live Square items
+- Confirm Instagram/TikTok profiles are `@wildhouselane` (URLs updated in site content)
+- Sandbox checkout + catalog Functions with Collection attribute present
 
 ---
 

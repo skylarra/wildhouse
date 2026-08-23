@@ -1,0 +1,3 @@
+/collections /collections.html 200
+/collections/ /collections.html 200
+/collections/:handle /collection.html?handle=:handle 200

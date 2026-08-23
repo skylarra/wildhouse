@@ -18,9 +18,16 @@
 
 ## 2026-07-30 (Dynamic collections)
 
-- Storefront collections are derived from Square Catalog categories at runtime (`getCollections()` in `js/catalog.js`). Empty categories are omitted; products without a category appear only under All Products.
-- Optional display priority lives in content, not code: `content/site.json` → `collectionOrder` (exact category name match). Unlisted categories append alphabetically.
-- Adding a new collection only requires creating a Square category and assigning products — no frontend code change unless a custom order entry is desired.
+- ~~Storefront collections are derived from Square Catalog categories~~ **Superseded 2026-08-23.**
+
+## 2026-08-23 (Square Collection attribute)
+
+- **Membership:** Square Catalog custom attribute named `Collection` is the single source of truth for which thematic collection a product belongs to (`custom.collection` / `custom.collections` in the catalog payload).
+- **Product type:** Square Categories stay separate (Shop sidebar + collection-page type filters). Do not use Categories for collection membership.
+- **Presentation only:** `content/collections.json` holds description, heroImage, featured, and display `order` matched by exact Collection name or slug — never membership.
+- **URLs:** `collection.html?handle=<slug>` works everywhere; Cloudflare `_redirects` serves `/collections/:handle` as a pretty rewrite. Display names are preserved exactly; only slugs are transformed.
+- Products without a Collection attribute still appear in Shop and are omitted from collection pages (no public “Uncategorized” collection).
+- Sold-out items remain in their collection; archived/deleted Square items are excluded in `squareToCatalog()`.
 
 ## 2026-07-30 (Phase 1 — A Little Note + destination previews)
 
@@ -30,10 +37,9 @@
 
 ## 2026-07-30 (Phase 2 — Collection pages + storytelling metadata)
 
-- Square categories still define which collections exist and which products belong in them. Empty categories stay hidden.
-- Storytelling (description, optional `heroImage`, `featured`, display `order`) lives in `content/collections.json`, matched by category name or handle — no hardcoded category names in JS.
-- Dedicated pages at `collection.html?handle=…` with edge-to-edge hero image and intro copy below (no overlay badges). Shop `?category=` filters remain for power browsing.
-- Homepage featured strip prefers collections flagged `featured: true`; otherwise falls back to the ordered live list.
+- Dedicated pages at `collection.html?handle=…` / `/collections/:handle` with edge-to-edge hero image and intro copy below (no overlay badges).
+- Storytelling (description, optional `heroImage`, `featured`, display `order`) lives in `content/collections.json`. **Membership** is the Square `Collection` attribute (see 2026-08-23).
+- Shop `?category=` filters by Square Category (product type), not thematic collection.
 
 ## 2026-08-03 (Phase 3 — Product page experience)
 

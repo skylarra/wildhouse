@@ -1,7 +1,11 @@
 // Wildhouse Lane — catalog access layer.
 // Loads the live Square catalog (via /api/catalog) or falls back to
-// data/products.json. Pages depend on the normalized product/collection
-// helpers below — never hardcode Square category names in the UI.
+// data/products.json.
+//
+// Architecture (do not invert):
+// - Square `Collection` custom attribute → customer-facing collection membership
+// - Square Categories → product type (shop filters / collection type chips)
+// - content/collections.json → presentation only (copy, hero, featured, order)
 
 import { loadSite, loadJSON } from "./content.js";
 
@@ -14,6 +18,21 @@ export function formatMoney(cents, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
     (cents || 0) / 100
   );
+}
+
+/** URL slug from a Square Collection display name (display name itself is never mutated). */
+export function slugify(str = "") {
+  return String(str)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Pretty collection path used in production (Cloudflare `_redirects` → collection.html). */
+export function collectionHref(handle) {
+  if (!handle) return "./collections.html";
+  return `./collections/${encodeURIComponent(handle)}`;
 }
 
 async function loadRaw() {
@@ -49,13 +68,14 @@ async function loadCollectionsMeta() {
   return collectionsMetaCache;
 }
 
-/** Index storytelling metadata by Square category name and handle. */
+/** Index storytelling metadata by Collection display name and slug. */
 function metaIndex(meta) {
   const byName = new Map();
   const byHandle = new Map();
   for (const entry of meta.entries || []) {
     if (entry.name) byName.set(entry.name, entry);
-    if (entry.handle) byHandle.set(entry.handle, entry);
+    const handle = entry.handle || (entry.name ? slugify(entry.name) : null);
+    if (handle) byHandle.set(handle, entry);
   }
   return { byName, byHandle };
 }
@@ -69,6 +89,14 @@ function enrichCollection(base, metaMaps) {
     heroImage: entry?.heroImage || base.image,
     featured: Boolean(entry?.featured),
   };
+}
+
+function collectionNamesFromCustom(custom = {}) {
+  if (Array.isArray(custom.collections) && custom.collections.length) {
+    return custom.collections.map((n) => String(n).trim()).filter(Boolean);
+  }
+  if (custom.collection) return [String(custom.collection).trim()].filter(Boolean);
+  return [];
 }
 
 function normalize(raw) {
@@ -96,21 +124,29 @@ function normalize(raw) {
       });
       const prices = variations.map((v) => v.priceCents);
       const totalStock = variations.reduce((s, v) => s + v.stock, 0);
+
+      // Collection membership from Square custom attribute (via API transform or local JSON).
+      const collectionNames = collectionNamesFromCustom(obj.custom);
+      const collectionName = collectionNames[0] || null;
+      const collectionHandle = collectionName ? slugify(collectionName) : null;
+
       return {
         id: obj.id,
         name: d.name,
         description: d.description || "",
-        // Square dashboard formatting (paragraphs, line breaks, lists, bold).
         descriptionHtml: d.description_html || obj.custom?.description_html || "",
         handle: obj.custom?.handle || obj.id,
         tags: obj.custom?.tags || [],
         featured: Boolean(obj.custom?.featured),
-        // Optional map of color/option label → image URL (local catalog or content overlay).
         colorImages: obj.custom?.colorImages || {},
-        // Products without a Square category only appear under All Products.
+        // Product type = Square Category (separate from Collection).
         categoryId: d.category_id || null,
         categoryName: category?.name || "",
         categoryHandle: category?.handle || null,
+        // Customer-facing collection = Square Collection attribute.
+        collectionNames,
+        collectionName,
+        collectionHandle,
         images: (d.image_ids || []).map((id) => images[id]?.url).filter(Boolean),
         variations,
         minPriceCents: prices.length ? Math.min(...prices) : 0,
@@ -127,14 +163,10 @@ export async function getProducts() {
   return normalize(raw);
 }
 
-export async function getCategories() {
-  const collections = await getCollections();
-  return collections.map(({ id, name, handle }) => ({ id, name, handle }));
-}
-
 /**
- * Sort collections: names listed in `order` first (exact match), then any
- * remaining collections alphabetically. Unknown order entries are ignored.
+ * Sort collections: names listed in `order` first (exact Square display-name match),
+ * then remaining alphabetically. Unknown order entries are ignored.
+ * Ready for a future manual ordering system (content/collections.json → order).
  */
 export function sortCollections(collections, order = []) {
   if (!order.length) {
@@ -150,50 +182,45 @@ export function sortCollections(collections, order = []) {
 }
 
 /**
- * Dynamic storefront collections derived from Square categories.
- * - One collection per category that has at least one product
- * - Cover/hero: content override → category image → first product image → placeholder
- * - Description + featured flags from content/collections.json
- * - Display order from collections.json → order (fallback: site.json collectionOrder)
+ * Customer-facing collections derived from the Square `Collection` custom attribute.
+ * - One collection per unique attribute value that has ≥1 active product
+ * - Products without Collection still appear in Shop, never invent a public “Uncategorized”
+ * - Cover/hero: content override → first product image → placeholder
+ * - Description + featured + order from content/collections.json (presentation only)
  */
 export async function getCollections() {
-  const [raw, products, meta] = await Promise.all([
-    loadRaw(),
-    getProducts(),
-    loadCollectionsMeta(),
-  ]);
-  const images = raw.images || {};
+  const [products, meta] = await Promise.all([getProducts(), loadCollectionsMeta()]);
   const maps = metaIndex(meta);
 
   const counts = new Map();
+  const names = new Map();
   const firstImage = new Map();
+
   for (const p of products) {
-    if (!p.categoryId) continue;
-    counts.set(p.categoryId, (counts.get(p.categoryId) || 0) + 1);
-    if (!firstImage.has(p.categoryId) && p.images.length) {
-      firstImage.set(p.categoryId, p.images[0]);
+    if (!p.collectionHandle || !p.collectionName) continue;
+    counts.set(p.collectionHandle, (counts.get(p.collectionHandle) || 0) + 1);
+    names.set(p.collectionHandle, p.collectionName);
+    if (!firstImage.has(p.collectionHandle) && p.images.length) {
+      firstImage.set(p.collectionHandle, p.images[0]);
     }
   }
 
-  const collections = (raw.categories || [])
-    .map((c) => {
-      const data = c.category_data || {};
-      const count = counts.get(c.id) || 0;
-      const imageId = data.image_id || data.image_ids?.[0] || null;
-      const categoryImage = imageId ? images[imageId]?.url : null;
-      const cover = categoryImage || firstImage.get(c.id) || DEFAULT_COLLECTION_IMAGE;
-      return enrichCollection(
-        {
-          id: c.id,
-          name: data.name || "Collection",
-          handle: data.handle || c.id,
-          count,
-          image: cover,
-        },
-        maps
-      );
-    })
-    .filter((c) => c.count > 0);
+  const collections = [...counts.entries()].map(([handle, count]) => {
+    const name = names.get(handle);
+    const cover = firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE;
+    return enrichCollection(
+      {
+        id: handle,
+        name,
+        handle,
+        slug: handle,
+        count,
+        productCount: count,
+        image: cover,
+      },
+      maps
+    );
+  });
 
   let order = Array.isArray(meta.order) ? meta.order : [];
   if (!order.length) {
@@ -208,10 +235,41 @@ export async function getCollections() {
   return sortCollections(collections, order);
 }
 
+/**
+ * Product types from Square Categories (not collections).
+ * Used by Shop sidebar and collection-page type filters.
+ */
+export async function getProductTypes() {
+  const [raw, products] = await Promise.all([loadRaw(), getProducts()]);
+  const counts = new Map();
+  for (const p of products) {
+    if (!p.categoryId) continue;
+    counts.set(p.categoryId, (counts.get(p.categoryId) || 0) + 1);
+  }
+
+  return (raw.categories || [])
+    .map((c) => {
+      const data = c.category_data || {};
+      return {
+        id: c.id,
+        name: data.name || "Product type",
+        handle: data.handle || c.id,
+        count: counts.get(c.id) || 0,
+      };
+    })
+    .filter((t) => t.count > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** @deprecated Prefer getProductTypes(); kept for older call sites. */
+export async function getCategories() {
+  return getProductTypes();
+}
+
 export async function getCollectionByHandle(handle) {
   if (!handle) return null;
   const collections = await getCollections();
-  return collections.find((c) => c.handle === handle) || null;
+  return collections.find((c) => c.handle === handle || c.slug === handle) || null;
 }
 
 /** Homepage featured collections: explicit featured flags first, then ordered list. */
@@ -231,33 +289,48 @@ export async function getFeatured(limit = 4) {
   const products = await getProducts();
   const featured = products.filter((p) => p.featured);
   if (featured.length) return featured.slice(0, limit);
-  // Live Square catalogs may not mark featured items yet — prefer in-stock.
   const inStock = products.filter((p) => p.inStock);
   return (inStock.length ? inStock : products).slice(0, limit);
 }
 
 export async function getRelated(product, limit = 4) {
   const products = await getProducts();
-  if (!product?.categoryId) {
-    return products.filter((p) => p.id !== product.id).slice(0, limit);
+  const others = products.filter((p) => p.id !== product?.id);
+  if (product?.collectionHandle) {
+    const sameCollection = others.filter(
+      (p) => p.collectionHandle === product.collectionHandle
+    );
+    if (sameCollection.length) return sameCollection.slice(0, limit);
   }
-  return products
-    .filter((p) => p.id !== product.id && p.categoryId === product.categoryId)
-    .slice(0, limit);
+  if (product?.categoryId) {
+    return others.filter((p) => p.categoryId === product.categoryId).slice(0, limit);
+  }
+  return others.slice(0, limit);
 }
 
-// Client-side search + filter + sort for the shop page.
-export function queryProducts(products, { search = "", category = "all", sort = "featured" } = {}) {
+/**
+ * Client-side search + filter + sort.
+ * - `collection` → Square Collection attribute slug
+ * - `category` → Square Category (product type) handle
+ */
+export function queryProducts(
+  products,
+  { search = "", category = "all", collection = "all", sort = "featured" } = {}
+) {
   let list = [...products];
 
   const term = search.trim().toLowerCase();
   if (term) {
     list = list.filter((p) =>
-      [p.name, p.description, p.categoryName, ...p.tags]
+      [p.name, p.description, p.categoryName, p.collectionName, ...p.tags]
         .join(" ")
         .toLowerCase()
         .includes(term)
     );
+  }
+
+  if (collection && collection !== "all") {
+    list = list.filter((p) => p.collectionHandle === collection);
   }
 
   if (category && category !== "all") {

@@ -1,22 +1,26 @@
 {
-  "_comment": "Collection storytelling metadata. Square categories remain the source of truth for which collections exist and which products belong in them. Match entries by exact Square category name (preferred) or handle. Fields: description, heroImage (optional override), featured (homepage). order = display priority; unlisted live categories append alphabetically. Future Square categories listed here unlock copy/hero as soon as products are assigned.",
+  "_comment": "Collection PRESENTATION metadata only. Product membership comes from the Square Catalog custom attribute named Collection (via /api/catalog or data/products.json custom.collection). Match entries by exact Square Collection display name (preferred) or slug/handle. Fields: description, heroImage, featured. order = display priority for public nav; unlisted live collections append alphabetically.",
   "order": [
+    "Witches Lane",
     "Moon, Sun & Stars",
+    "Nocturnal",
+    "Wild Things",
+    "Tide & Marsh",
     "Ocean Wonders",
     "Coastal Carolina",
     "Pet Keepsakes",
     "Family & Home",
     "Holiday Collection",
     "Haunted Hollow",
-    "Keychains",
-    "Suncatchers",
-    "Stickers",
-    "Magnets",
-    "Patches",
-    "T-Shirts",
     "Weddings & Events"
   ],
   "entries": [
+    {
+      "name": "Witches Lane",
+      "handle": "witches-lane",
+      "description": "Spellbound motifs, midnight flora, and a little woodland witchcraft for everyday carry.",
+      "featured": true
+    },
     {
       "name": "Moon, Sun & Stars",
       "handle": "moon-sun-stars",
@@ -24,16 +28,34 @@
       "featured": true
     },
     {
+      "name": "Nocturnal",
+      "handle": "nocturnal",
+      "description": "Creatures and quiet hours — moths, moonlight, and the soft magic after dark.",
+      "featured": true
+    },
+    {
+      "name": "Wild Things",
+      "handle": "wild-things",
+      "description": "Forest friends, fungi, and rooted evergreen energy for people who feel most at home outside.",
+      "featured": true
+    },
+    {
+      "name": "Tide & Marsh",
+      "handle": "tide-marsh",
+      "description": "Salt air, marsh light, and coastal flora — pieces that feel like a pocketful of the shore.",
+      "featured": true
+    },
+    {
       "name": "Ocean Wonders",
       "handle": "ocean-wonders",
-      "description": "Tides, shells, and salt-air stories — pieces that feel like a pocketful of the sea.",
-      "featured": true
+      "description": "Tides, shells, and salt-air stories for anyone who carries the sea with them.",
+      "featured": false
     },
     {
       "name": "Coastal Carolina",
       "handle": "coastal-carolina",
       "description": "Hometown shores, marsh light, and the quiet magic of the Carolina coast.",
-      "featured": true
+      "featured": false
     },
     {
       "name": "Pet Keepsakes",
@@ -57,48 +79,6 @@
       "name": "Haunted Hollow",
       "handle": "haunted-hollow",
       "description": "Spooky-nature folklore for the forever Halloween spirit — moths, moons, and misty woods.",
-      "featured": true
-    },
-    {
-      "name": "Keychains",
-      "handle": "keychains",
-      "description": "Everyday carry charms — wood, acrylic, and little companions for keys and bags.",
-      "heroImage": "./assets/coming-soon.png",
-      "featured": true
-    },
-    {
-      "name": "Suncatchers",
-      "handle": "suncatchers",
-      "description": "Window light, turned into color. Hand-finished pieces that throw soft rainbows indoors.",
-      "heroImage": "./assets/sunny-mirror.jpg",
-      "featured": true
-    },
-    {
-      "name": "Stickers",
-      "handle": "stickers",
-      "description": "Weatherproof vinyl art for bottles, laptops, journals, and anywhere that needs a little wild.",
-      "heroImage": "./assets/coming-soon.png",
-      "featured": true
-    },
-    {
-      "name": "Magnets",
-      "handle": "magnets",
-      "description": "Fridge-friendly woodland finds — small, sturdy, and ready to hold notes and memories.",
-      "heroImage": "./assets/coming-soon.png",
-      "featured": false
-    },
-    {
-      "name": "Patches",
-      "handle": "patches",
-      "description": "Stitch-on emblems for jackets, bags, and denim that wants a forest story.",
-      "heroImage": "./assets/coming-soon.png",
-      "featured": false
-    },
-    {
-      "name": "T-Shirts",
-      "handle": "t-shirts",
-      "description": "Soft tees with Wildhouse Lane artwork — wearable reminders of the woods and the weird.",
-      "heroImage": "./assets/coming-soon.png",
       "featured": false
     },
     {

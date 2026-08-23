@@ -4,10 +4,12 @@ Custom e-commerce storefront for "Wildhouse Lane" — framework-free (plain HTML
 
 ## Architecture at a glance
 
-- Content is data, not code: editable copy/images/announcements/products/events live in `content/*.json` and `data/products.json`; pages render them via components. Change content there, not in HTML/JS. Collection storytelling (order, descriptions, heroes, featured flags) lives in `content/collections.json`; Square categories still define which collections exist.
+- Content is data, not code: editable copy/images/announcements/products/events live in `content/*.json` and `data/products.json`; pages render them via components. Change content there, not in HTML/JS. Collection storytelling (order, descriptions, heroes, featured flags) lives in `content/collections.json`; membership comes from the Square `Collection` custom attribute.
 - Reusable UI is componentized: `js/components.js` (announcement bar, header/nav, newsletter, footer), `js/ui.js` (product card, favorites, toast), `js/page.js` (generic content-page renderer).
 - Data access is isolated in `js/content.js` and `js/catalog.js`. `js/catalog.js` calls `/api/catalog` (live Square) and falls back to `data/products.json`.
-- Square runs server-side in `functions/api/*` (Cloudflare Pages Functions): `catalog` (Catalog + Inventory), `checkout` (Square Payment Links), `order`. Shared code + the pure `squareToCatalog()` transform live in `functions/api/_square.js`. The access token is never exposed to the browser.
+- **Collections vs categories:** Customer-facing collections are driven by the Square Catalog custom attribute named `Collection`. Square Categories are product types (Shop filters / collection type chips). Presentation metadata lives in `content/collections.json` only.
+- Square runs server-side in `functions/api/*` (Cloudflare Pages Functions): `catalog` (Catalog + Inventory + Collection attribute), `checkout` (Square Payment Links), `order`. Shared code + the pure `squareToCatalog()` transform live in `functions/api/_square.js`. The access token is never exposed to the browser.
+- Pretty collection URLs: Cloudflare `_redirects` maps `/collections/:handle` → `collection.html?handle=:handle`. Local static preview uses the query-string form.
 - CSS: `styles.css` is the base/legacy layer; `css/components.css` is authored mobile-first (base = mobile, `min-width` queries enhance up). New/refactored styles should stay mobile-first.
 
 ## Cursor Cloud specific instructions
