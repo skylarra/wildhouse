@@ -30,7 +30,7 @@ function summaryHTML(order) {
 async function fetchOrder() {
   if (!orderId) return null;
   try {
-    const res = await fetch(`./api/order?orderId=${encodeURIComponent(orderId)}`, {
+    const res = await fetch(`/api/order?orderId=${encodeURIComponent(orderId)}`, {
       cache: "no-store",
     });
     const data = await res.json().catch(() => ({}));

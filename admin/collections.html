@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin · Collections | Wildhouse Lane</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/WILDHOUSE-logomark.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+    <a class="skip-link" href="#admin-main">Skip to content</a>
+
+    <header class="admin-top">
+        <div class="admin-top__inner">
+            <a class="admin-brand" href="../index.html">← Storefront</a>
+            <h1 class="admin-title">Collections</h1>
+            <p class="admin-tagline">Visibility &amp; presentation — Square still owns membership</p>
+        </div>
+    </header>
+
+    <main id="admin-main" class="admin-main">
+        <section id="admin-gate" class="admin-card" hidden>
+            <h2>Unlock admin</h2>
+            <p>Enter the admin password (Cloudflare <code>ADMIN_PASSWORD</code>). On local static preview, you can continue without a password — changes save to this browser and can be downloaded as JSON.</p>
+            <form id="admin-unlock-form" class="admin-unlock">
+                <label class="field">
+                    <span>Password</span>
+                    <input type="password" id="admin-password" name="password" autocomplete="current-password">
+                </label>
+                <button type="submit" class="btn secondary">Unlock</button>
+                <button type="button" class="btn" id="admin-continue-local">Continue locally</button>
+            </form>
+            <p class="admin-status" id="admin-gate-status" role="status"></p>
+        </section>
+
+        <section id="admin-app" hidden>
+            <div class="admin-toolbar">
+                <p class="admin-hint">Drag to reorder. Visibility OFF hides a collection everywhere public. New Square collections default to OFF.</p>
+                <div class="admin-toolbar__actions">
+                    <button type="button" class="btn" id="admin-reload">Reload</button>
+                    <button type="button" class="btn" id="admin-export">Download JSON</button>
+                    <button type="button" class="btn secondary" id="admin-save">Save</button>
+                </div>
+            </div>
+            <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
+            <div id="admin-list" class="admin-collection-list" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <dialog id="admin-edit-dialog" class="admin-dialog">
+        <form method="dialog" id="admin-edit-form" class="admin-edit-form">
+            <h2 id="admin-edit-title">Edit collection</h2>
+            <input type="hidden" id="edit-key" name="collectionKey">
+            <p class="admin-edit-name" id="edit-display-name"></p>
+            <label class="field">
+                <span>Description</span>
+                <textarea id="edit-description" rows="4"></textarea>
+            </label>
+            <label class="field">
+                <span>Hero image URL</span>
+                <input type="text" id="edit-hero" placeholder="./assets/… or https://…">
+            </label>
+            <label class="field">
+                <span>Featured / card image URL</span>
+                <input type="text" id="edit-featured-image" placeholder="./assets/… or https://…">
+            </label>
+            <div class="admin-dialog__actions">
+                <button type="submit" class="btn secondary" value="save">Save details</button>
+                <button type="submit" class="btn" value="cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script type="module" src="../js/admin-collections.js"></script>
+</body>
+</html>

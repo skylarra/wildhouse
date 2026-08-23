@@ -20,6 +20,14 @@
 
 - ~~Storefront collections are derived from Square Catalog categories~~ **Superseded 2026-08-23.**
 
+## 2026-08-23 (Collection visibility admin)
+
+- Website-side config controls **visible**, **featured**, **sortOrder**, description, and images. Square `Collection` attribute still owns membership only.
+- Public rule: `visible === true` AND `productCount > 0`. New Square collections with no config default to **visible OFF**.
+- Empty collections keep their saved config (not deleted) but stay hidden publicly until products return.
+- Admin UI at `/admin/collections` (noindex). Live persistence: Cloudflare KV binding `COLLECTIONS_CONFIG` + env `ADMIN_PASSWORD` via `PUT /api/collections-config`. Fallback: download JSON into `content/collections.json` or localStorage draft on static preview.
+- Featured cannot override visibility: homepage featured strip only includes public + featured collections (no fallback to “all”).
+
 ## 2026-08-23 (Square Collection attribute)
 
 - **Membership:** Square Catalog custom attribute named `Collection` is the single source of truth for which thematic collection a product belongs to (`custom.collection` / `custom.collections` in the catalog payload).

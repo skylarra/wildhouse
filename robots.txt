@@ -10,5 +10,7 @@ Disallow: /post-office.html
 Disallow: /post-office
 Disallow: /keychain-studio.html
 Disallow: /keychain-studio
+Disallow: /admin
+Disallow: /admin/
 
 Sitemap: https://wildhouselane.com/sitemap.xml
