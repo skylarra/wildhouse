@@ -36,7 +36,7 @@ async function init() {
     if (!collections.length) {
       grid.innerHTML = emptyStateHTML({
         title: "Collections coming soon",
-        body: "Once products are grouped into categories, they’ll show up here. In the meantime, browse the full shop.",
+        body: "Once products have a Square Collection attribute, they’ll show up here. In the meantime, browse the full shop.",
         primary: { href: "./shop.html", label: "Shop all products" },
         secondary: { href: "./index.html", label: "Back to home" },
       });

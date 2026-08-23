@@ -19,7 +19,10 @@ export async function onRequestGet({ env }) {
   }
 
   try {
-    const catalog = await squareFetch(cfg, "/v2/catalog/list?types=ITEM,CATEGORY,IMAGE");
+    const catalog = await squareFetch(
+      cfg,
+      "/v2/catalog/list?types=ITEM,CATEGORY,IMAGE,CUSTOM_ATTRIBUTE_DEFINITION"
+    );
     const objects = catalog.objects || [];
 
     // Look up real-time inventory for every variation.

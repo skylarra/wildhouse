@@ -1,5 +1,5 @@
 {
-  "_comment": "Local placeholder catalog for Wildhouse Lane. Mirrors the Square Catalog API shape (objects of type ITEM / ITEM_VARIATION, price_money in cents, category + image references, and a separate inventory count map keyed by variation id). Replace this file with live Square data after launch. Edit products/prices/inventory here until then.",
+  "_comment": "Local placeholder catalog for Wildhouse Lane. Mirrors the Square Catalog API shape. Square Categories = product type. custom.collection = Square Collection custom attribute (customer-facing membership). Replace with live Square data after launch.",
   "currency": "USD",
   "categories": [
     { "id": "CAT_KEYCHAINS", "type": "CATEGORY", "category_data": { "name": "Keychains", "handle": "keychains" } },
@@ -57,7 +57,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_SUNNY_DEFAULT", "item_variation_data": { "item_id": "ITEM_SUNNY_MIRROR", "name": "Regular", "sku": "WHL-SUN-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2400, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "sunny-mirror-suncatcher", "tags": ["nature", "sun", "handmade"], "featured": true }
+      "custom": { "handle": "sunny-mirror-suncatcher", "tags": ["nature", "sun", "handmade"], "featured": true, "collection": "Moon, Sun & Stars", "collections": ["Moon, Sun & Stars"] }
     },
     {
       "type": "ITEM",
@@ -71,7 +71,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_LUNA_DEFAULT", "item_variation_data": { "item_id": "ITEM_LUNA_MOTH", "name": "Regular", "sku": "WHL-SUN-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 2600, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "luna-moth-suncatcher", "tags": ["moth", "spooky", "nature"], "featured": true }
+      "custom": { "handle": "luna-moth-suncatcher", "tags": ["moth", "spooky", "nature"], "featured": true, "collection": "Nocturnal", "collections": ["Nocturnal"] }
     },
     {
       "type": "ITEM",
@@ -85,7 +85,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_TREE_KEY_DEFAULT", "item_variation_data": { "item_id": "ITEM_TREE_KEYCHAIN", "name": "Regular", "sku": "WHL-KEY-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1200, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "wildhouse-tree-keychain", "tags": ["tree", "wood", "handmade"], "featured": true }
+      "custom": { "handle": "wildhouse-tree-keychain", "tags": ["tree", "wood", "handmade"], "featured": true, "collection": "Wild Things", "collections": ["Wild Things"] }
     },
     {
       "type": "ITEM",
@@ -99,7 +99,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_TOADSTOOL_DEFAULT", "item_variation_data": { "item_id": "ITEM_TOADSTOOL_KEYCHAIN", "name": "Regular", "sku": "WHL-KEY-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1200, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "toadstool-keychain", "tags": ["mushroom", "cottagecore"], "featured": false }
+      "custom": { "handle": "toadstool-keychain", "tags": ["mushroom", "cottagecore"], "featured": false, "collection": "Wild Things", "collections": ["Wild Things"] }
     },
     {
       "type": "ITEM",
@@ -113,7 +113,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_MOTH_STICKER_DEFAULT", "item_variation_data": { "item_id": "ITEM_MOTH_STICKER", "name": "Regular", "sku": "WHL-STK-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 400, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "spooky-moth-sticker", "tags": ["moth", "spooky", "vinyl"], "featured": false }
+      "custom": { "handle": "spooky-moth-sticker", "tags": ["moth", "spooky", "vinyl"], "featured": false, "collection": "Witches Lane", "collections": ["Witches Lane"] }
     },
     {
       "type": "ITEM",
@@ -127,7 +127,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_STICKER_PACK_DEFAULT", "item_variation_data": { "item_id": "ITEM_STICKER_PACK", "name": "Pack of 5", "sku": "WHL-STK-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1200, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "forest-friends-sticker-pack", "tags": ["pack", "animals", "vinyl"], "featured": true }
+      "custom": { "handle": "forest-friends-sticker-pack", "tags": ["pack", "animals", "vinyl"], "featured": true, "collection": "Wild Things", "collections": ["Wild Things"] }
     },
     {
       "type": "ITEM",
@@ -141,7 +141,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_MUSHROOM_MAGNET_DEFAULT", "item_variation_data": { "item_id": "ITEM_MUSHROOM_MAGNET", "name": "Regular", "sku": "WHL-MAG-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 800, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "mushroom-magnet", "tags": ["mushroom", "kitchen"], "featured": false }
+      "custom": { "handle": "mushroom-magnet", "tags": ["mushroom", "kitchen"], "featured": false, "collection": "Wild Things", "collections": ["Wild Things"] }
     },
     {
       "type": "ITEM",
@@ -155,7 +155,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_WILDFLOWER_MAGNET_DEFAULT", "item_variation_data": { "item_id": "ITEM_WILDFLOWER_MAGNET", "name": "Set of 3", "sku": "WHL-MAG-002", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1400, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "wildflower-magnet-set", "tags": ["flowers", "set"], "featured": false }
+      "custom": { "handle": "wildflower-magnet-set", "tags": ["flowers", "set"], "featured": false, "collection": "Tide & Marsh", "collections": ["Tide & Marsh"] }
     },
     {
       "type": "ITEM",
@@ -169,7 +169,7 @@
           { "type": "ITEM_VARIATION", "id": "VAR_EVERGREEN_PATCH_DEFAULT", "item_variation_data": { "item_id": "ITEM_EVERGREEN_PATCH", "name": "Regular", "sku": "WHL-PAT-001", "pricing_type": "FIXED_PRICING", "price_money": { "amount": 1000, "currency": "USD" } } }
         ]
       },
-      "custom": { "handle": "evergreen-patch", "tags": ["tree", "embroidered"], "featured": false }
+      "custom": { "handle": "evergreen-patch", "tags": ["tree", "embroidered"], "featured": false, "collection": "Wild Things", "collections": ["Wild Things"] }
     },
     {
       "type": "ITEM",
