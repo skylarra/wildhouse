@@ -3,11 +3,18 @@
 // data/products.json.
 //
 // Architecture (do not invert):
-// - Square `Collection` custom attribute → customer-facing collection membership
+// - Square `Collection` custom attribute → product membership
 // - Square Categories → product type (shop filters / collection type chips)
-// - content/collections.json → presentation only (copy, hero, featured, order)
+// - Website collections config → visibility, featured, order, copy, images
+//   (content/collections.json seed + /api/collections-config KV override)
 
-import { loadSite, loadJSON } from "./content.js";
+import { loadJSON, sitePath } from "./content.js";
+import {
+  normalizeCollectionsConfig,
+  mergeCollectionsWithConfig,
+  isPublicCollection,
+  COLLECTIONS_CONFIG_LS_KEY,
+} from "./collections-config.js";
 
 let cache = null;
 let collectionsMetaCache = null;
@@ -37,11 +44,8 @@ export function collectionHref(handle) {
 
 async function loadRaw() {
   if (cache) return cache;
-  // Prefer the live Square catalog (served by the Cloudflare Function at
-  // /api/catalog). Fall back to the bundled products.json when Square isn't
-  // configured, errors, or returns an empty catalog so the shop never goes blank.
   try {
-    const live = await fetch("./api/catalog", { cache: "no-store" });
+    const live = await fetch(sitePath("api/catalog"), { cache: "no-store" });
     if (live.ok) {
       const data = await live.json();
       if (Array.isArray(data?.objects) && data.objects.length > 0) {
@@ -50,45 +54,55 @@ async function loadRaw() {
       }
     }
   } catch (_) {
-    /* network/offline or static host without Functions — use local fallback */
+    /* static host without Functions — use local fallback */
   }
-  const res = await fetch("./data/products.json", { cache: "no-store" });
+  const res = await fetch(sitePath("data/products.json"), { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load catalog: ${res.status}`);
   cache = await res.json();
   return cache;
 }
 
-async function loadCollectionsMeta() {
-  if (collectionsMetaCache) return collectionsMetaCache;
+/**
+ * Load website collection configuration.
+ * Priority: /api/collections-config → localStorage admin draft → content/collections.json
+ */
+export async function loadCollectionsMeta({ bust = false } = {}) {
+  if (!bust && collectionsMetaCache) return collectionsMetaCache;
+
   try {
-    collectionsMetaCache = await loadJSON("./content/collections.json");
+    const live = await fetch(sitePath("api/collections-config"), { cache: "no-store" });
+    if (live.ok) {
+      const data = await live.json();
+      if (Array.isArray(data?.entries)) {
+        collectionsMetaCache = normalizeCollectionsConfig(data);
+        return collectionsMetaCache;
+      }
+    }
   } catch (_) {
-    collectionsMetaCache = { order: [], entries: [] };
+    /* no Functions */
+  }
+
+  try {
+    const draft = localStorage.getItem(COLLECTIONS_CONFIG_LS_KEY);
+    if (draft) {
+      collectionsMetaCache = normalizeCollectionsConfig(JSON.parse(draft));
+      return collectionsMetaCache;
+    }
+  } catch (_) {
+    /* private mode / invalid JSON */
+  }
+
+  try {
+    const seed = await loadJSON("content/collections.json");
+    collectionsMetaCache = normalizeCollectionsConfig(seed);
+  } catch (_) {
+    collectionsMetaCache = { version: 2, entries: [] };
   }
   return collectionsMetaCache;
 }
 
-/** Index storytelling metadata by Collection display name and slug. */
-function metaIndex(meta) {
-  const byName = new Map();
-  const byHandle = new Map();
-  for (const entry of meta.entries || []) {
-    if (entry.name) byName.set(entry.name, entry);
-    const handle = entry.handle || (entry.name ? slugify(entry.name) : null);
-    if (handle) byHandle.set(handle, entry);
-  }
-  return { byName, byHandle };
-}
-
-function enrichCollection(base, metaMaps) {
-  const entry =
-    metaMaps.byHandle.get(base.handle) || metaMaps.byName.get(base.name) || null;
-  return {
-    ...base,
-    description: entry?.description || "",
-    heroImage: entry?.heroImage || base.image,
-    featured: Boolean(entry?.featured),
-  };
+export function clearCollectionsMetaCache() {
+  collectionsMetaCache = null;
 }
 
 function collectionNamesFromCustom(custom = {}) {
@@ -125,7 +139,6 @@ function normalize(raw) {
       const prices = variations.map((v) => v.priceCents);
       const totalStock = variations.reduce((s, v) => s + v.stock, 0);
 
-      // Collection membership from Square custom attribute (via API transform or local JSON).
       const collectionNames = collectionNamesFromCustom(obj.custom);
       const collectionName = collectionNames[0] || null;
       const collectionHandle = collectionName ? slugify(collectionName) : null;
@@ -139,11 +152,9 @@ function normalize(raw) {
         tags: obj.custom?.tags || [],
         featured: Boolean(obj.custom?.featured),
         colorImages: obj.custom?.colorImages || {},
-        // Product type = Square Category (separate from Collection).
         categoryId: d.category_id || null,
         categoryName: category?.name || "",
         categoryHandle: category?.handle || null,
-        // Customer-facing collection = Square Collection attribute.
         collectionNames,
         collectionName,
         collectionHandle,
@@ -163,35 +174,8 @@ export async function getProducts() {
   return normalize(raw);
 }
 
-/**
- * Sort collections: names listed in `order` first (exact Square display-name match),
- * then remaining alphabetically. Unknown order entries are ignored.
- * Ready for a future manual ordering system (content/collections.json → order).
- */
-export function sortCollections(collections, order = []) {
-  if (!order.length) {
-    return [...collections].sort((a, b) => a.name.localeCompare(b.name));
-  }
-  const rank = new Map(order.map((name, i) => [name, i]));
-  return [...collections].sort((a, b) => {
-    const ai = rank.has(a.name) ? rank.get(a.name) : Number.POSITIVE_INFINITY;
-    const bi = rank.has(b.name) ? rank.get(b.name) : Number.POSITIVE_INFINITY;
-    if (ai !== bi) return ai - bi;
-    return a.name.localeCompare(b.name);
-  });
-}
-
-/**
- * Customer-facing collections derived from the Square `Collection` custom attribute.
- * - One collection per unique attribute value that has ≥1 active product
- * - Products without Collection still appear in Shop, never invent a public “Uncategorized”
- * - Cover/hero: content override → first product image → placeholder
- * - Description + featured + order from content/collections.json (presentation only)
- */
-export async function getCollections() {
-  const [products, meta] = await Promise.all([getProducts(), loadCollectionsMeta()]);
-  const maps = metaIndex(meta);
-
+/** Detect collections from Square membership only (no visibility filter). */
+async function detectCollectionsFromProducts(products) {
   const counts = new Map();
   const names = new Map();
   const firstImage = new Map();
@@ -205,39 +189,40 @@ export async function getCollections() {
     }
   }
 
-  const collections = [...counts.entries()].map(([handle, count]) => {
-    const name = names.get(handle);
-    const cover = firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE;
-    return enrichCollection(
-      {
-        id: handle,
-        name,
-        handle,
-        slug: handle,
-        count,
-        productCount: count,
-        image: cover,
-      },
-      maps
-    );
-  });
+  return [...counts.entries()].map(([handle, count]) => ({
+    handle,
+    collectionKey: handle,
+    name: names.get(handle),
+    count,
+    productCount: count,
+    image: firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE,
+  }));
+}
 
-  let order = Array.isArray(meta.order) ? meta.order : [];
-  if (!order.length) {
-    try {
-      const site = await loadSite();
-      order = Array.isArray(site.collectionOrder) ? site.collectionOrder : [];
-    } catch (_) {
-      /* optional */
-    }
-  }
+/**
+ * Full collection records for admin (includes hidden + empty).
+ * Public pages should use getCollections() instead.
+ */
+export async function getAllCollectionRecords() {
+  const [products, meta] = await Promise.all([getProducts(), loadCollectionsMeta()]);
+  const detected = await detectCollectionsFromProducts(products);
+  return mergeCollectionsWithConfig(detected, meta).map((c) => ({
+    ...c,
+    image: c.image || DEFAULT_COLLECTION_IMAGE,
+    heroImage: c.heroImage || c.image || DEFAULT_COLLECTION_IMAGE,
+  }));
+}
 
-  return sortCollections(collections, order);
+/**
+ * Public collections: visible === true AND productCount > 0, sorted by sortOrder.
+ */
+export async function getCollections() {
+  const all = await getAllCollectionRecords();
+  return all.filter(isPublicCollection);
 }
 
 /**
  * Product types from Square Categories (not collections).
- * Used by Shop sidebar and collection-page type filters.
  */
 export async function getProductTypes() {
   const [raw, products] = await Promise.all([loadRaw(), getProducts()]);
@@ -261,7 +246,7 @@ export async function getProductTypes() {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/** @deprecated Prefer getProductTypes(); kept for older call sites. */
+/** @deprecated Prefer getProductTypes() */
 export async function getCategories() {
   return getProductTypes();
 }
@@ -272,12 +257,10 @@ export async function getCollectionByHandle(handle) {
   return collections.find((c) => c.handle === handle || c.slug === handle) || null;
 }
 
-/** Homepage featured collections: explicit featured flags first, then ordered list. */
+/** Homepage featured strip: public + featured only (no fallback to all). */
 export async function getFeaturedCollections(limit = 6) {
   const collections = await getCollections();
-  const flagged = collections.filter((c) => c.featured);
-  const list = flagged.length ? flagged : collections;
-  return list.slice(0, limit);
+  return collections.filter((c) => c.featured).slice(0, limit);
 }
 
 export async function getProductByHandle(handle) {
@@ -308,11 +291,6 @@ export async function getRelated(product, limit = 4) {
   return others.slice(0, limit);
 }
 
-/**
- * Client-side search + filter + sort.
- * - `collection` → Square Collection attribute slug
- * - `category` → Square Category (product type) handle
- */
 export function queryProducts(
   products,
   { search = "", category = "all", collection = "all", sort = "featured" } = {}
@@ -354,4 +332,18 @@ export function queryProducts(
   }
 
   return list;
+}
+
+/** @deprecated kept for any leftover imports */
+export function sortCollections(collections, order = []) {
+  if (!order.length) {
+    return [...collections].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0) || a.name.localeCompare(b.name));
+  }
+  const rank = new Map(order.map((name, i) => [name, i]));
+  return [...collections].sort((a, b) => {
+    const ai = rank.has(a.name) ? rank.get(a.name) : Number.POSITIVE_INFINITY;
+    const bi = rank.has(b.name) ? rank.get(b.name) : Number.POSITIVE_INFINITY;
+    if (ai !== bi) return ai - bi;
+    return a.name.localeCompare(b.name);
+  });
 }

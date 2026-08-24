@@ -1,18 +1,17 @@
 # Current Sprint
 
-## Square Collection attribute → website collections
+## Collection visibility admin
 
-- Customer-facing collections come from the Square Catalog custom attribute **`Collection`** (not Square Categories)
-- Square Categories remain product types for Shop filters + collection-page type chips
-- Presentation (copy/hero/featured/order) stays in `content/collections.json`
-- Pretty URLs via Cloudflare `_redirects`: `/collections/:handle`
-- Instagram / TikTok handles → `@wildhouselane`
+- Admin page: `/admin/collections` (toggles, featured, drag-reorder, description/images)
+- Public collections require `visible` + at least one product
+- New Square collections default to hidden until enabled in admin
+- Persistence: KV `COLLECTIONS_CONFIG` + `ADMIN_PASSWORD`, or download `content/collections.json`
 
-### Still open (ops)
+### Ops to enable live admin saves
 
-- Assign `Collection` custom attribute values on live Square items
-- Confirm Instagram/TikTok profiles are `@wildhouselane` (URLs updated in site content)
-- Sandbox checkout + catalog Functions with Collection attribute present
+1. Cloudflare Pages → create KV namespace → bind as `COLLECTIONS_CONFIG`
+2. Set secret/env `ADMIN_PASSWORD`
+3. Redeploy Functions
 
 ---
 

@@ -2,7 +2,7 @@
 // progress, and a placeholder checkout (Square Checkout is wired after launch).
 import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
-import { loadSite } from "./content.js";
+import { loadSite, sitePath } from "./content.js";
 import { escapeHtml, toast } from "./ui.js";
 
 const root = document.getElementById("cart-root");
@@ -117,7 +117,7 @@ async function startCheckout(button) {
   button.textContent = "Redirecting…";
 
   try {
-    const res = await fetch("./api/checkout", {
+    const res = await fetch(sitePath("api/checkout"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

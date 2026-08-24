@@ -49,7 +49,7 @@ async function renderLittleNote() {
   const el = document.getElementById("little-note");
   if (!el) return;
   try {
-    const data = await loadJSON("./content/notes.json");
+    const data = await loadJSON("content/notes.json");
     const message = pickDailyMessage(data.messages);
     if (!message) {
       el.hidden = true;

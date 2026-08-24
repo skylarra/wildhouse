@@ -1,91 +1,126 @@
 {
-  "_comment": "Collection PRESENTATION metadata only. Product membership comes from the Square Catalog custom attribute named Collection (via /api/catalog or data/products.json custom.collection). Match entries by exact Square Collection display name (preferred) or slug/handle. Fields: description, heroImage, featured. order = display priority for public nav; unlisted live collections append alphabetically.",
-  "order": [
-    "Witches Lane",
-    "Moon, Sun & Stars",
-    "Nocturnal",
-    "Wild Things",
-    "Tide & Marsh",
-    "Ocean Wonders",
-    "Coastal Carolina",
-    "Pet Keepsakes",
-    "Family & Home",
-    "Holiday Collection",
-    "Haunted Hollow",
-    "Weddings & Events"
-  ],
+  "_comment": "Website-side collection configuration (visibility, featured, order, copy, images). Product membership comes ONLY from the Square Catalog custom attribute named Collection. New Square collections with no entry here default to visible=false until enabled in /admin/collections.",
+  "version": 2,
   "entries": [
     {
-      "name": "Witches Lane",
-      "handle": "witches-lane",
+      "collectionKey": "witches-lane",
+      "displayName": "Witches Lane",
+      "visible": true,
+      "featured": true,
+      "sortOrder": 1,
       "description": "Spellbound motifs, midnight flora, and a little woodland witchcraft for everyday carry.",
-      "featured": true
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Moon, Sun & Stars",
-      "handle": "moon-sun-stars",
+      "collectionKey": "moon-sun-stars",
+      "displayName": "Moon, Sun & Stars",
+      "visible": true,
+      "featured": true,
+      "sortOrder": 2,
       "description": "Celestial charms, moonlit motifs, and starry keepsakes for night owls and sky watchers.",
-      "featured": true
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Nocturnal",
-      "handle": "nocturnal",
+      "collectionKey": "nocturnal",
+      "displayName": "Nocturnal",
+      "visible": true,
+      "featured": true,
+      "sortOrder": 3,
       "description": "Creatures and quiet hours — moths, moonlight, and the soft magic after dark.",
-      "featured": true
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Wild Things",
-      "handle": "wild-things",
+      "collectionKey": "wild-things",
+      "displayName": "Wild Things",
+      "visible": true,
+      "featured": true,
+      "sortOrder": 4,
       "description": "Forest friends, fungi, and rooted evergreen energy for people who feel most at home outside.",
-      "featured": true
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Tide & Marsh",
-      "handle": "tide-marsh",
+      "collectionKey": "tide-marsh",
+      "displayName": "Tide & Marsh",
+      "visible": true,
+      "featured": true,
+      "sortOrder": 5,
       "description": "Salt air, marsh light, and coastal flora — pieces that feel like a pocketful of the shore.",
-      "featured": true
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Ocean Wonders",
-      "handle": "ocean-wonders",
+      "collectionKey": "ocean-wonders",
+      "displayName": "Ocean Wonders",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 6,
       "description": "Tides, shells, and salt-air stories for anyone who carries the sea with them.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Coastal Carolina",
-      "handle": "coastal-carolina",
+      "collectionKey": "coastal-carolina",
+      "displayName": "Coastal Carolina",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 7,
       "description": "Hometown shores, marsh light, and the quiet magic of the Carolina coast.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Pet Keepsakes",
-      "handle": "pet-keepsakes",
+      "collectionKey": "pet-keepsakes",
+      "displayName": "Pet Keepsakes",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 8,
       "description": "Little tributes for the companions who make every ordinary day softer.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Family & Home",
-      "handle": "family-home",
+      "collectionKey": "family-home",
+      "displayName": "Family & Home",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 9,
       "description": "Warm, rooted pieces meant to live on keys, shelves, and shared spaces.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Holiday Collection",
-      "handle": "holiday-collection",
+      "collectionKey": "holiday-collection",
+      "displayName": "Holiday Collection",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 10,
       "description": "Seasonal favorites that rotate with the calendar — festive, handmade, and easy to gift.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Haunted Hollow",
-      "handle": "haunted-hollow",
+      "collectionKey": "haunted-hollow",
+      "displayName": "Haunted Hollow",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 11,
       "description": "Spooky-nature folklore for the forever Halloween spirit — moths, moons, and misty woods.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     },
     {
-      "name": "Weddings & Events",
-      "handle": "weddings-events",
+      "collectionKey": "weddings-events",
+      "displayName": "Weddings & Events",
+      "visible": false,
+      "featured": false,
+      "sortOrder": 12,
       "description": "Thoughtful favors and keepsakes for gatherings that deserve a handmade touch.",
-      "featured": false
+      "heroImage": "",
+      "featuredImage": ""
     }
   ]
 }
