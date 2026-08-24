@@ -1,6 +1,7 @@
 // Single collection page — products whose Square Collection attribute matches.
 // URLs:
-//   /collections/<slug>          (Cloudflare _redirects → this page)
+//   /collections/<slug>          (Cloudflare _redirects → /collection?handle=…)
+//   /collection?handle=<slug>    (extensionless; also works as collection.html?handle=)
 //   collection.html?handle=<slug>
 import {
   getCollectionByHandle,

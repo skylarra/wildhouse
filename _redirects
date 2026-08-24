@@ -1,5 +1,7 @@
-/collections /collections.html 200
-/collections/ /collections.html 200
-/collections/:handle /collection.html?handle=:handle 200
-/admin/collections /admin/collections.html 200
-/admin/collections/ /admin/collections.html 200
+# Cloudflare Pages automatically serves `page.html` at `/page` and 308-redirects
+# `/page.html` → `/page`. Do NOT add `/path /path.html 200` rewrites — those fight
+# the extensionless redirect and cause ERR_TOO_MANY_REDIRECTS (seen on /collections).
+#
+# Pretty single-collection URLs rewrite to the extensionless collection page.
+# Target must NOT include `.html` or Pages will 308 again and drop the handle.
+/collections/:handle /collection?handle=:handle 200
