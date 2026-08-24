@@ -17,62 +17,47 @@
         <div class="admin-top__inner">
             <a class="admin-brand" href="../index.html">← Storefront</a>
             <h1 class="admin-title">Collections</h1>
-            <p class="admin-tagline">Visibility &amp; presentation — Square still owns membership</p>
+            <p class="admin-tagline">Turn Square collections on or off and set their display order. Membership still comes from Square.</p>
         </div>
     </header>
 
     <main id="admin-main" class="admin-main">
         <section id="admin-gate" class="admin-card" hidden>
             <h2>Unlock admin</h2>
-            <p>Enter the admin password (Cloudflare <code>ADMIN_PASSWORD</code>). On local static preview, you can continue without a password — changes save to this browser and can be downloaded as JSON.</p>
+            <p>Enter the Cloudflare <code>ADMIN_PASSWORD</code> to manage collection visibility and order. Changes save to Cloudflare KV and update the live site.</p>
             <form id="admin-unlock-form" class="admin-unlock">
                 <label class="field">
                     <span>Password</span>
-                    <input type="password" id="admin-password" name="password" autocomplete="current-password">
+                    <input type="password" id="admin-password" name="password" autocomplete="current-password" required>
                 </label>
                 <button type="submit" class="btn secondary">Unlock</button>
-                <button type="button" class="btn" id="admin-continue-local">Continue locally</button>
             </form>
             <p class="admin-status" id="admin-gate-status" role="status"></p>
+            <details class="admin-dev">
+                <summary>Developer / local preview</summary>
+                <p>Static <code>python -m http.server</code> cannot write KV. Use this only while developing without Wrangler.</p>
+                <button type="button" class="btn" id="admin-continue-local">Continue without saving to KV</button>
+            </details>
         </section>
 
         <section id="admin-app" hidden>
             <div class="admin-toolbar">
-                <p class="admin-hint">Drag to reorder. Visibility OFF hides a collection everywhere public. New Square collections default to OFF.</p>
+                <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Toggle visibility. Empty collections stay hidden on the public site even when marked visible. New Square collections default to hidden.</p>
                 <div class="admin-toolbar__actions">
                     <button type="button" class="btn" id="admin-reload">Reload</button>
-                    <button type="button" class="btn" id="admin-export">Download JSON</button>
-                    <button type="button" class="btn secondary" id="admin-save">Save</button>
+                    <button type="button" class="btn secondary" id="admin-save">Save Changes</button>
                 </div>
             </div>
             <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
             <div id="admin-list" class="admin-collection-list" aria-live="polite"></div>
+
+            <details class="admin-dev admin-dev--footer">
+                <summary>Developer fallback</summary>
+                <p>If KV is unavailable, download a seed file for <code>content/collections.json</code>. This is not the normal publishing path.</p>
+                <button type="button" class="btn" id="admin-export">Download JSON</button>
+            </details>
         </section>
     </main>
-
-    <dialog id="admin-edit-dialog" class="admin-dialog">
-        <form method="dialog" id="admin-edit-form" class="admin-edit-form">
-            <h2 id="admin-edit-title">Edit collection</h2>
-            <input type="hidden" id="edit-key" name="collectionKey">
-            <p class="admin-edit-name" id="edit-display-name"></p>
-            <label class="field">
-                <span>Description</span>
-                <textarea id="edit-description" rows="4"></textarea>
-            </label>
-            <label class="field">
-                <span>Hero image URL</span>
-                <input type="text" id="edit-hero" placeholder="./assets/… or https://…">
-            </label>
-            <label class="field">
-                <span>Featured / card image URL</span>
-                <input type="text" id="edit-featured-image" placeholder="./assets/… or https://…">
-            </label>
-            <div class="admin-dialog__actions">
-                <button type="submit" class="btn secondary" value="save">Save details</button>
-                <button type="submit" class="btn" value="cancel">Cancel</button>
-            </div>
-        </form>
-    </dialog>
 
     <script type="module" src="../js/admin-collections.js"></script>
 </body>

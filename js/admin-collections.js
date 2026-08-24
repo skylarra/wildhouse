@@ -1,9 +1,9 @@
-// Admin · Collections — visibility, featured, order, presentation.
-// Square Collection attribute remains membership source of truth.
+// Admin · Collections — visibility + display order only.
+// Square Collection attribute remains the membership source of truth.
+// Persistence: PUT /api/collections-config → Cloudflare KV (COLLECTIONS_CONFIG).
 import { getAllCollectionRecords, clearCollectionsMetaCache } from "./catalog.js";
 import {
   toSavableConfig,
-  COLLECTIONS_CONFIG_LS_KEY,
   ADMIN_TOKEN_SESSION_KEY,
 } from "./collections-config.js";
 import { escapeHtml } from "./ui.js";
@@ -13,11 +13,13 @@ const app = document.getElementById("admin-app");
 const listEl = document.getElementById("admin-list");
 const statusEl = document.getElementById("admin-status");
 const gateStatus = document.getElementById("admin-gate-status");
-const dialog = document.getElementById("admin-edit-dialog");
 
 /** @type {ReturnType<typeof normalizeRow>[]} */
 let rows = [];
 let dragKey = null;
+let kvConfigured = null;
+let localPreview = false;
+let dirty = false;
 
 function normalizeRow(r) {
   return {
@@ -32,7 +34,6 @@ function normalizeRow(r) {
     heroImage: r.heroImage || "",
     featuredImage: r.featuredImage || "",
     isNew: Boolean(r.isNew),
-    image: r.image || "",
   };
 }
 
@@ -57,6 +58,16 @@ function reindexOrder() {
   });
 }
 
+function markDirty() {
+  dirty = true;
+  const saveBtn = document.getElementById("admin-save");
+  if (saveBtn) saveBtn.disabled = false;
+}
+
+function visibilityLabel(visible) {
+  return visible ? "VISIBLE" : "HIDDEN";
+}
+
 function render() {
   if (!listEl) return;
   if (!rows.length) {
@@ -66,34 +77,29 @@ function render() {
 
   listEl.innerHTML = rows
     .map((r) => {
-      const badges = [
-        r.isNew ? `<span class="admin-badge admin-badge--new">New · defaults hidden</span>` : "",
-        r.productCount === 0 ? `<span class="admin-badge admin-badge--empty">0 products · public hide</span>` : "",
-      ]
-        .filter(Boolean)
-        .join("");
+      const countNote =
+        r.productCount === 0
+          ? `<span class="admin-row__note">0 products · stays off the public site</span>`
+          : `<span class="admin-row__note">${r.productCount} ${r.productCount === 1 ? "product" : "products"}</span>`;
+      const newNote = r.isNew
+        ? `<span class="admin-row__note admin-row__note--new">New from Square · defaults hidden</span>`
+        : "";
       return `
       <article class="admin-row" draggable="true" data-key="${escapeHtml(r.collectionKey)}">
-        <div class="admin-row__handle" aria-hidden="true">⠿</div>
+        <div class="admin-row__handle" title="Drag to reorder" aria-hidden="true">☰</div>
         <div class="admin-row__main">
-          <h2 class="admin-row__title">${escapeHtml(r.displayName || r.name)}</h2>
-          <p class="admin-row__meta">${r.productCount} ${r.productCount === 1 ? "product" : "products"} · key <code>${escapeHtml(r.collectionKey)}</code></p>
-          ${badges ? `<div class="admin-row__badges">${badges}</div>` : ""}
-        </div>
-        <div class="admin-row__controls">
-          <label class="admin-toggle">
-            <input type="checkbox" data-action="visible" ${r.visible ? "checked" : ""}>
-            <span>Visible ${r.visible ? "ON" : "OFF"}</span>
-          </label>
-          <label class="admin-toggle">
-            <input type="checkbox" data-action="featured" ${r.featured ? "checked" : ""}>
-            <span>Featured ${r.featured ? "ON" : "OFF"}</span>
-          </label>
-          <label class="admin-order">
-            <span>Order</span>
-            <input type="number" min="1" step="1" data-action="sortOrder" value="${r.sortOrder}">
-          </label>
-          <button type="button" class="btn" data-action="edit">Edit →</button>
+          <h2 class="admin-row__title">
+            <span class="admin-row__name">${escapeHtml(r.displayName || r.name)}</span>
+            <span class="admin-row__sep" aria-hidden="true">—</span>
+            <button type="button"
+              class="admin-vis-btn${r.visible ? " is-on" : ""}"
+              data-action="toggle-visible"
+              aria-pressed="${r.visible}"
+              aria-label="${r.visible ? "Hide" : "Show"} ${escapeHtml(r.displayName || r.name)}">
+              ${visibilityLabel(r.visible)}
+            </button>
+          </h2>
+          <p class="admin-row__meta">${countNote}${newNote}</p>
         </div>
       </article>`;
     })
@@ -108,36 +114,22 @@ function rowFromEvent(e) {
 }
 
 function wireList() {
-  listEl.addEventListener("change", (e) => {
-    const row = rowFromEvent(e);
-    if (!row) return;
-    const input = e.target.closest("[data-action]");
-    if (!input) return;
-    const action = input.dataset.action;
-    if (action === "visible") {
-      row.visible = input.checked;
-      // Featured cannot publish a hidden collection.
-      if (!row.visible) row.featured = false;
-    } else if (action === "featured") {
-      row.featured = input.checked;
-      if (row.featured) row.visible = true;
-    } else if (action === "sortOrder") {
-      row.sortOrder = Math.max(1, Number(input.value) || 1);
-      rows.sort((a, b) => a.sortOrder - b.sortOrder || a.displayName.localeCompare(b.displayName));
-      reindexOrder();
-    }
-    render();
-  });
-
   listEl.addEventListener("click", (e) => {
-    const btn = e.target.closest('[data-action="edit"]');
+    const btn = e.target.closest('[data-action="toggle-visible"]');
     if (!btn) return;
     const row = rowFromEvent(e);
     if (!row) return;
-    openEdit(row);
+    row.visible = !row.visible;
+    if (!row.visible) row.featured = false;
+    markDirty();
+    render();
   });
 
   listEl.addEventListener("dragstart", (e) => {
+    if (e.target.closest("button, input, a, label")) {
+      e.preventDefault();
+      return;
+    }
     const article = e.target.closest(".admin-row");
     if (!article) return;
     dragKey = article.dataset.key;
@@ -159,46 +151,48 @@ function wireList() {
     const [item] = rows.splice(from, 1);
     rows.splice(to, 0, item);
     reindexOrder();
+    markDirty();
     render();
   });
 }
 
-function openEdit(row) {
-  document.getElementById("edit-key").value = row.collectionKey;
-  document.getElementById("edit-display-name").textContent = row.displayName || row.name;
-  document.getElementById("edit-description").value = row.description || "";
-  document.getElementById("edit-hero").value = row.heroImage || "";
-  document.getElementById("edit-featured-image").value = row.featuredImage || "";
-  dialog.showModal();
-}
-
-function wireDialog() {
-  const form = document.getElementById("admin-edit-form");
-  form.addEventListener("submit", (e) => {
-    const submitter = e.submitter;
-    if (submitter?.value === "cancel") return;
-    e.preventDefault();
-    const key = document.getElementById("edit-key").value;
-    const row = rows.find((r) => r.collectionKey === key);
-    if (row) {
-      row.description = document.getElementById("edit-description").value.trim();
-      row.heroImage = document.getElementById("edit-hero").value.trim();
-      row.featuredImage = document.getElementById("edit-featured-image").value.trim();
-      setStatus(`Updated details for ${row.displayName}. Remember to Save.`, "ok");
+async function probeKv() {
+  try {
+    const res = await fetch("/api/collections-config", { cache: "no-store" });
+    if (!res.ok) {
+      kvConfigured = false;
+      return;
     }
-    dialog.close();
-    render();
-  });
+    const data = await res.json();
+    kvConfigured = Boolean(data?._meta?.kvConfigured || data?._meta?.source === "kv");
+  } catch (_) {
+    kvConfigured = false;
+  }
 }
 
 async function loadRows() {
   setStatus("Loading collections…");
   clearCollectionsMetaCache();
+  await probeKv();
   const all = await getAllCollectionRecords();
   rows = all.map(normalizeRow);
   reindexOrder();
+  dirty = false;
   render();
-  setStatus(`${rows.length} collection${rows.length === 1 ? "" : "s"} loaded.`, "ok");
+
+  if (localPreview) {
+    setStatus(
+      `${rows.length} collections loaded (local preview — Save Changes needs Wrangler + KV).`,
+      "warn"
+    );
+  } else if (kvConfigured === false) {
+    setStatus(
+      `${rows.length} collections loaded. Cloudflare KV (COLLECTIONS_CONFIG) is not bound — Save Changes will not persist until it is configured.`,
+      "error"
+    );
+  } else {
+    setStatus(`${rows.length} collections loaded.`, "ok");
+  }
 }
 
 function downloadConfig() {
@@ -215,49 +209,66 @@ function downloadConfig() {
 async function save() {
   reindexOrder();
   const config = toSavableConfig(rows);
-  setStatus("Saving…");
-
-  // Always keep a local draft so static preview reflects changes immediately.
-  try {
-    localStorage.setItem(COLLECTIONS_CONFIG_LS_KEY, JSON.stringify(config));
-  } catch (_) {
-    /* ignore quota */
-  }
-  clearCollectionsMetaCache();
-
   const token = getToken();
+
+  if (localPreview && !token) {
+    setStatus(
+      "Local preview cannot write to Cloudflare KV. Unlock with ADMIN_PASSWORD under Wrangler, or use Developer fallback → Download JSON.",
+      "error"
+    );
+    return;
+  }
+
+  if (!token) {
+    setStatus("Unlock with the admin password before saving.", "error");
+    showGate();
+    return;
+  }
+
+  setStatus("Saving to Cloudflare KV…");
+  const saveBtn = document.getElementById("admin-save");
+  if (saveBtn) saveBtn.disabled = true;
+
   try {
     const res = await fetch("/api/collections-config", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(config),
     });
+
     if (res.ok) {
-      setStatus("Saved to live config (KV). Public site will pick this up on next load.", "ok");
+      clearCollectionsMetaCache();
+      dirty = false;
+      kvConfigured = true;
+      setStatus("Saved. Visibility and order are live on the public site.", "ok");
       return;
     }
+
     const data = await res.json().catch(() => ({}));
-    if (res.status === 503 || res.status === 404) {
-      setStatus(
-        `${data.error || "Live API unavailable"}. Draft saved in this browser — use Download JSON to update content/collections.json, or configure ADMIN_PASSWORD + COLLECTIONS_CONFIG KV.`,
-        "error"
-      );
-      return;
-    }
     if (res.status === 401) {
       setStatus("Unauthorized — unlock with the correct admin password.", "error");
+      setToken("");
       showGate();
+      return;
+    }
+    if (res.status === 503 || res.status === 404) {
+      setStatus(
+        `${data.error || "Save unavailable"}. ${data.hint || "Set ADMIN_PASSWORD and bind KV namespace COLLECTIONS_CONFIG in Cloudflare Pages."}`,
+        "error"
+      );
       return;
     }
     setStatus(data.error || `Save failed (${res.status})`, "error");
   } catch (_) {
     setStatus(
-      "Could not reach /api/collections-config. Draft saved in this browser — Download JSON to commit content/collections.json.",
+      "Could not reach /api/collections-config. Is the site running with Cloudflare Pages Functions (Wrangler)?",
       "error"
     );
+  } finally {
+    if (saveBtn) saveBtn.disabled = !dirty;
   }
 }
 
@@ -275,17 +286,28 @@ function wireChrome() {
   document.getElementById("admin-unlock-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
     const password = document.getElementById("admin-password").value;
+    if (!password.trim()) {
+      gateStatus.textContent = "Enter the admin password.";
+      gateStatus.className = "admin-status is-error";
+      return;
+    }
     setToken(password);
+    localPreview = false;
     gateStatus.textContent = "Unlocked.";
+    gateStatus.className = "admin-status is-ok";
     showApp();
     loadRows();
   });
+
   document.getElementById("admin-continue-local")?.addEventListener("click", () => {
     setToken("");
-    gateStatus.textContent = "Local mode — saves use this browser + JSON download.";
+    localPreview = true;
+    gateStatus.textContent = "Local preview — changes will not save to KV.";
+    gateStatus.className = "admin-status is-warn";
     showApp();
     loadRows();
   });
+
   document.getElementById("admin-save")?.addEventListener("click", () => save());
   document.getElementById("admin-export")?.addEventListener("click", () => downloadConfig());
   document.getElementById("admin-reload")?.addEventListener("click", () => loadRows());
@@ -294,9 +316,8 @@ function wireChrome() {
 async function init() {
   wireChrome();
   wireList();
-  wireDialog();
-  // If a token already exists (or local draft), go straight in.
-  if (getToken() || localStorage.getItem(COLLECTIONS_CONFIG_LS_KEY)) {
+  if (getToken()) {
+    localPreview = false;
     showApp();
     await loadRows();
   } else {

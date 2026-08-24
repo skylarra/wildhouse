@@ -5,15 +5,15 @@
 // Architecture (do not invert):
 // - Square `Collection` custom attribute → product membership
 // - Square Categories → product type (shop filters / collection type chips)
-// - Website collections config → visibility, featured, order, copy, images
-//   (content/collections.json seed + /api/collections-config KV override)
+// - Website collections config → visibility + order (+ optional copy/images)
+//   Admin Save → Cloudflare KV; public reads /api/collections-config
+//   (seed: content/collections.json when KV empty)
 
 import { loadJSON, sitePath } from "./content.js";
 import {
   normalizeCollectionsConfig,
   mergeCollectionsWithConfig,
   isPublicCollection,
-  COLLECTIONS_CONFIG_LS_KEY,
 } from "./collections-config.js";
 
 let cache = null;
@@ -65,7 +65,8 @@ async function loadRaw() {
 
 /**
  * Load website collection configuration.
- * Priority: /api/collections-config → localStorage admin draft → content/collections.json
+ * Priority: /api/collections-config (KV, then seed) → content/collections.json
+ * Browser drafts are intentionally not used on the public site.
  */
 export async function loadCollectionsMeta({ bust = false } = {}) {
   if (!bust && collectionsMetaCache) return collectionsMetaCache;
@@ -81,16 +82,6 @@ export async function loadCollectionsMeta({ bust = false } = {}) {
     }
   } catch (_) {
     /* no Functions */
-  }
-
-  try {
-    const draft = localStorage.getItem(COLLECTIONS_CONFIG_LS_KEY);
-    if (draft) {
-      collectionsMetaCache = normalizeCollectionsConfig(JSON.parse(draft));
-      return collectionsMetaCache;
-    }
-  } catch (_) {
-    /* private mode / invalid JSON */
   }
 
   try {
@@ -258,10 +249,10 @@ export async function getCollectionByHandle(handle) {
   return collections.find((c) => c.handle === handle || c.slug === handle) || null;
 }
 
-/** Homepage featured strip: public + featured only (no fallback to all). */
+/** Homepage featured strip: public collections in admin display order. */
 export async function getFeaturedCollections(limit = 6) {
   const collections = await getCollections();
-  return collections.filter((c) => c.featured).slice(0, limit);
+  return collections.slice(0, limit);
 }
 
 export async function getProductByHandle(handle) {
