@@ -1704,10 +1704,15 @@
   margin: 0;
   padding: 12px max(16px, calc((100% - 1100px) / 2 + 16px));
   display: flex;
+  flex-wrap: nowrap;
   gap: 18px;
   width: max-content;
+  max-width: none;
 }
-.custom-roll__item { scroll-snap-align: start; }
+.custom-roll__item {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
 .custom-roll__card {
   appearance: none;
   border: 0;
