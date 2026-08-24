@@ -36,7 +36,8 @@ export function slugify(str = "") {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Pretty collection path used in production (Cloudflare `_redirects` → collection.html). */
+/** Collection detail URL. Prefer pretty `/collections/:handle` in production
+ *  (`_redirects` → `/collection?handle=…`). Query form works locally too. */
 export function collectionHref(handle) {
   if (!handle) return "./collections.html";
   return `./collections/${encodeURIComponent(handle)}`;
