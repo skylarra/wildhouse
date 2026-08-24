@@ -1,5 +1,5 @@
 {
-  "_comment": "Website-side collection configuration (visibility, featured, order, copy, images). Product membership comes ONLY from the Square Catalog custom attribute named Collection. New Square collections with no entry here default to visible=false until enabled in /admin/collections.",
+  "_comment": "Website-side collection presentation seed (visibility + order + optional copy/images). Product membership comes ONLY from Square's Collection attribute. Live edits persist in Cloudflare KV via /admin/collections → PUT /api/collections-config. New Square collections with no entry default to visible=false. Public pages require visible=true AND productCount > 0.",
   "version": 2,
   "entries": [
     {

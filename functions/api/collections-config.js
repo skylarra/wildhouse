@@ -25,7 +25,11 @@ async function loadConfig(request, env) {
       if (stored && Array.isArray(stored.entries)) {
         return {
           ...normalizeCollectionsConfig(stored),
-          _meta: { source: "kv" },
+          _meta: {
+            source: "kv",
+            kvConfigured: true,
+            adminConfigured: Boolean(env.ADMIN_PASSWORD),
+          },
         };
       }
     } catch (_) {
@@ -33,7 +37,14 @@ async function loadConfig(request, env) {
     }
   }
   const seed = await loadSeed(request, env);
-  return { ...seed, _meta: { source: "seed", kvConfigured: Boolean(env.COLLECTIONS_CONFIG) } };
+  return {
+    ...seed,
+    _meta: {
+      source: "seed",
+      kvConfigured: Boolean(env.COLLECTIONS_CONFIG),
+      adminConfigured: Boolean(env.ADMIN_PASSWORD),
+    },
+  };
 }
 
 function unauthorized() {

@@ -1,17 +1,19 @@
 # Current Sprint
 
-## Collection visibility admin
+## Collections admin (visibility + order)
 
-- Admin page: `/admin/collections` (toggles, featured, drag-reorder, description/images)
-- Public collections require `visible` + at least one product
-- New Square collections default to hidden until enabled in admin
-- Persistence: KV `COLLECTIONS_CONFIG` + `ADMIN_PASSWORD`, or download `content/collections.json`
+- Admin page: `/admin/collections`
+- Controls only: **visibility** ON/OFF + drag **display order**
+- Square remains source of truth for which products belong to a collection
+- New Square collections default to **hidden**
+- Public rule: `visible && productCount > 0`
+- Persistence: **Save Changes** → `PUT /api/collections-config` → Cloudflare KV `COLLECTIONS_CONFIG`
 
-### Ops to enable live admin saves
+### Ops (required for live Save Changes)
 
 1. Cloudflare Pages → create KV namespace → bind as `COLLECTIONS_CONFIG`
 2. Set secret/env `ADMIN_PASSWORD`
-3. Redeploy Functions
+3. Redeploy so Functions pick up the binding
 
 ---
 
