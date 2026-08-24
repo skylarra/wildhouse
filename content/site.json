@@ -27,7 +27,7 @@
   "nav": [
     { "label": "SHOP", "href": "./shop.html" },
     { "label": "COLLECTIONS", "href": "./collections.html" },
-    { "label": "CUSTOM", "href": "./custom-creations.html" },
+    { "label": "CUSTOM ORDERS", "href": "./custom-creations.html" },
     { "label": "CONTACT", "href": "./contact.html" }
   ],
   "footerLinks": [
@@ -36,7 +36,7 @@
       "links": [
         { "label": "Shop", "href": "./shop.html" },
         { "label": "Collections", "href": "./collections.html" },
-        { "label": "Custom Creations", "href": "./custom-creations.html" }
+        { "label": "Custom Orders", "href": "./custom-creations.html" }
       ]
     },
     {

@@ -25,9 +25,9 @@
     {
       "id": "custom-creations",
       "eyebrow": "Made just for you",
-      "heading": "Custom Creations",
-      "body": "Have something entirely your own in mind? Share a sketch of the idea and we'll talk materials, size, and timeline.",
-      "cta": { "label": "Start a custom project", "href": "./custom-creations.html" },
+      "heading": "Custom Orders",
+      "body": "Have an idea? Personalized gifts, signs, wall art, and other laser-made pieces — built around what you imagine.",
+      "cta": { "label": "Start a custom order", "href": "./custom-creations.html" },
       "image": { "src": "./assets/coming-soon.png", "alt": "Custom handmade piece" }
     },
     {

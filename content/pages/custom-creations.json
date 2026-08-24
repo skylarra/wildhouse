@@ -1,27 +1,14 @@
 {
-  "_comment": "Custom Creations landing for launch. Full inquiry form + uploads arrive later; Contact is the path for now.",
-  "title": "Custom Creations",
-  "intro": "For projects that aren't already on the shelf — keepsakes, one-offs, and ideas that need a little conversation first.",
+  "_comment": "Superseded by content/custom-orders.json + js/custom-orders.js (dedicated Custom Orders page). Kept so older page.js references do not 404 if reused.",
+  "title": "Custom Orders",
+  "seo": {
+    "heading": "Custom Orders | Wildhouse Lane",
+    "body": "Have an idea? Wildhouse Lane creates personalized laser-cut, engraved, and handmade pieces made around your idea."
+  },
   "blocks": [
     {
-      "type": "note",
-      "html": "There are no custom inquiry submissions here yet — the full request form is coming after launch. Until then, email is the best way to start."
-    },
-    { "type": "heading", "text": "What to include" },
-    {
-      "type": "paragraph",
-      "html": "When you reach out, share your name, email, project type, rough budget and timeline, preferred size and materials, and a short description. Inspiration photos help a lot."
-    },
-    {
-      "type": "paragraph",
-      "html": "Custom work is made by hand in small batches of one — timing depends on the season and how detailed the piece is."
-    },
-    { "type": "heading", "text": "Start the conversation" },
-    {
-      "type": "paragraph",
-      "html": "Send a note to <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a>, or use the contact page. We'll reply with next steps."
-    },
-    { "type": "cta", "label": "Contact Wildhouse Lane", "href": "./contact.html" },
-    { "type": "cta", "label": "Shop ready-made pieces", "href": "./shop.html" }
+      "type": "prose",
+      "html": "<p>This page is rendered by <code>js/custom-orders.js</code>. Edit <code>content/custom-orders.json</code> instead.</p>"
+    }
   ]
 }

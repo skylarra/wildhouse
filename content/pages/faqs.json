@@ -59,7 +59,7 @@
       "items": [
         {
           "q": "Do you take custom requests?",
-          "a": "Yes. Visit <a href=\"./custom-creations.html\">Custom Creations</a> to share your idea, and we’ll talk materials, size, and timeline."
+          "a": "Yes. Visit <a href=\"./custom-creations.html\">Custom Orders</a> to share your idea, and we’ll talk materials, size, and timeline."
         },
         {
           "q": "Are custom pieces returnable?",
