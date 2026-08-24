@@ -190,16 +190,11 @@ export function formatProductDescription({ html = "", text = "" } = {}) {
 }
 
 export function collectionCardHTML(collection) {
-  const blurb = collection.description
-    ? `<p class="collection-card__blurb">${escapeHtml(collection.description)}</p>`
-    : `<p>${collection.count} ${collection.count === 1 ? "product" : "products"}</p>`;
   return `
     <a class="collection-card" href="./collection.html?handle=${encodeURIComponent(collection.handle)}">
       <div class="collection-card__media img-placeholder">
         <img src="${collection.image}" alt="${escapeHtml(collection.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
       </div>
-      <h3>${escapeHtml(collection.name)}</h3>
-      ${blurb}
-      <span class="collection-card__cta">Shop Collection →</span>
+      <h3 class="collection-card__name">${escapeHtml(collection.name)}</h3>
     </a>`;
 }
