@@ -7,6 +7,7 @@ import {
   getCollectionByHandle,
   getProducts,
   queryProducts,
+  productInCollection,
 } from "./catalog.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml } from "./ui.js";
 
@@ -72,7 +73,7 @@ function typesInCollection(list) {
 function renderTypeFilters() {
   const el = document.getElementById("collection-type-filters");
   if (!el) return;
-  const inCollection = products.filter((p) => p.collectionHandle === collection.handle);
+  const inCollection = products.filter((p) => productInCollection(p, collection.handle));
   const types = typesInCollection(inCollection);
   if (!types.length) {
     el.hidden = true;

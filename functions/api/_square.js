@@ -31,10 +31,17 @@ export function missingSquareEnv(env = {}) {
 
 function isFeaturedItem(attrs = {}) {
   for (const attr of Object.values(attrs)) {
-    const key = String(attr?.name || attr?.key || "").toLowerCase();
-    if (!key.includes("featured")) continue;
+    const key = String(attr?.name || attr?.key || "").toLowerCase().trim();
+    // Exact “Featured” custom attribute (avoid accidental substring matches).
+    const isFeaturedKey =
+      key === "featured" ||
+      key.endsWith(":featured") ||
+      key.endsWith(".featured") ||
+      key.endsWith("_featured");
+    if (!isFeaturedKey) continue;
     if (attr.boolean_value === true) return true;
     if (String(attr.string_value || "").toLowerCase() === "true") return true;
+    if (attr.selection_uid_values?.length) return true;
   }
   return false;
 }
