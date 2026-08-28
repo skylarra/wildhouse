@@ -1,164 +1,77 @@
 {
-  "_comment": "Custom Orders page content. Replace gallery image paths with real custom-project photos when available (see gallery[]._todo). Form submits via mailto to site email.",
+  "_comment": "Custom Orders page. No inquiry form yet — visitors reach out by Instagram or email. Showcase items use placeholders until real project photos are added (_todo).",
   "seo": {
     "title": "Custom Orders | Wildhouse Lane",
-    "description": "Have an idea? Wildhouse Lane creates personalized laser-cut, engraved, and handmade pieces made around your idea."
+    "description": "Have an idea? Message Wildhouse Lane on Instagram or email for personalized laser-cut and handmade pieces."
   },
   "hero": {
     "heading": "Custom Orders",
     "tagline": "Have an idea? Let's make it real.",
-    "body": "Personalized gifts, signs, wall art, keychains, ornaments, magnets, engraved pieces, and other laser-made keepsakes — built around your idea.",
-    "cta": { "label": "Start a Custom Order", "href": "#custom-inquiry" },
+    "body": "Personalized gifts, baby signs, name puzzles, custom keychains, and other laser-made keepsakes — built around your idea. No form for now; just reach out.",
+    "ctas": [
+      {
+        "label": "Message on Instagram",
+        "href": "https://www.instagram.com/wildhouselane/",
+        "external": true
+      },
+      {
+        "label": "Email Skylar",
+        "href": "mailto:skylar@wildhouselane.com?subject=Custom%20order%20idea"
+      }
+    ],
     "image": {
       "src": "./assets/sunny-mirror.jpg",
       "alt": "Handmade Wildhouse Lane piece catching the light"
     }
   },
-  "gallery": {
-    "heading": "A FEW THINGS I'VE MADE",
-    "body": "Every custom order starts with an idea.",
+  "showcase": {
+    "heading": "A few custom pieces",
+    "body": "A small peek at things I've made to order.",
     "items": [
       {
-        "_todo": "Replace with a real custom-project photo",
-        "image": "./assets/sunny-mirror.jpg",
-        "title": "Custom wall piece",
-        "category": "Custom wall art",
-        "alt": "Placeholder — custom wall art photo coming soon"
+        "_todo": "Replace with a real baby-sign photo",
+        "image": "./assets/1.png",
+        "title": "Baby sign",
+        "alt": "Placeholder — custom baby sign photo coming soon"
       },
       {
-        "_todo": "Replace with a real custom-project photo",
+        "_todo": "Replace with a real name-puzzle photo",
+        "image": "./assets/2.jpg",
+        "title": "Name puzzle",
+        "alt": "Placeholder — custom name puzzle photo coming soon"
+      },
+      {
+        "_todo": "Replace with a real custom-keychain photo",
+        "image": "./assets/sunny-mirror.jpg",
+        "title": "Custom keychain",
+        "alt": "Placeholder — custom keychain photo coming soon"
+      },
+      {
+        "_todo": "Replace with a real personalized-gift photo",
         "image": "./assets/welcome1.jpg",
         "title": "Personalized gift",
-        "category": "Personalized gift",
         "alt": "Placeholder — personalized gift photo coming soon"
-      },
-      {
-        "_todo": "Replace with a real custom-project photo",
-        "image": "./assets/2.jpg",
-        "title": "Engraved keepsake",
-        "category": "Custom engraving",
-        "alt": "Placeholder — custom engraving photo coming soon"
-      },
-      {
-        "_todo": "Replace with a real custom-project photo",
-        "image": "./assets/1.png",
-        "title": "Sign work",
-        "category": "Custom sign",
-        "alt": "Placeholder — custom sign photo coming soon"
-      },
-      {
-        "_todo": "Replace with a real custom-project photo",
-        "image": "./assets/2.2.png",
-        "title": "Event piece",
-        "category": "Wedding piece",
-        "alt": "Placeholder — wedding or event piece photo coming soon"
-      },
-      {
-        "_todo": "Replace with a real custom-project photo",
-        "image": "./assets/about-me-picture.png",
-        "title": "Memorial piece",
-        "category": "Memorial piece",
-        "alt": "Placeholder — memorial piece photo coming soon"
-      },
-      {
-        "_todo": "Replace with a real custom-project photo",
-        "image": "./assets/coming-soon.png",
-        "title": "Studio detail",
-        "category": "Handmade detail",
-        "alt": "Placeholder — custom project detail photo coming soon"
       }
     ]
   },
-  "categories": {
-    "heading": "What can I customize?",
-    "body": "These are starting places — not limits.",
-    "items": [
+  "contact": {
+    "id": "custom-reach-out",
+    "heading": "Ready to start?",
+    "body": "Send a quick note with your idea, any sizes or colors you already know, and inspiration photos if you have them. I'll reply with next steps.",
+    "channels": [
       {
-        "title": "PERSONALIZED",
-        "body": "Names, dates, initials, meaningful phrases"
+        "label": "Instagram",
+        "value": "@wildhouselane",
+        "href": "https://www.instagram.com/wildhouselane/",
+        "external": true,
+        "hint": "DM me anytime"
       },
       {
-        "title": "HOME",
-        "body": "Signs, wall art, décor, displays"
-      },
-      {
-        "title": "GIFTS",
-        "body": "Birthdays, weddings, anniversaries, holidays"
-      },
-      {
-        "title": "EVENTS",
-        "body": "Wedding décor, party favors, event pieces"
-      },
-      {
-        "title": "JUST BECAUSE",
-        "body": "If you have an idea, ask.",
-        "featured": true
+        "label": "Email",
+        "value": "skylar@wildhouselane.com",
+        "href": "mailto:skylar@wildhouselane.com?subject=Custom%20order%20idea",
+        "hint": "Attach photos if you like"
       }
     ]
-  },
-  "process": {
-    "heading": "How custom orders work",
-    "steps": [
-      {
-        "number": "01",
-        "title": "Tell me your idea",
-        "body": "Share the details, inspiration, dimensions, colors, quantity — whatever you already know."
-      },
-      {
-        "number": "02",
-        "title": "We'll figure it out",
-        "body": "I review the request and determine materials, production method, and pricing that fit the piece."
-      },
-      {
-        "number": "03",
-        "title": "Approve your design",
-        "body": "For applicable custom pieces, you'll get a proof or mockup before production begins."
-      },
-      {
-        "number": "04",
-        "title": "I make it",
-        "body": "Once approved, the piece is made by hand and prepared for pickup or shipping."
-      }
-    ]
-  },
-  "faq": {
-    "heading": "Before you submit",
-    "items": [
-      {
-        "q": "How much do custom orders cost?",
-        "a": "Custom pricing depends on size, materials, complexity, and quantity. I'll share an estimate after reviewing your idea."
-      },
-      {
-        "q": "How long do custom orders take?",
-        "a": "Production time varies depending on the project and current workload. Please allow handmade processing time — and share your desired date in the form."
-      },
-      {
-        "q": "Can you work from an idea instead of a finished design?",
-        "a": "Yes. Describe the idea and share inspiration or reference images. We can shape the details together."
-      },
-      {
-        "q": "Can you make something that isn't shown here?",
-        "a": "Probably. If it fits the Wildhouse Lane studio (laser-cut, engraved, or handmade keepsakes), ask. The worst I can say is not this time."
-      }
-    ]
-  },
-  "form": {
-    "id": "custom-inquiry",
-    "heading": "Start a custom order",
-    "intro": "Tell me what you're imagining. I'll reply by email with next steps.",
-    "mailto": "skylar@wildhouselane.com",
-    "successMessage": "Your email draft should open shortly — add any reference photos as attachments, then send when you're ready.",
-    "errorMessage": "Please fill in your name, a valid email, what you want made, and a short description of your idea.",
-    "disclaimer": "I understand that submitting this form is an inquiry and does not guarantee an order or final price.",
-    "submitLabel": "SEND CUSTOM REQUEST",
-    "sourceOptions": [
-      "TikTok",
-      "Instagram",
-      "Pinterest",
-      "Google",
-      "Friend/Family",
-      "Other"
-    ],
-    "uploadNote": "File uploads aren't connected yet. After your email draft opens, attach inspiration photos there — or reply to my response with images."
   }
 }
