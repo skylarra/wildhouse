@@ -4,7 +4,7 @@
 import { formatMoney } from "./catalog.js";
 import { isFavorite, toggleFavorite } from "./store.js";
 
-const FALLBACK_IMG = "./assets/coming-soon.png";
+const FALLBACK_IMG = "/assets/coming-soon.png";
 
 export function productCardHTML(product) {
   const img = product.images[0] || FALLBACK_IMG;

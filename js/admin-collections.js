@@ -1,12 +1,19 @@
-// Admin · Collections — visibility, featured, order, presentation copy/images.
-// Square Collection attribute remains the membership source of truth.
+// Admin · Collections — presentation controls over Square-derived collections.
+// Names + membership: Square Collection custom attribute (same as /collections).
+// Covers: assets/collections/{normalizeCollectionKey}.png
 // Persistence: PUT /api/collections-config → Cloudflare KV (COLLECTIONS_CONFIG).
-import { getAllCollectionRecords, clearCollectionsMetaCache } from "./catalog.js";
+import { getAllCollectionRecords, getCollections, clearCollectionsMetaCache } from "./catalog.js";
 import {
   toSavableConfig,
   ADMIN_TOKEN_SESSION_KEY,
 } from "./collections-config.js";
-import { collectionCoverFilename } from "./collection-assets.js";
+import {
+  collectionCoverFilename,
+  collectionCoverRepoPath,
+  collectionCoverSrc,
+  COLLECTION_COVER_FALLBACK,
+  probeCollectionCover,
+} from "./collection-assets.js";
 import { escapeHtml } from "./ui.js";
 
 const gate = document.getElementById("admin-gate");
@@ -23,17 +30,20 @@ let localPreview = false;
 let dirty = false;
 
 function normalizeRow(r) {
+  const name = r.name || r.displayName || "";
   return {
     collectionKey: r.collectionKey || r.handle,
-    displayName: r.displayName || r.name,
-    name: r.name || r.displayName,
+    displayName: name,
+    name,
     productCount: r.productCount || r.count || 0,
     visible: Boolean(r.visible),
     featured: Boolean(r.featured),
     sortOrder: Number(r.sortOrder) || 0,
     description: r.description || "",
-    heroImage: r.heroImage || "",
-    featuredImage: r.featuredImage || "",
+    image: r.image || collectionCoverSrc(name),
+    coverRepoPath: collectionCoverRepoPath(name),
+    coverFilename: collectionCoverFilename(name),
+    coverFound: null, // filled async after render
     isNew: Boolean(r.isNew),
   };
 }
@@ -69,58 +79,80 @@ function visibilityLabel(visible) {
   return visible ? "VISIBLE" : "HIDDEN";
 }
 
+function coverStatusHTML(r) {
+  if (r.coverFound === true) {
+    return `<span class="admin-cover-status is-found">Cover found</span>`;
+  }
+  if (r.coverFound === false) {
+    return `<span class="admin-cover-status is-missing">Missing cover</span>`;
+  }
+  return `<span class="admin-cover-status">Checking cover…</span>`;
+}
+
 function render() {
   if (!listEl) return;
   if (!rows.length) {
-    listEl.innerHTML = `<p class="empty-state__body">No collections detected yet. In Square, create a custom attribute named <strong>Collection</strong> (single selection), add your collection options, assign products, then reload.</p>`;
+    listEl.innerHTML = `<p class="empty-state__body">No Square collections detected yet. Assign the <strong>Collection</strong> custom attribute on products (same source as <a href="/collections">/collections</a>), then reload.</p>`;
     return;
   }
 
   listEl.innerHTML = rows
     .map((r) => {
-      const countNote =
+      const countLabel =
         r.productCount === 0
-          ? `<span class="admin-row__note">0 products · stays off the public site</span>`
-          : `<span class="admin-row__note">${r.productCount} ${r.productCount === 1 ? "product" : "products"}</span>`;
+          ? `0 products · not on public /collections yet`
+          : `${r.productCount} ${r.productCount === 1 ? "product" : "products"}`;
       const newNote = r.isNew
-        ? `<span class="admin-row__note admin-row__note--new">New from Square · defaults hidden</span>`
+        ? `<span class="admin-row__note admin-row__note--new">New from Square</span>`
         : "";
-      const featuredNote = r.featured
-        ? `<span class="admin-row__note admin-row__note--featured">Featured on homepage</span>`
-        : "";
+      const thumbSrc = r.coverFound === false ? COLLECTION_COVER_FALLBACK : r.image;
       return `
       <article class="admin-row" draggable="true" data-key="${escapeHtml(r.collectionKey)}">
         <div class="admin-row__handle" title="Drag to reorder" aria-hidden="true">☰</div>
         <div class="admin-row__main">
           <div class="admin-row__summary">
-            <h2 class="admin-row__title">
-              <span class="admin-row__name">${escapeHtml(r.displayName || r.name)}</span>
-              <span class="admin-row__sep" aria-hidden="true">—</span>
-              <button type="button"
-                class="admin-vis-btn${r.visible ? " is-on" : ""}"
-                data-action="toggle-visible"
-                aria-pressed="${r.visible}"
-                aria-label="${r.visible ? "Hide" : "Show"} ${escapeHtml(r.displayName || r.name)}">
-                ${visibilityLabel(r.visible)}
-              </button>
-              <button type="button"
-                class="admin-feat-btn${r.featured ? " is-on" : ""}"
-                data-action="toggle-featured"
-                aria-pressed="${r.featured}"
-                aria-label="${r.featured ? "Unfeature" : "Feature"} ${escapeHtml(r.displayName || r.name)}"
-                ${!r.visible ? "disabled" : ""}>
-                ${r.featured ? "FEATURED" : "NOT FEATURED"}
-              </button>
-            </h2>
-            <p class="admin-row__meta">${countNote}${featuredNote}${newNote}</p>
-            <p class="admin-row__order">Display order: <strong>${r.sortOrder}</strong></p>
+            <div class="admin-row__cover">
+              <img src="${escapeHtml(thumbSrc)}" alt="" width="72" height="90"
+                data-cover-key="${escapeHtml(r.collectionKey)}"
+                data-fallback="${COLLECTION_COVER_FALLBACK}"
+                loading="lazy">
+            </div>
+            <div class="admin-row__text">
+              <h2 class="admin-row__title">
+                <span class="admin-row__name">${escapeHtml(r.displayName || r.name)}</span>
+                <span class="admin-row__sep" aria-hidden="true">—</span>
+                <button type="button"
+                  class="admin-vis-btn${r.visible ? " is-on" : ""}"
+                  data-action="toggle-visible"
+                  aria-pressed="${r.visible}"
+                  aria-label="${r.visible ? "Hide" : "Show"} ${escapeHtml(r.displayName || r.name)}">
+                  ${visibilityLabel(r.visible)}
+                </button>
+                <button type="button"
+                  class="admin-feat-btn${r.featured ? " is-on" : ""}"
+                  data-action="toggle-featured"
+                  aria-pressed="${r.featured}"
+                  aria-label="${r.featured ? "Unfeature" : "Feature"} ${escapeHtml(r.displayName || r.name)}"
+                  ${!r.visible ? "disabled" : ""}>
+                  ${r.featured ? "FEATURED" : "NOT FEATURED"}
+                </button>
+              </h2>
+              <p class="admin-row__meta">
+                <span class="admin-row__note">${escapeHtml(countLabel)}</span>
+                ${newNote}
+              </p>
+              <p class="admin-row__order">Display order: <strong>${r.sortOrder}</strong></p>
+              <div class="admin-cover-meta">
+                <p><span class="admin-cover-label">Cover image:</span> <code>${escapeHtml(r.coverRepoPath || "—")}</code></p>
+                <p><span class="admin-cover-label">Status:</span> ${coverStatusHTML(r)}</p>
+              </div>
+            </div>
           </div>
           <details class="admin-row__details">
-            <summary>Edit presentation</summary>
+            <summary>Edit description</summary>
             <div class="admin-row__fields">
-              <p class="admin-row__note">Cover image file: <code>assets/collections/${escapeHtml(collectionCoverFilename(r.displayName || r.name) || "…")}</code> — add/replace the PNG in the repo; names come from Square.</p>
               <label class="field">
-                <span>Description (optional website copy)</span>
+                <span>Description (optional website copy — name/membership stay in Square)</span>
                 <textarea data-field="description" rows="3">${escapeHtml(r.description)}</textarea>
               </label>
             </div>
@@ -129,6 +161,18 @@ function render() {
       </article>`;
     })
     .join("");
+}
+
+async function refreshCoverStatuses() {
+  await Promise.all(
+    rows.map(async (r) => {
+      const result = await probeCollectionCover(r.name || r.displayName);
+      r.coverFound = result.found;
+      r.image = result.url;
+      r.coverRepoPath = result.repoPath;
+    })
+  );
+  render();
 }
 
 function rowFromEvent(e) {
@@ -172,8 +216,15 @@ function wireList() {
     }
   });
 
+  listEl.addEventListener("error", (e) => {
+    const img = e.target.closest("img[data-fallback]");
+    if (!img || img.dataset.fellBack) return;
+    img.dataset.fellBack = "1";
+    img.src = img.dataset.fallback || COLLECTION_COVER_FALLBACK;
+  }, true);
+
   listEl.addEventListener("dragstart", (e) => {
-    if (e.target.closest("button, input, a, label, textarea, details, summary")) {
+    if (e.target.closest("button, input, a, label, textarea, details, summary, img")) {
       e.preventDefault();
       return;
     }
@@ -218,27 +269,48 @@ async function probeKv() {
 }
 
 async function loadRows() {
-  setStatus("Loading collections…");
+  setStatus("Loading collections from Square…");
   clearCollectionsMetaCache();
   await probeKv();
-  const all = await getAllCollectionRecords();
+
+  let all;
+  let publicList = [];
+  try {
+    [all, publicList] = await Promise.all([getAllCollectionRecords(), getCollections()]);
+  } catch (err) {
+    setStatus("Could not load Square catalog collections.", "error");
+    listEl.innerHTML = `<p class="empty-state__body">Failed to load collections. Check /api/catalog and reload.</p>`;
+    console.error(err);
+    return;
+  }
+
   rows = all.map(normalizeRow);
-  reindexOrder();
+  // Keep admin order stable; reindex only if every sortOrder is 0
+  if (rows.every((r) => !r.sortOrder)) reindexOrder();
+  else rows.sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name));
   dirty = false;
   render();
+  refreshCoverStatuses();
+
+  const withProducts = rows.filter((r) => r.productCount > 0).length;
+  const publicNames = publicList.map((c) => c.name).sort().join(", ") || "—";
+  const parity =
+    withProducts === publicList.length
+      ? `Public /collections shows the same ${publicList.length} with products (${publicNames}).`
+      : `Public /collections has ${publicList.length} with products; admin lists ${rows.length} Square values (${withProducts} with products).`;
 
   if (localPreview) {
     setStatus(
-      `${rows.length} collections loaded (local preview — Save Changes needs Wrangler + KV).`,
+      `${rows.length} Square collections loaded (local preview — Save needs Wrangler + KV). ${parity}`,
       "warn"
     );
   } else if (kvConfigured === false) {
     setStatus(
-      `${rows.length} collections loaded. Cloudflare KV (COLLECTIONS_CONFIG) is not bound — Save Changes will not persist until it is configured.`,
+      `${rows.length} Square collections loaded. KV (COLLECTIONS_CONFIG) not bound — Save will not persist. ${parity}`,
       "error"
     );
   } else {
-    setStatus(`${rows.length} collections loaded.`, "ok");
+    setStatus(`${rows.length} Square collections loaded. ${parity}`, "ok");
   }
 }
 
@@ -290,7 +362,7 @@ async function save() {
       clearCollectionsMetaCache();
       dirty = false;
       kvConfigured = true;
-      setStatus("Saved. Collection presentation is live on the public site.", "ok");
+      setStatus("Saved. Presentation settings stored; membership still comes from Square.", "ok");
       return;
     }
 
