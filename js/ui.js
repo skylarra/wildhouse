@@ -14,12 +14,17 @@ export function productCardHTML(product) {
       : formatMoney(product.minPriceCents);
   const fav = isFavorite(product.id);
   const soldOut = product.inStock ? "" : '<span class="badge badge--soldout">Sold out</span>';
+  // Optional future focal-point override (e.g. "50% 20%"). Defaults to centered cover crop.
+  const imagePosition = product.imagePosition || product.custom?.imagePosition || "";
+  const positionStyle = imagePosition
+    ? ` style="--product-image-position: ${escapeHtml(String(imagePosition))}"`
+    : "";
 
   return `
     <article class="product-card" data-item-id="${product.id}">
       <a class="product-card__link" href="./product.html?handle=${encodeURIComponent(product.handle)}">
         <div class="product-card__media img-placeholder">
-          <img src="${img}" alt="${escapeHtml(product.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
+          <img src="${img}" alt="${escapeHtml(product.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}"${positionStyle}>
           ${soldOut}
         </div>
         <h3>${escapeHtml(product.name)}</h3>
