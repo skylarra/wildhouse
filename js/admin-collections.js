@@ -71,7 +71,7 @@ function visibilityLabel(visible) {
 function render() {
   if (!listEl) return;
   if (!rows.length) {
-    listEl.innerHTML = `<p class="empty-state__body">No collections detected yet. Assign the Square <strong>Collection</strong> attribute on products, then reload.</p>`;
+    listEl.innerHTML = `<p class="empty-state__body">No collections detected yet. In Square, create a custom attribute named <strong>Collection</strong> (single selection), add your collection options, assign products, then reload.</p>`;
     return;
   }
 

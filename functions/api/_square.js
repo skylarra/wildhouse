@@ -29,45 +29,169 @@ export function missingSquareEnv(env = {}) {
   return missing;
 }
 
-function isFeaturedItem(attrs = {}) {
-  for (const attr of Object.values(attrs)) {
-    const key = String(attr?.name || attr?.key || "").toLowerCase().trim();
-    // Exact “Featured” custom attribute (avoid accidental substring matches).
-    const isFeaturedKey =
-      key === "featured" ||
-      key.endsWith(":featured") ||
-      key.endsWith(".featured") ||
-      key.endsWith("_featured");
-    if (!isFeaturedKey) continue;
-    if (attr.boolean_value === true) return true;
-    if (String(attr.string_value || "").toLowerCase() === "true") return true;
-    if (attr.selection_uid_values?.length) return true;
+/**
+ * Index CUSTOM_ATTRIBUTE_DEFINITION objects by id.
+ * Square value payloads often omit `name`/`key`; the map key on the item plus
+ * the definition id are the reliable identifiers.
+ */
+export function buildAttributeDefinitionIndex(objects = []) {
+  const byId = new Map();
+  for (const obj of objects) {
+    if (obj.type !== "CUSTOM_ATTRIBUTE_DEFINITION") continue;
+    const data = obj.custom_attribute_definition_data || {};
+    byId.set(obj.id, {
+      id: obj.id,
+      name: String(data.name || "").trim(),
+      key: String(data.key || "").trim(),
+      type: String(data.type || "").trim().toUpperCase(),
+      allowedSelections: data.selection_config?.allowed_selections || [],
+    });
+  }
+  return byId;
+}
+
+/** Lowercased identity strings for a custom-attribute value (map key, value fields, definition). */
+export function attributeIdentities(mapKey, attr = {}, defIndex = new Map()) {
+  const out = [];
+  const push = (v) => {
+    const s = String(v || "")
+      .trim()
+      .toLowerCase();
+    if (s && !out.includes(s)) out.push(s);
+  };
+  push(mapKey);
+  push(attr.name);
+  push(attr.key);
+  const def = attr.custom_attribute_definition_id
+    ? defIndex.get(attr.custom_attribute_definition_id)
+    : null;
+  if (def) {
+    push(def.name);
+    push(def.key);
+  }
+  return out;
+}
+
+function identityMatches(identities, needle) {
+  const n = String(needle || "")
+    .trim()
+    .toLowerCase();
+  if (!n) return false;
+  return identities.some(
+    (id) =>
+      id === n ||
+      id.endsWith(`:${n}`) ||
+      id.endsWith(`.${n}`) ||
+      id.endsWith(`_${n}`)
+  );
+}
+
+function isFeaturedIdentity(identities) {
+  return identityMatches(identities, "featured");
+}
+
+function isCollectionIdentity(identities) {
+  return identityMatches(identities, "collection");
+}
+
+function isTruthyLabel(label) {
+  const s = String(label || "")
+    .trim()
+    .toLowerCase();
+  if (!s) return false;
+  if (s === "false" || s === "no" || s === "off" || s === "0" || s === "none") return false;
+  return true;
+}
+
+/** True when a Featured custom attribute value is ON. */
+function featuredValueIsOn(attr = {}, defIndex = new Map()) {
+  if (attr.boolean_value === true) return true;
+  if (attr.boolean_value === false) return false;
+
+  const str = String(attr.string_value || "")
+    .trim()
+    .toLowerCase();
+  if (str === "true" || str === "yes" || str === "1") return true;
+  if (str === "false" || str === "no" || str === "0") return false;
+
+  // SELECTION-style Featured (Yes/No): resolve labels so "No" is not treated as on.
+  if (Array.isArray(attr.selection_uid_values) && attr.selection_uid_values.length) {
+    const def = attr.custom_attribute_definition_id
+      ? defIndex.get(attr.custom_attribute_definition_id)
+      : null;
+    const byUid = new Map(
+      (def?.allowedSelections || []).map((sel) => [sel.uid, sel.name])
+    );
+    const labels = attr.selection_uid_values
+      .map((uid) => byUid.get(uid) || "")
+      .filter(Boolean);
+    if (labels.length) return labels.some(isTruthyLabel);
+    // Unknown labels — presence of a selection still means the merchant opted in.
+    return true;
+  }
+
+  // Some merchants store 1/0 as NUMBER.
+  if (attr.number_value != null && String(attr.number_value).trim() !== "") {
+    const num = Number(attr.number_value);
+    if (Number.isFinite(num)) return num !== 0;
+  }
+
+  return false;
+}
+
+/**
+ * Merge custom_attribute_values from the CatalogObject, item_data, and
+ * item variations (Featured/Collection may be allowed on ITEM_VARIATION).
+ * Later sources do not overwrite earlier keys; variation attrs fill gaps.
+ */
+export function collectItemAttributeValues(item = {}) {
+  const merged = {};
+  const layers = [item.custom_attribute_values, item.item_data?.custom_attribute_values];
+  for (const layer of layers) {
+    if (!layer || typeof layer !== "object") continue;
+    for (const [k, v] of Object.entries(layer)) {
+      if (!(k in merged)) merged[k] = v;
+    }
+  }
+  for (const variation of item.item_data?.variations || []) {
+    for (const layer of [variation.custom_attribute_values, variation.item_variation_data?.custom_attribute_values]) {
+      if (!layer || typeof layer !== "object") continue;
+      for (const [k, v] of Object.entries(layer)) {
+        if (!(k in merged)) merged[k] = v;
+      }
+    }
+  }
+  return merged;
+}
+
+export function isFeaturedItem(attrs = {}, defIndex = new Map()) {
+  for (const [mapKey, attr] of Object.entries(attrs || {})) {
+    const identities = attributeIdentities(mapKey, attr, defIndex);
+    if (!isFeaturedIdentity(identities)) continue;
+    if (featuredValueIsOn(attr, defIndex)) return true;
   }
   return false;
 }
 
 /** True when a Square custom attribute is the Collection membership field. */
-function isCollectionAttribute(attr = {}) {
-  const name = String(attr.name || "").trim().toLowerCase();
-  const key = String(attr.key || "").trim().toLowerCase();
-  return (
-    name === "collection" ||
-    key === "collection" ||
-    key.endsWith(":collection") ||
-    key.endsWith(".collection")
-  );
+export function isCollectionAttribute(mapKey, attr = {}, defIndex = new Map()) {
+  return isCollectionIdentity(attributeIdentities(mapKey, attr, defIndex));
 }
 
 /**
  * Read Collection custom-attribute values from a catalog item.
  * Supports STRING attributes and SELECTION attributes (via UID → name map).
- * Returns an ordered, deduped list of display names exactly as in Square.
- * Structured as an array so multi-value Collection attrs can be adopted later.
+ * Uses the custom_attribute_values map key and definition metadata — Square
+ * often omits `name` on the value object itself.
  */
-export function readCollectionNames(customAttributeValues = {}, selectionNameByUid = new Map()) {
+export function readCollectionNames(
+  customAttributeValues = {},
+  selectionNameByUid = new Map(),
+  defIndex = new Map()
+) {
   const names = [];
-  for (const attr of Object.values(customAttributeValues || {})) {
-    if (!isCollectionAttribute(attr)) continue;
+  for (const [mapKey, attr] of Object.entries(customAttributeValues || {})) {
+    if (!isCollectionAttribute(mapKey, attr, defIndex)) continue;
 
     const stringVal = String(attr.string_value || "").trim();
     if (stringVal) names.push(stringVal);
@@ -94,6 +218,26 @@ export function buildSelectionNameMap(objects = []) {
   return map;
 }
 
+/**
+ * Every allowed selection name on the Square "Collection" attribute definition.
+ * Lets admin/collections list all Square options even before products are assigned.
+ */
+export function listCollectionOptionNames(objects = [], defIndex = null) {
+  const index = defIndex || buildAttributeDefinitionIndex(objects);
+  const names = [];
+  for (const def of index.values()) {
+    const identities = [def.name, def.key]
+      .map((s) => String(s || "").trim().toLowerCase())
+      .filter(Boolean);
+    if (!isCollectionIdentity(identities)) continue;
+    for (const sel of def.allowedSelections || []) {
+      const label = String(sel?.name || "").trim();
+      if (label) names.push(label);
+    }
+  }
+  return [...new Set(names)];
+}
+
 export async function squareFetch(cfg, path, options = {}) {
   const res = await fetch(`${cfg.base}${path}`, {
     ...options,
@@ -111,6 +255,23 @@ export async function squareFetch(cfg, path, options = {}) {
     throw new Error(`Square API ${res.status}: ${detail}`);
   }
   return body;
+}
+
+/**
+ * Paginate Square Catalog List — a single page can omit CUSTOM_ATTRIBUTE_DEFINITION
+ * objects needed to resolve Collection selection UIDs and Featured keys.
+ */
+export async function listCatalogObjects(cfg, types = "ITEM,CATEGORY,IMAGE,CUSTOM_ATTRIBUTE_DEFINITION") {
+  const objects = [];
+  let cursor = null;
+  do {
+    const qs = new URLSearchParams({ types });
+    if (cursor) qs.set("cursor", cursor);
+    const page = await squareFetch(cfg, `/v2/catalog/list?${qs}`);
+    objects.push(...(page.objects || []));
+    cursor = page.cursor || null;
+  } while (cursor);
+  return objects;
 }
 
 export function json(data, status = 200) {
@@ -139,12 +300,15 @@ export function slugify(str = "") {
 // Architecture:
 // - Square Categories → product type (reporting / type filters)
 // - Square custom attribute "Collection" → customer-facing collection membership
+// - Square custom attribute "Featured" → product.featured (manual merchandising)
 export function squareToCatalog(objects = [], counts = [], currency = "USD") {
   const categories = [];
   const images = {};
   const inventory = {};
   const items = [];
+  const defIndex = buildAttributeDefinitionIndex(objects);
   const selectionNameByUid = buildSelectionNameMap(objects);
+  const collectionOptions = listCollectionOptionNames(objects, defIndex);
 
   for (const obj of objects) {
     if (obj.type === "CATEGORY") {
@@ -181,12 +345,8 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
     // `category_id` (older); support both. This is PRODUCT TYPE, not collection.
     const categoryId = d.categories?.[0]?.id || d.category_id || null;
 
-    // Collection membership: custom attribute on the CatalogObject and/or item_data.
-    const attrs = {
-      ...(it.custom_attribute_values || {}),
-      ...(d.custom_attribute_values || {}),
-    };
-    const collectionNames = readCollectionNames(attrs, selectionNameByUid);
+    const attrs = collectItemAttributeValues(it);
+    const collectionNames = readCollectionNames(attrs, selectionNameByUid, defIndex);
     const primaryCollection = collectionNames[0] || null;
 
     return {
@@ -214,7 +374,7 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
       custom: {
         handle: slugify(d.name) || it.id,
         tags: [],
-        featured: isFeaturedItem(attrs),
+        featured: isFeaturedItem(attrs, defIndex),
         // Exact Square Collection display name(s). Membership authority.
         collection: primaryCollection,
         collections: collectionNames,
@@ -222,5 +382,13 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
     };
   });
 
-  return { currency, categories, images, inventory, objects: objectsOut };
+  return {
+    currency,
+    categories,
+    images,
+    inventory,
+    objects: objectsOut,
+    // All Collection selection labels from Square (for admin detection).
+    collectionOptions,
+  };
 }
