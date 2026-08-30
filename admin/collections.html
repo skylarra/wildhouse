@@ -16,52 +16,28 @@
 
     <header class="admin-top">
         <div class="admin-top__inner">
-            <nav class="admin-nav" aria-label="Admin">
-                <a class="admin-brand" href="/index.html">← Storefront</a>
-                <a href="/admin/collections" aria-current="page">Collections</a>
-                <a href="/admin/products">Products</a>
-            </nav>
+            <nav class="admin-nav" aria-label="Admin"></nav>
             <h1 class="admin-title">Collections</h1>
             <p class="admin-tagline">Same Square <strong>Collection</strong> attribute as <a href="/collections">/collections</a>. Names and membership come from Square; cover PNGs live in <code>assets/collections/</code>.</p>
         </div>
     </header>
 
     <main id="admin-main" class="admin-main">
-        <section id="admin-gate" class="admin-card" hidden>
-            <h2>Unlock admin</h2>
-            <p>Enter the Cloudflare <code>ADMIN_PASSWORD</code>. Changes save presentation settings to Cloudflare KV (not membership).</p>
-            <form id="admin-unlock-form" class="admin-unlock">
-                <label class="field">
-                    <span>Password</span>
-                    <input type="password" id="admin-password" name="password" autocomplete="current-password" required>
-                </label>
-                <button type="submit" class="btn secondary">Unlock</button>
-            </form>
-            <p class="admin-status" id="admin-gate-status" role="status"></p>
-            <details class="admin-dev">
-                <summary>Developer / local preview</summary>
-                <p>Static <code>python -m http.server</code> cannot write KV. Use this only while developing without Wrangler.</p>
-                <button type="button" class="btn" id="admin-continue-local">Continue without saving to KV</button>
-            </details>
-        </section>
-
-        <section id="admin-app" hidden>
-            <div class="admin-toolbar">
-                <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Visibility / featured / description are website presentation only. Membership stays in Square.</p>
-                <div class="admin-toolbar__actions">
-                    <button type="button" class="btn" id="admin-reload">Reload</button>
-                    <button type="button" class="btn secondary" id="admin-save">Save Changes</button>
-                </div>
+        <div class="admin-toolbar">
+            <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Visibility / featured / description are website presentation only. Membership stays in Square.</p>
+            <div class="admin-toolbar__actions">
+                <button type="button" class="btn" id="admin-reload">Reload</button>
+                <button type="button" class="btn secondary" id="admin-save">Save Changes</button>
             </div>
-            <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
-            <div id="admin-list" class="admin-collection-list" aria-live="polite"></div>
+        </div>
+        <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
+        <div id="admin-list" class="admin-collection-list" aria-live="polite"></div>
 
-            <details class="admin-dev admin-dev--footer">
-                <summary>Developer fallback</summary>
-                <p>If KV is unavailable, download a seed file for <code>content/collections.json</code>. This is not the normal publishing path.</p>
-                <button type="button" class="btn" id="admin-export">Download JSON</button>
-            </details>
-        </section>
+        <details class="admin-dev admin-dev--footer">
+            <summary>Developer fallback</summary>
+            <p>If KV is unavailable, download a seed file for <code>content/collections.json</code>. This is not the normal publishing path.</p>
+            <button type="button" class="btn" id="admin-export">Download JSON</button>
+        </details>
     </main>
 
     <script type="module" src="/js/admin-collections.js"></script>

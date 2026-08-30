@@ -2,11 +2,9 @@
 // Names + membership: Square Collection custom attribute (same as /collections).
 // Covers: assets/collections/{normalizeCollectionKey}.png
 // Persistence: PUT /api/collections-config → Cloudflare KV (COLLECTIONS_CONFIG).
+// Auth: existing Bearer ADMIN_PASSWORD session (js/admin-auth.js).
 import { getAllCollectionRecords, getCollections, clearCollectionsMetaCache } from "./catalog.js";
-import {
-  toSavableConfig,
-  ADMIN_TOKEN_SESSION_KEY,
-} from "./collections-config.js";
+import { toSavableConfig } from "./collections-config.js";
 import {
   collectionCoverFilename,
   collectionCoverRepoPath,
@@ -14,20 +12,31 @@ import {
   COLLECTION_COVER_FALLBACK,
   probeCollectionCover,
 } from "./collection-assets.js";
+import {
+  requireAdmin,
+  mountAdminChrome,
+  getAdminToken,
+  clearAdminSession,
+  adminAuthHeader,
+  logoutAdmin,
+} from "./admin-auth.js";
 import { escapeHtml } from "./ui.js";
 
-const gate = document.getElementById("admin-gate");
-const app = document.getElementById("admin-app");
-const listEl = document.getElementById("admin-list");
-const statusEl = document.getElementById("admin-status");
-const gateStatus = document.getElementById("admin-gate-status");
+if (!requireAdmin()) {
+  /* redirected to login */
+} else {
+  mountAdminChrome();
+  boot();
+}
 
 /** @type {ReturnType<typeof normalizeRow>[]} */
 let rows = [];
 let dragKey = null;
 let kvConfigured = null;
-let localPreview = false;
 let dirty = false;
+
+const listEl = document.getElementById("admin-list");
+const statusEl = document.getElementById("admin-status");
 
 function normalizeRow(r) {
   const name = r.name || r.displayName || "";
@@ -43,7 +52,7 @@ function normalizeRow(r) {
     image: r.image || collectionCoverSrc(name),
     coverRepoPath: collectionCoverRepoPath(name),
     coverFilename: collectionCoverFilename(name),
-    coverFound: null, // filled async after render
+    coverFound: null,
     isNew: Boolean(r.isNew),
   };
 }
@@ -52,15 +61,6 @@ function setStatus(msg, kind = "") {
   if (!statusEl) return;
   statusEl.textContent = msg || "";
   statusEl.className = `admin-status${kind ? ` is-${kind}` : ""}`;
-}
-
-function getToken() {
-  return sessionStorage.getItem(ADMIN_TOKEN_SESSION_KEY) || "";
-}
-
-function setToken(token) {
-  if (token) sessionStorage.setItem(ADMIN_TOKEN_SESSION_KEY, token);
-  else sessionStorage.removeItem(ADMIN_TOKEN_SESSION_KEY);
 }
 
 function reindexOrder() {
@@ -183,6 +183,8 @@ function rowFromEvent(e) {
 }
 
 function wireList() {
+  if (!listEl) return;
+
   listEl.addEventListener("click", (e) => {
     const row = rowFromEvent(e);
     if (!row) return;
@@ -209,19 +211,22 @@ function wireList() {
     if (!field) return;
     const row = rowFromEvent(e);
     if (!row) return;
-    const key = field.dataset.field;
-    if (key === "description") {
-      row[key] = field.value;
+    if (field.dataset.field === "description") {
+      row.description = field.value;
       markDirty();
     }
   });
 
-  listEl.addEventListener("error", (e) => {
-    const img = e.target.closest("img[data-fallback]");
-    if (!img || img.dataset.fellBack) return;
-    img.dataset.fellBack = "1";
-    img.src = img.dataset.fallback || COLLECTION_COVER_FALLBACK;
-  }, true);
+  listEl.addEventListener(
+    "error",
+    (e) => {
+      const img = e.target.closest("img[data-fallback]");
+      if (!img || img.dataset.fellBack) return;
+      img.dataset.fellBack = "1";
+      img.src = img.dataset.fallback || COLLECTION_COVER_FALLBACK;
+    },
+    true
+  );
 
   listEl.addEventListener("dragstart", (e) => {
     if (e.target.closest("button, input, a, label, textarea, details, summary, img")) {
@@ -235,8 +240,7 @@ function wireList() {
     e.dataTransfer.effectAllowed = "move";
   });
   listEl.addEventListener("dragend", (e) => {
-    const article = e.target.closest(".admin-row");
-    article?.classList.remove("is-dragging");
+    e.target.closest(".admin-row")?.classList.remove("is-dragging");
     dragKey = null;
   });
   listEl.addEventListener("dragover", (e) => {
@@ -279,13 +283,14 @@ async function loadRows() {
     [all, publicList] = await Promise.all([getAllCollectionRecords(), getCollections()]);
   } catch (err) {
     setStatus("Could not load Square catalog collections.", "error");
-    listEl.innerHTML = `<p class="empty-state__body">Failed to load collections. Check /api/catalog and reload.</p>`;
+    if (listEl) {
+      listEl.innerHTML = `<p class="empty-state__body">Failed to load collections. Check /api/catalog and reload.</p>`;
+    }
     console.error(err);
     return;
   }
 
   rows = all.map(normalizeRow);
-  // Keep admin order stable; reindex only if every sortOrder is 0
   if (rows.every((r) => !r.sortOrder)) reindexOrder();
   else rows.sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name));
   dirty = false;
@@ -299,12 +304,7 @@ async function loadRows() {
       ? `Public /collections shows the same ${publicList.length} with products (${publicNames}).`
       : `Public /collections has ${publicList.length} with products; admin lists ${rows.length} Square values (${withProducts} with products).`;
 
-  if (localPreview) {
-    setStatus(
-      `${rows.length} Square collections loaded (local preview — Save needs Wrangler + KV). ${parity}`,
-      "warn"
-    );
-  } else if (kvConfigured === false) {
+  if (kvConfigured === false) {
     setStatus(
       `${rows.length} Square collections loaded. KV (COLLECTIONS_CONFIG) not bound — Save will not persist. ${parity}`,
       "error"
@@ -328,19 +328,11 @@ function downloadConfig() {
 async function save() {
   reindexOrder();
   const config = toSavableConfig(rows);
-  const token = getToken();
-
-  if (localPreview && !token) {
-    setStatus(
-      "Local preview cannot write to Cloudflare KV. Unlock with ADMIN_PASSWORD under Wrangler, or use Developer fallback → Download JSON.",
-      "error"
-    );
-    return;
-  }
+  const token = getAdminToken();
 
   if (!token) {
-    setStatus("Unlock with the admin password before saving.", "error");
-    showGate();
+    setStatus("Session expired. Please log in again.", "error");
+    logoutAdmin({ redirect: true });
     return;
   }
 
@@ -353,7 +345,7 @@ async function save() {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...adminAuthHeader(),
       },
       body: JSON.stringify(config),
     });
@@ -368,9 +360,9 @@ async function save() {
 
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
-      setStatus("Unauthorized — unlock with the correct admin password.", "error");
-      setToken("");
-      showGate();
+      clearAdminSession();
+      setStatus("Unauthorized — please log in again.", "error");
+      logoutAdmin({ redirect: true });
       return;
     }
     if (res.status === 503 || res.status === 404) {
@@ -391,57 +383,10 @@ async function save() {
   }
 }
 
-function showGate() {
-  gate.hidden = false;
-  app.hidden = true;
-}
-
-function showApp() {
-  gate.hidden = true;
-  app.hidden = false;
-}
-
-function wireChrome() {
-  document.getElementById("admin-unlock-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const password = document.getElementById("admin-password").value;
-    if (!password.trim()) {
-      gateStatus.textContent = "Enter the admin password.";
-      gateStatus.className = "admin-status is-error";
-      return;
-    }
-    setToken(password);
-    localPreview = false;
-    gateStatus.textContent = "Unlocked.";
-    gateStatus.className = "admin-status is-ok";
-    showApp();
-    loadRows();
-  });
-
-  document.getElementById("admin-continue-local")?.addEventListener("click", () => {
-    setToken("");
-    localPreview = true;
-    gateStatus.textContent = "Local preview — changes will not save to KV.";
-    gateStatus.className = "admin-status is-warn";
-    showApp();
-    loadRows();
-  });
-
+function boot() {
+  wireList();
   document.getElementById("admin-save")?.addEventListener("click", () => save());
   document.getElementById("admin-export")?.addEventListener("click", () => downloadConfig());
   document.getElementById("admin-reload")?.addEventListener("click", () => loadRows());
+  loadRows();
 }
-
-async function init() {
-  wireChrome();
-  wireList();
-  if (getToken()) {
-    localPreview = false;
-    showApp();
-    await loadRows();
-  } else {
-    showGate();
-  }
-}
-
-init();

@@ -1,7 +1,15 @@
 // Admin · Products — read-only Square merchandising inspector.
-// Featured + Collection membership are edited in Square, not here.
+// Auth: existing Bearer ADMIN_PASSWORD session (js/admin-auth.js).
 import { getProducts } from "./catalog.js";
+import { requireAdmin, mountAdminChrome } from "./admin-auth.js";
 import { escapeHtml } from "./ui.js";
+
+if (!requireAdmin()) {
+  /* redirected */
+} else {
+  mountAdminChrome();
+  boot();
+}
 
 const listEl = document.getElementById("admin-products-list");
 const statusEl = document.getElementById("admin-products-status");
@@ -67,7 +75,7 @@ function render() {
             return `
           <tr>
             <td>
-              <a href="../product.html?handle=${encodeURIComponent(p.handle)}">${escapeHtml(p.name)}</a>
+              <a href="/product.html?handle=${encodeURIComponent(p.handle)}">${escapeHtml(p.name)}</a>
               <div class="admin-muted"><code>${escapeHtml(p.handle)}</code></div>
             </td>
             <td>${
@@ -103,11 +111,9 @@ async function load() {
   }
 }
 
-function init() {
+function boot() {
   filterEl?.addEventListener("input", () => render());
   featuredEl?.addEventListener("change", () => render());
   document.getElementById("admin-products-reload")?.addEventListener("click", () => load());
   load();
 }
-
-init();
