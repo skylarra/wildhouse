@@ -17,7 +17,13 @@
     "heading": "FEATURED COLLECTIONS",
     "cta": { "label": "VIEW ALL COLLECTIONS", "href": "./collections.html" }
   },
+  "featuredProducts": {
+    "heading": "FEATURED PRODUCTS",
+    "cta": { "label": "SHOP ALL", "href": "./shop.html" }
+  },
   "bestSellers": {
+    "_comment": "Reserved for post-launch sales data via getBestSellingProducts(). Do not label Featured Products as Best Sellers.",
+    "enabled": false,
     "heading": "BEST SELLERS",
     "cta": { "label": "SHOP ALL", "href": "./shop.html" }
   },

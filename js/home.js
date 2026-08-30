@@ -1,7 +1,12 @@
 // Home page — renders all sections from content (home.json + events.json + notes.json),
-// featured products, dynamic Square collections, destination previews, and recently viewed.
-import { getFeatured, getProducts, getFeaturedCollections } from "./catalog.js";
-import { loadPage, loadJSON } from "./content.js";
+// featured collections/products, destination previews, and recently viewed.
+import {
+  getFeaturedProducts,
+  getBestSellingProducts,
+  getProducts,
+  getFeaturedCollections,
+} from "./catalog.js";
+import { loadPage } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml, collectionCardHTML } from "./ui.js";
 
@@ -31,47 +36,6 @@ function renderHero(hero) {
     </div>
     <div class="hero-strip">${stripImgs}</div>
     <div class="hero-bottom">${ctaHTML(hero.cta)}</div>`;
-}
-
-/** Stable daily pick: same message for everyone on a given local calendar day. */
-function pickDailyMessage(messages) {
-  if (!messages?.length) return "";
-  const now = new Date();
-  const dayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
-  let hash = 0;
-  for (let i = 0; i < dayKey.length; i++) {
-    hash = (hash * 31 + dayKey.charCodeAt(i)) >>> 0;
-  }
-  return messages[hash % messages.length];
-}
-
-async function renderLittleNote() {
-  const el = document.getElementById("little-note");
-  if (!el) return;
-  try {
-    const data = await loadJSON("content/notes.json");
-    const message = pickDailyMessage(data.messages);
-    if (!message) {
-      el.hidden = true;
-      return;
-    }
-    const heading = data.heading || "A Little Note";
-    el.innerHTML = `
-      <p class="little-note__label homemade-apple-regular">${escapeHtml(heading)}</p>
-      <p class="little-note__message shadows-into-light-regular">${escapeHtml(message)}</p>`;
-    el.hidden = false;
-  } catch (err) {
-    el.hidden = true;
-    console.error(err);
-  }
-}
-
-function renderBestSellersChrome(bs) {
-  if (!bs) return;
-  const heading = document.getElementById("best-sellers-heading");
-  const cta = document.getElementById("best-sellers-cta");
-  if (heading && bs.heading) heading.textContent = bs.heading;
-  if (cta) cta.innerHTML = ctaHTML(bs.cta);
 }
 
 function renderWelcome(w) {
@@ -154,18 +118,41 @@ function formatDate(iso) {
     : d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" });
 }
 
-async function renderFeatured() {
+/** Featured Products — Square Featured attribute only. Hide when none selected. */
+async function renderFeaturedProducts(cfg = {}) {
+  const section = document.getElementById("featured-products");
   const grid = document.getElementById("featured-grid");
-  if (!grid) return;
+  const heading = document.getElementById("featured-products-heading");
+  const cta = document.getElementById("featured-products-cta");
+  if (!section || !grid) return;
+
   try {
-    const featured = await getFeatured(4);
+    const featured = await getFeaturedProducts(cfg.limit || 4);
+    if (!featured.length) {
+      section.hidden = true;
+      return;
+    }
+    if (heading) heading.textContent = cfg.heading || "FEATURED PRODUCTS";
+    if (cta) cta.innerHTML = ctaHTML(cfg.cta);
     grid.innerHTML = featured.map(productCardHTML).join("");
     wireFavorites(grid);
     wireImagePlaceholders(grid);
+    section.hidden = false;
   } catch (err) {
-    grid.innerHTML = `<p class="error">Could not load products right now.</p>`;
+    section.hidden = true;
     console.error(err);
   }
+}
+
+/**
+ * Best Sellers — only when enabled AND real sales data exists.
+ * Pre-launch: getBestSellingProducts() returns [] so this stays hidden.
+ */
+async function renderBestSellers(cfg = {}) {
+  if (!cfg?.enabled) return;
+  // Reserved mount point for a future dedicated section; do not reuse Featured Products markup.
+  const products = await getBestSellingProducts(cfg.limit || 4);
+  if (!products.length) return;
 }
 
 async function renderHomeCollections(cfg = {}) {
@@ -210,14 +197,19 @@ async function renderRecentlyViewed(heading) {
 }
 
 async function init() {
-  renderFeatured();
-  renderLittleNote();
   try {
     const home = await loadPage("home");
     renderSeo(home.seo);
     renderHero(home.hero);
     await renderHomeCollections(home.collections);
-    renderBestSellersChrome(home.bestSellers);
+    // Prefer featuredProducts config; fall back to legacy bestSellers heading only if
+    // someone still has old JSON — but never label featured products as best sellers.
+    const featuredCfg = home.featuredProducts || {
+      heading: "FEATURED PRODUCTS",
+      cta: home.bestSellers?.cta,
+    };
+    await renderFeaturedProducts(featuredCfg);
+    await renderBestSellers(home.bestSellers);
     renderPreviews(home.previews);
     renderWelcome(home.welcome);
     renderBanner(home.banner);

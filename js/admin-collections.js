@@ -1,4 +1,4 @@
-// Admin · Collections — visibility + display order only.
+// Admin · Collections — visibility, featured, order, presentation copy/images.
 // Square Collection attribute remains the membership source of truth.
 // Persistence: PUT /api/collections-config → Cloudflare KV (COLLECTIONS_CONFIG).
 import { getAllCollectionRecords, clearCollectionsMetaCache } from "./catalog.js";
@@ -84,22 +84,53 @@ function render() {
       const newNote = r.isNew
         ? `<span class="admin-row__note admin-row__note--new">New from Square · defaults hidden</span>`
         : "";
+      const featuredNote = r.featured
+        ? `<span class="admin-row__note admin-row__note--featured">Featured on homepage</span>`
+        : "";
       return `
       <article class="admin-row" draggable="true" data-key="${escapeHtml(r.collectionKey)}">
         <div class="admin-row__handle" title="Drag to reorder" aria-hidden="true">☰</div>
         <div class="admin-row__main">
-          <h2 class="admin-row__title">
-            <span class="admin-row__name">${escapeHtml(r.displayName || r.name)}</span>
-            <span class="admin-row__sep" aria-hidden="true">—</span>
-            <button type="button"
-              class="admin-vis-btn${r.visible ? " is-on" : ""}"
-              data-action="toggle-visible"
-              aria-pressed="${r.visible}"
-              aria-label="${r.visible ? "Hide" : "Show"} ${escapeHtml(r.displayName || r.name)}">
-              ${visibilityLabel(r.visible)}
-            </button>
-          </h2>
-          <p class="admin-row__meta">${countNote}${newNote}</p>
+          <div class="admin-row__summary">
+            <h2 class="admin-row__title">
+              <span class="admin-row__name">${escapeHtml(r.displayName || r.name)}</span>
+              <span class="admin-row__sep" aria-hidden="true">—</span>
+              <button type="button"
+                class="admin-vis-btn${r.visible ? " is-on" : ""}"
+                data-action="toggle-visible"
+                aria-pressed="${r.visible}"
+                aria-label="${r.visible ? "Hide" : "Show"} ${escapeHtml(r.displayName || r.name)}">
+                ${visibilityLabel(r.visible)}
+              </button>
+              <button type="button"
+                class="admin-feat-btn${r.featured ? " is-on" : ""}"
+                data-action="toggle-featured"
+                aria-pressed="${r.featured}"
+                aria-label="${r.featured ? "Unfeature" : "Feature"} ${escapeHtml(r.displayName || r.name)}"
+                ${!r.visible ? "disabled" : ""}>
+                ${r.featured ? "FEATURED" : "NOT FEATURED"}
+              </button>
+            </h2>
+            <p class="admin-row__meta">${countNote}${featuredNote}${newNote}</p>
+            <p class="admin-row__order">Display order: <strong>${r.sortOrder}</strong></p>
+          </div>
+          <details class="admin-row__details">
+            <summary>Edit presentation</summary>
+            <div class="admin-row__fields">
+              <label class="field">
+                <span>Description</span>
+                <textarea data-field="description" rows="3">${escapeHtml(r.description)}</textarea>
+              </label>
+              <label class="field">
+                <span>Featured / card image URL</span>
+                <input type="text" data-field="featuredImage" value="${escapeHtml(r.featuredImage)}" placeholder="./assets/… or https://…">
+              </label>
+              <label class="field">
+                <span>Hero image URL</span>
+                <input type="text" data-field="heroImage" value="${escapeHtml(r.heroImage)}" placeholder="./assets/… or https://…">
+              </label>
+            </div>
+          </details>
         </div>
       </article>`;
     })
@@ -115,18 +146,40 @@ function rowFromEvent(e) {
 
 function wireList() {
   listEl.addEventListener("click", (e) => {
-    const btn = e.target.closest('[data-action="toggle-visible"]');
-    if (!btn) return;
     const row = rowFromEvent(e);
     if (!row) return;
-    row.visible = !row.visible;
-    if (!row.visible) row.featured = false;
-    markDirty();
-    render();
+
+    if (e.target.closest('[data-action="toggle-visible"]')) {
+      row.visible = !row.visible;
+      if (!row.visible) row.featured = false;
+      markDirty();
+      render();
+      return;
+    }
+
+    if (e.target.closest('[data-action="toggle-featured"]')) {
+      if (!row.visible) return;
+      row.featured = !row.featured;
+      if (row.featured) row.visible = true;
+      markDirty();
+      render();
+    }
+  });
+
+  listEl.addEventListener("input", (e) => {
+    const field = e.target.closest("[data-field]");
+    if (!field) return;
+    const row = rowFromEvent(e);
+    if (!row) return;
+    const key = field.dataset.field;
+    if (key === "description" || key === "heroImage" || key === "featuredImage") {
+      row[key] = field.value;
+      markDirty();
+    }
   });
 
   listEl.addEventListener("dragstart", (e) => {
-    if (e.target.closest("button, input, a, label")) {
+    if (e.target.closest("button, input, a, label, textarea, details, summary")) {
       e.preventDefault();
       return;
     }
@@ -243,7 +296,7 @@ async function save() {
       clearCollectionsMetaCache();
       dirty = false;
       kvConfigured = true;
-      setStatus("Saved. Visibility and order are live on the public site.", "ok");
+      setStatus("Saved. Collection presentation is live on the public site.", "ok");
       return;
     }
 

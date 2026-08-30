@@ -5,9 +5,11 @@
 // Architecture (do not invert):
 // - Square `Collection` custom attribute → product membership
 // - Square Categories → product type (shop filters / collection type chips)
-// - Website collections config → visibility + order (+ optional copy/images)
+// - Website collections config → visibility, featured, order, copy, images
 //   Admin Save → Cloudflare KV; public reads /api/collections-config
 //   (seed: content/collections.json when KV empty)
+// - Square Featured custom attribute → product.featured (manual merchandising)
+// - Best sellers → getBestSellingProducts() (sales data later; empty for launch)
 
 import { loadJSON, sitePath } from "./content.js";
 import {
@@ -166,18 +168,28 @@ export async function getProducts() {
   return normalize(raw);
 }
 
-/** Detect collections from Square membership only (no visibility filter). */
+/** Detect collections from Square membership only (no visibility filter).
+ *  Counts every Collection attribute value on a product (multi-collection). */
 async function detectCollectionsFromProducts(products) {
   const counts = new Map();
   const names = new Map();
   const firstImage = new Map();
 
   for (const p of products) {
-    if (!p.collectionHandle || !p.collectionName) continue;
-    counts.set(p.collectionHandle, (counts.get(p.collectionHandle) || 0) + 1);
-    names.set(p.collectionHandle, p.collectionName);
-    if (!firstImage.has(p.collectionHandle) && p.images.length) {
-      firstImage.set(p.collectionHandle, p.images[0]);
+    const list =
+      Array.isArray(p.collectionNames) && p.collectionNames.length
+        ? p.collectionNames
+        : p.collectionName
+          ? [p.collectionName]
+          : [];
+    for (const displayName of list) {
+      const handle = slugify(displayName);
+      if (!handle) continue;
+      counts.set(handle, (counts.get(handle) || 0) + 1);
+      names.set(handle, displayName);
+      if (!firstImage.has(handle) && p.images.length) {
+        firstImage.set(handle, p.images[0]);
+      }
     }
   }
 
@@ -189,6 +201,13 @@ async function detectCollectionsFromProducts(products) {
     productCount: count,
     image: firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE,
   }));
+}
+
+/** True when a product belongs to a collection handle (primary or multi-value). */
+export function productInCollection(product, handle) {
+  if (!product || !handle) return false;
+  if (product.collectionHandle === handle) return true;
+  return (product.collectionNames || []).some((n) => slugify(n) === handle);
 }
 
 /**
@@ -249,10 +268,10 @@ export async function getCollectionByHandle(handle) {
   return collections.find((c) => c.handle === handle || c.slug === handle) || null;
 }
 
-/** Homepage featured strip: public collections in admin display order. */
+/** Homepage featured collections: public + featured, in admin sort order. */
 export async function getFeaturedCollections(limit = 6) {
   const collections = await getCollections();
-  return collections.slice(0, limit);
+  return collections.filter((c) => c.featured).slice(0, limit);
 }
 
 export async function getProductByHandle(handle) {
@@ -260,20 +279,39 @@ export async function getProductByHandle(handle) {
   return products.find((p) => p.handle === handle) || null;
 }
 
-export async function getFeatured(limit = 4) {
+/**
+ * Manually featured products (Square Featured custom attribute).
+ * No silent fallback — pre-launch must not invent merchandising.
+ */
+export async function getFeaturedProducts(limit = 4) {
   const products = await getProducts();
-  const featured = products.filter((p) => p.featured);
-  if (featured.length) return featured.slice(0, limit);
-  const inStock = products.filter((p) => p.inStock);
-  return (inStock.length ? inStock : products).slice(0, limit);
+  return products.filter((p) => p.featured).slice(0, limit);
+}
+
+/**
+ * Real best sellers from Square order/sales data — not implemented yet.
+ * Returns [] until sales exist. Do NOT fake rankings from featured/inventory.
+ */
+export async function getBestSellingProducts(_limit = 4) {
+  return [];
+}
+
+/** Reserved for a future Square “New” attribute / catalog date sort. */
+export async function getNewProducts(_limit = 4) {
+  return [];
+}
+
+/** @deprecated Use getFeaturedProducts() */
+export async function getFeatured(limit = 4) {
+  return getFeaturedProducts(limit);
 }
 
 export async function getRelated(product, limit = 4) {
   const products = await getProducts();
   const others = products.filter((p) => p.id !== product?.id);
   if (product?.collectionHandle) {
-    const sameCollection = others.filter(
-      (p) => p.collectionHandle === product.collectionHandle
+    const sameCollection = others.filter((p) =>
+      productInCollection(p, product.collectionHandle)
     );
     if (sameCollection.length) return sameCollection.slice(0, limit);
   }
@@ -300,7 +338,7 @@ export function queryProducts(
   }
 
   if (collection && collection !== "all") {
-    list = list.filter((p) => p.collectionHandle === collection);
+    list = list.filter((p) => productInCollection(p, collection));
   }
 
   if (category && category !== "all") {

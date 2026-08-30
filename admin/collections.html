@@ -15,16 +15,20 @@
 
     <header class="admin-top">
         <div class="admin-top__inner">
-            <a class="admin-brand" href="../index.html">← Storefront</a>
+            <nav class="admin-nav" aria-label="Admin">
+                <a class="admin-brand" href="../index.html">← Storefront</a>
+                <a href="./collections.html" aria-current="page">Collections</a>
+                <a href="./products.html">Products</a>
+            </nav>
             <h1 class="admin-title">Collections</h1>
-            <p class="admin-tagline">Turn Square collections on or off and set their display order. Membership still comes from Square.</p>
+            <p class="admin-tagline">Website presentation only — visibility, featured, order, and copy. Membership still comes from Square’s <strong>Collection</strong> attribute.</p>
         </div>
     </header>
 
     <main id="admin-main" class="admin-main">
         <section id="admin-gate" class="admin-card" hidden>
             <h2>Unlock admin</h2>
-            <p>Enter the Cloudflare <code>ADMIN_PASSWORD</code> to manage collection visibility and order. Changes save to Cloudflare KV and update the live site.</p>
+            <p>Enter the Cloudflare <code>ADMIN_PASSWORD</code>. Changes save to Cloudflare KV and update the live site.</p>
             <form id="admin-unlock-form" class="admin-unlock">
                 <label class="field">
                     <span>Password</span>
@@ -42,7 +46,7 @@
 
         <section id="admin-app" hidden>
             <div class="admin-toolbar">
-                <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Toggle visibility. Empty collections stay hidden on the public site even when marked visible. New Square collections default to hidden.</p>
+                <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Expand a row to edit featured, description, and images. Empty collections stay off the public site. New Square collections default to hidden.</p>
                 <div class="admin-toolbar__actions">
                     <button type="button" class="btn" id="admin-reload">Reload</button>
                     <button type="button" class="btn secondary" id="admin-save">Save Changes</button>

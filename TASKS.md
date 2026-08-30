@@ -1,19 +1,18 @@
 # Current Sprint
 
-## Collections admin (visibility + order)
+## Pre-launch merchandising pass
 
-- Admin page: `/admin/collections`
-- Controls only: **visibility** ON/OFF + drag **display order**
-- Square remains source of truth for which products belong to a collection
-- New Square collections default to **hidden**
-- Public rule: `visible && productCount > 0`
-- Persistence: **Save Changes** → `PUT /api/collections-config` → Cloudflare KV `COLLECTIONS_CONFIG`
+- Homepage: **FEATURED PRODUCTS** (Square Featured attribute) — never “Best Sellers” with zero sales
+- `getBestSellingProducts()` stub returns `[]` until real Square sales data exists
+- Featured Collections: `visible && productCount > 0 && featured`, ordered by admin config
+- Collections admin: visibility, featured, order, description, images → KV
+- Products admin (read-only): inspect Featured + Collection from Square
+- Multi-value Square Collection attribute supported for membership counts/filters
 
-### Ops (required for live Save Changes)
-
-1. Cloudflare Pages → create KV namespace → bind as `COLLECTIONS_CONFIG`
-2. Set secret/env `ADMIN_PASSWORD`
-3. Redeploy so Functions pick up the binding
+### Ops
+1. Bind KV `COLLECTIONS_CONFIG` + set `ADMIN_PASSWORD`
+2. Mark products Featured in Square for homepage
+3. Square production credentials only after sandbox QA
 
 ---
 

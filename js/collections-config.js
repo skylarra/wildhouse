@@ -1,5 +1,5 @@
 // Website-side collection configuration helpers.
-// Admin controls: visibility + display order (and preserved copy/images).
+// Admin controls: visibility, featured, sortOrder, description, hero/card images.
 // Membership always comes from Square's Collection attribute — never from this file.
 
 export const COLLECTIONS_CONFIG_LS_KEY = "whl_collections_config";
