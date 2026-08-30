@@ -25,10 +25,31 @@
     <div id="site-announcement"></div>
     <header id="site-header"></header>
 
-    <main id="main-content">
-        <div id="collection-page" aria-live="polite">
-            <p class="loading page-wrap">Loading collection…</p>
-        </div>
+    <main id="main-content" class="shop-all-page">
+        <aside class="side-bar">
+            <h2>Categories</h2>
+            <ul id="category-list"></ul>
+        </aside>
+        <section class="shop">
+            <h1 id="collection-heading">COLLECTION</h1>
+            <div class="shop-toolbar">
+                <label class="field shop-search-field">
+                    <span class="visually-hidden">Search products</span>
+                    <input type="search" id="shop-search" placeholder="Search products…" autocomplete="off">
+                </label>
+                <label class="field shop-sort-field">
+                    <span class="visually-hidden">Sort products</span>
+                    <select id="shop-sort">
+                        <option value="featured">Featured</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="name-asc">Name: A to Z</option>
+                    </select>
+                </label>
+                <p class="shop-count" id="shop-count" aria-live="polite"></p>
+            </div>
+            <div class="product-grid" id="shop-grid" aria-live="polite"></div>
+        </section>
     </main>
 
     <div id="site-newsletter"></div>
