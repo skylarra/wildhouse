@@ -3,11 +3,11 @@
 // data/products.json.
 //
 // Architecture (do not invert):
-// - Square `Collection` custom attribute → product membership
+// - Square `Collection` custom attribute → ONLY source of collection names
+//   and product membership (grouped by unique Square value)
 // - Square Categories → product type (shop filters / collection type chips)
-// - Website collections config → visibility, featured, order, copy, images
-//   Admin Save → Cloudflare KV; public reads /api/collections-config
-//   (seed: content/collections.json when KV empty)
+// - Website → cover PNGs in assets/collections/ (normalized filename),
+//   optional KV presentation (description/order) — never invents membership
 // - Square Featured custom attribute → product.featured (manual merchandising)
 // - Best sellers → getBestSellingProducts() (sales data later; empty for launch)
 
@@ -15,13 +15,15 @@ import { loadJSON, sitePath } from "./content.js";
 import {
   normalizeCollectionsConfig,
   mergeCollectionsWithConfig,
-  isPublicCollection,
+  indexConfigByKey,
 } from "./collections-config.js";
+import {
+  normalizeCollectionKey,
+  collectionCoverSrc,
+} from "./collection-assets.js";
 
 let cache = null;
 let collectionsMetaCache = null;
-
-const DEFAULT_COLLECTION_IMAGE = "./assets/coming-soon.png";
 
 export function formatMoney(cents, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
@@ -29,7 +31,7 @@ export function formatMoney(cents, currency = "USD") {
   );
 }
 
-/** URL slug from a Square Collection display name (display name itself is never mutated). */
+/** Generic URL slug (categories / product handles). Prefer normalizeCollectionKey for collections. */
 export function slugify(str = "") {
   return String(str)
     .toLowerCase()
@@ -37,6 +39,8 @@ export function slugify(str = "") {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+export { normalizeCollectionKey, collectionCoverSrc };
 
 /** Collection detail URL. Prefer pretty `/collections/:handle` in production
  *  (`_redirects` → `/collection?handle=…`). Query form works locally too. */
@@ -135,7 +139,7 @@ function normalize(raw) {
 
       const collectionNames = collectionNamesFromCustom(obj.custom);
       const collectionName = collectionNames[0] || null;
-      const collectionHandle = collectionName ? slugify(collectionName) : null;
+      const collectionHandle = collectionName ? normalizeCollectionKey(collectionName) : null;
 
       return {
         id: obj.id,
@@ -169,27 +173,75 @@ export async function getProducts() {
 }
 
 /**
- * Detect collections from Square:
- * 1) Every allowed selection on the Collection custom-attribute definition
- * 2) Plus any Collection values actually assigned on products (counts/images)
- * Admin/collections must list Square options even when productCount is 0.
+ * Group products by unique Square Collection attribute values.
+ * Display names are kept exactly as Square provides them.
+ * Cover art resolves from assets/collections/{normalized}.png.
  */
-async function detectCollectionsFromCatalog(products, raw) {
+export function buildCollectionsFromProducts(products = []) {
+  const counts = new Map();
+  const names = new Map(); // key → exact Square display name (first wins)
+
+  for (const p of products) {
+    const list =
+      Array.isArray(p.collectionNames) && p.collectionNames.length
+        ? p.collectionNames
+        : p.collectionName
+          ? [p.collectionName]
+          : [];
+    for (const displayName of list) {
+      const label = String(displayName || "").trim();
+      if (!label) continue;
+      const handle = normalizeCollectionKey(label);
+      if (!handle) continue;
+      if (!names.has(handle)) names.set(handle, label);
+      counts.set(handle, (counts.get(handle) || 0) + 1);
+    }
+  }
+
+  return [...names.entries()]
+    .map(([handle, name]) => {
+      const productCount = counts.get(handle) || 0;
+      const image = collectionCoverSrc(name);
+      return {
+        id: handle,
+        handle,
+        slug: handle,
+        collectionKey: handle,
+        name,
+        displayName: name,
+        count: productCount,
+        productCount,
+        image,
+        heroImage: image,
+        featuredImage: image,
+        description: "",
+        visible: true,
+        featured: true,
+        sortOrder: 0,
+      };
+    })
+    .filter((c) => c.productCount > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * Detect collections for admin: Square definition options + assigned membership.
+ * Covers always come from the filesystem convention (not KV image URLs).
+ */
+function detectCollectionsFromCatalog(products, raw) {
   const counts = new Map();
   const names = new Map();
-  const firstImage = new Map();
 
   const ensure = (displayName) => {
     const label = String(displayName || "").trim();
     if (!label) return null;
-    const handle = slugify(label);
+    const handle = normalizeCollectionKey(label);
     if (!handle) return null;
     if (!names.has(handle)) names.set(handle, label);
     if (!counts.has(handle)) counts.set(handle, 0);
     return handle;
   };
 
-  // Seed from Square Collection definition options (single- or multi-select).
   for (const option of raw?.collectionOptions || []) {
     ensure(option);
   }
@@ -205,21 +257,20 @@ async function detectCollectionsFromCatalog(products, raw) {
       const handle = ensure(displayName);
       if (!handle) continue;
       counts.set(handle, (counts.get(handle) || 0) + 1);
-      if (!firstImage.has(handle) && p.images.length) {
-        firstImage.set(handle, p.images[0]);
-      }
     }
   }
 
   return [...names.keys()].map((handle) => {
+    const name = names.get(handle);
     const count = counts.get(handle) || 0;
+    const image = collectionCoverSrc(name);
     return {
       handle,
       collectionKey: handle,
-      name: names.get(handle),
+      name,
       count,
       productCount: count,
-      image: firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE,
+      image,
     };
   });
 }
@@ -227,12 +278,14 @@ async function detectCollectionsFromCatalog(products, raw) {
 /** True when a product belongs to a collection handle (primary or multi-value). */
 export function productInCollection(product, handle) {
   if (!product || !handle) return false;
-  if (product.collectionHandle === handle) return true;
-  return (product.collectionNames || []).some((n) => slugify(n) === handle);
+  const target = normalizeCollectionKey(handle);
+  if (!target) return false;
+  if (normalizeCollectionKey(product.collectionHandle || "") === target) return true;
+  return (product.collectionNames || []).some((n) => normalizeCollectionKey(n) === target);
 }
 
 /**
- * Full collection records for admin (includes hidden + empty).
+ * Full collection records for admin (includes empty Square options).
  * Public pages should use getCollections() instead.
  */
 export async function getAllCollectionRecords() {
@@ -241,20 +294,49 @@ export async function getAllCollectionRecords() {
     getProducts(),
     loadCollectionsMeta(),
   ]);
-  const detected = await detectCollectionsFromCatalog(products, raw);
-  return mergeCollectionsWithConfig(detected, meta).map((c) => ({
-    ...c,
-    image: c.image || DEFAULT_COLLECTION_IMAGE,
-    heroImage: c.heroImage || c.image || DEFAULT_COLLECTION_IMAGE,
-  }));
+  const detected = detectCollectionsFromCatalog(products, raw);
+  return mergeCollectionsWithConfig(detected, meta).map((c) => {
+    const cover = collectionCoverSrc(c.name || c.displayName);
+    return {
+      ...c,
+      // Filesystem covers win — KV/image URL fields are presentation leftovers.
+      image: cover,
+      heroImage: cover,
+      featuredImage: cover,
+    };
+  });
 }
 
 /**
- * Public collections: visible === true AND productCount > 0, sorted by sortOrder.
+ * Public collections: one card per unique Square Collection value that has
+ * products. Names are exact Square strings; covers from assets/collections/.
+ * Optional KV description/order overlay does not invent membership.
  */
 export async function getCollections() {
-  const all = await getAllCollectionRecords();
-  return all.filter(isPublicCollection);
+  const products = await getProducts();
+  const built = buildCollectionsFromProducts(products);
+  let meta;
+  try {
+    meta = await loadCollectionsMeta();
+  } catch (_) {
+    meta = { version: 2, entries: [] };
+  }
+  const byKey = indexConfigByKey(meta);
+  return built
+    .map((c) => {
+      const cfg = byKey.get(c.handle);
+      if (!cfg) return c;
+      return {
+        ...c,
+        // Keep Square name + filesystem cover; allow optional story copy/order.
+        description: cfg.description || "",
+        sortOrder: Number(cfg.sortOrder) || 0,
+      };
+    })
+    .sort(
+      (a, b) =>
+        (a.sortOrder || 0) - (b.sortOrder || 0) || a.name.localeCompare(b.name)
+    );
 }
 
 /**
@@ -289,14 +371,22 @@ export async function getCategories() {
 
 export async function getCollectionByHandle(handle) {
   if (!handle) return null;
+  const target = normalizeCollectionKey(handle);
   const collections = await getCollections();
-  return collections.find((c) => c.handle === handle || c.slug === handle) || null;
+  return (
+    collections.find(
+      (c) =>
+        normalizeCollectionKey(c.handle) === target ||
+        normalizeCollectionKey(c.slug || "") === target ||
+        normalizeCollectionKey(c.name || "") === target
+    ) || null
+  );
 }
 
-/** Homepage featured collections: public + featured, in admin sort order. */
+/** Homepage collections strip: every Square collection with products (capped). */
 export async function getFeaturedCollections(limit = 6) {
   const collections = await getCollections();
-  return collections.filter((c) => c.featured).slice(0, limit);
+  return collections.slice(0, limit);
 }
 
 export async function getProductByHandle(handle) {

@@ -118,11 +118,11 @@ function renderProducts() {
   }
 }
 
-function renderPage(col) {
-  const heroSrc = col.heroImage || col.image;
+  function renderPage(col) {
+  const heroSrc = col.heroImage || col.image || "./assets/coming-soon.png";
   mount.innerHTML = `
     <section class="collection-hero" aria-label="${escapeHtml(col.name)} collection">
-      <img class="collection-hero__image" src="${heroSrc}" alt="" role="presentation">
+      <img class="collection-hero__image" src="${heroSrc}" alt="" role="presentation" data-fallback="./assets/coming-soon.png" onerror="this.onerror=null;this.src=this.dataset.fallback||'./assets/coming-soon.png'">
     </section>
     <div class="collection-intro page-wrap">
       <nav class="collection-breadcrumb" aria-label="Breadcrumb">

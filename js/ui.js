@@ -195,10 +195,11 @@ export function formatProductDescription({ html = "", text = "" } = {}) {
 }
 
 export function collectionCardHTML(collection) {
+  const cover = collection.image || "./assets/coming-soon.png";
   return `
     <a class="collection-card" href="./collection.html?handle=${encodeURIComponent(collection.handle)}">
       <div class="collection-card__media img-placeholder">
-        <img src="${collection.image}" alt="${escapeHtml(collection.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
+        <img src="${cover}" alt="${escapeHtml(collection.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
       </div>
       <h3 class="collection-card__name">${escapeHtml(collection.name)}</h3>
     </a>`;

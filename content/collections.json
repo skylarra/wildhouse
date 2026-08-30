@@ -1,5 +1,5 @@
 {
-  "_comment": "Website-side collection presentation seed (visibility + order + optional copy/images). Product membership comes ONLY from Square's Collection attribute. Live edits persist in Cloudflare KV via /admin/collections → PUT /api/collections-config. New Square collections with no entry default to visible=false. Public pages require visible=true AND productCount > 0.",
+  "_comment": "Optional presentation overlay only (description + sortOrder). Collection NAMES and MEMBERSHIP come ONLY from Square's Collection custom attribute. Cover PNGs live in assets/collections/{normalized-key}.png — not here. Public site auto-lists every Square Collection value that has products.",
   "version": 2,
   "entries": [
     {
@@ -13,7 +13,7 @@
       "featuredImage": ""
     },
     {
-      "collectionKey": "moon-sun-stars",
+      "collectionKey": "moon-sun-and-stars",
       "displayName": "Moon, Sun & Stars",
       "visible": true,
       "featured": true,
@@ -43,7 +43,7 @@
       "featuredImage": ""
     },
     {
-      "collectionKey": "tide-marsh",
+      "collectionKey": "tide-and-marsh",
       "displayName": "Tide & Marsh",
       "visible": true,
       "featured": true,
@@ -83,7 +83,7 @@
       "featuredImage": ""
     },
     {
-      "collectionKey": "family-home",
+      "collectionKey": "family-and-home",
       "displayName": "Family & Home",
       "visible": false,
       "featured": false,
@@ -113,7 +113,7 @@
       "featuredImage": ""
     },
     {
-      "collectionKey": "weddings-events",
+      "collectionKey": "weddings-and-events",
       "displayName": "Weddings & Events",
       "visible": false,
       "featured": false,

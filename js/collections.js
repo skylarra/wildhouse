@@ -1,5 +1,5 @@
-// Collections index — one card per Square category that has products.
-// Names, covers, counts, and storytelling copy come from catalog + content/collections.json.
+// Collections index — one card per unique Square Collection attribute value.
+// Names come from Square; covers from assets/collections/{normalized}.png.
 import { getCollections } from "./catalog.js";
 import { collectionCardHTML, wireImagePlaceholders } from "./ui.js";
 
