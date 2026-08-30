@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Admin · Collections | Wildhouse Lane</title>
-    <link rel="icon" type="image/svg+xml" href="../assets/WILDHOUSE-logomark.svg">
-    <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="../css/components.css">
-    <link rel="stylesheet" href="../css/admin.css">
+    <base href="/">
+    <link rel="icon" type="image/svg+xml" href="/assets/WILDHOUSE-logomark.svg">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/admin.css">
 </head>
 <body class="admin-body">
     <a class="skip-link" href="#admin-main">Skip to content</a>
@@ -16,19 +17,19 @@
     <header class="admin-top">
         <div class="admin-top__inner">
             <nav class="admin-nav" aria-label="Admin">
-                <a class="admin-brand" href="../index.html">← Storefront</a>
-                <a href="./collections.html" aria-current="page">Collections</a>
-                <a href="./products.html">Products</a>
+                <a class="admin-brand" href="/index.html">← Storefront</a>
+                <a href="/admin/collections" aria-current="page">Collections</a>
+                <a href="/admin/products">Products</a>
             </nav>
             <h1 class="admin-title">Collections</h1>
-            <p class="admin-tagline">Square’s <strong>Collection</strong> attribute owns names and membership. Cover art lives in <code>assets/collections/</code> as normalized PNGs. Use this page for optional description, visibility, and order.</p>
+            <p class="admin-tagline">Same Square <strong>Collection</strong> attribute as <a href="/collections">/collections</a>. Names and membership come from Square; cover PNGs live in <code>assets/collections/</code>.</p>
         </div>
     </header>
 
     <main id="admin-main" class="admin-main">
         <section id="admin-gate" class="admin-card" hidden>
             <h2>Unlock admin</h2>
-            <p>Enter the Cloudflare <code>ADMIN_PASSWORD</code>. Changes save to Cloudflare KV and update the live site.</p>
+            <p>Enter the Cloudflare <code>ADMIN_PASSWORD</code>. Changes save presentation settings to Cloudflare KV (not membership).</p>
             <form id="admin-unlock-form" class="admin-unlock">
                 <label class="field">
                     <span>Password</span>
@@ -46,7 +47,7 @@
 
         <section id="admin-app" hidden>
             <div class="admin-toolbar">
-                <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Expand a row to edit featured, description, and images. Empty collections stay off the public site. New Square collections default to hidden.</p>
+                <p class="admin-hint">Drag <span aria-hidden="true">☰</span> to reorder. Visibility / featured / description are website presentation only. Membership stays in Square.</p>
                 <div class="admin-toolbar__actions">
                     <button type="button" class="btn" id="admin-reload">Reload</button>
                     <button type="button" class="btn secondary" id="admin-save">Save Changes</button>
@@ -63,6 +64,6 @@
         </section>
     </main>
 
-    <script type="module" src="../js/admin-collections.js"></script>
+    <script type="module" src="/js/admin-collections.js"></script>
 </body>
 </html>

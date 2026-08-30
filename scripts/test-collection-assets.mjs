@@ -28,5 +28,6 @@ assert.equal(
   collectionCoverSrc("Midnight Light"),
   `${COLLECTION_COVER_DIR}/midnight-light.png`
 );
+assert.equal(COLLECTION_COVER_DIR.startsWith("/"), true, "cover dir must be root-absolute for /admin");
 
 console.log("test-collection-assets: all passed");

@@ -14,7 +14,6 @@
 import { loadJSON, sitePath } from "./content.js";
 import {
   normalizeCollectionsConfig,
-  mergeCollectionsWithConfig,
   indexConfigByKey,
 } from "./collections-config.js";
 import {
@@ -173,13 +172,24 @@ export async function getProducts() {
 }
 
 /**
- * Group products by unique Square Collection attribute values.
- * Display names are kept exactly as Square provides them.
- * Cover art resolves from assets/collections/{normalized}.png.
+ * Square-only collection detection shared by public + admin.
+ * - Membership & names: Collection custom attribute on products
+ * - Plus (admin): empty options from the Square Collection definition
+ * Never invents collections from website seed/KV alone.
  */
-export function buildCollectionsFromProducts(products = []) {
+export function detectSquareCollections(products = [], raw = {}, { includeEmptyOptions = false } = {}) {
   const counts = new Map();
-  const names = new Map(); // key → exact Square display name (first wins)
+  const names = new Map();
+
+  const ensure = (displayName) => {
+    const label = String(displayName || "").trim();
+    if (!label) return null;
+    const handle = normalizeCollectionKey(label);
+    if (!handle) return null;
+    if (!names.has(handle)) names.set(handle, label);
+    if (!counts.has(handle)) counts.set(handle, 0);
+    return handle;
+  };
 
   for (const p of products) {
     const list =
@@ -189,17 +199,21 @@ export function buildCollectionsFromProducts(products = []) {
           ? [p.collectionName]
           : [];
     for (const displayName of list) {
-      const label = String(displayName || "").trim();
-      if (!label) continue;
-      const handle = normalizeCollectionKey(label);
+      const handle = ensure(displayName);
       if (!handle) continue;
-      if (!names.has(handle)) names.set(handle, label);
       counts.set(handle, (counts.get(handle) || 0) + 1);
     }
   }
 
-  return [...names.entries()]
-    .map(([handle, name]) => {
+  if (includeEmptyOptions) {
+    for (const option of raw?.collectionOptions || []) {
+      ensure(option);
+    }
+  }
+
+  return [...names.keys()]
+    .map((handle) => {
+      const name = names.get(handle);
       const productCount = counts.get(handle) || 0;
       const image = collectionCoverSrc(name);
       return {
@@ -216,63 +230,21 @@ export function buildCollectionsFromProducts(products = []) {
         featuredImage: image,
         description: "",
         visible: true,
-        featured: true,
+        featured: false,
         sortOrder: 0,
       };
     })
-    .filter((c) => c.productCount > 0)
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
- * Detect collections for admin: Square definition options + assigned membership.
- * Covers always come from the filesystem convention (not KV image URLs).
+ * Group products by unique Square Collection attribute values (public list).
+ * Display names are kept exactly as Square provides them.
  */
-function detectCollectionsFromCatalog(products, raw) {
-  const counts = new Map();
-  const names = new Map();
-
-  const ensure = (displayName) => {
-    const label = String(displayName || "").trim();
-    if (!label) return null;
-    const handle = normalizeCollectionKey(label);
-    if (!handle) return null;
-    if (!names.has(handle)) names.set(handle, label);
-    if (!counts.has(handle)) counts.set(handle, 0);
-    return handle;
-  };
-
-  for (const option of raw?.collectionOptions || []) {
-    ensure(option);
-  }
-
-  for (const p of products) {
-    const list =
-      Array.isArray(p.collectionNames) && p.collectionNames.length
-        ? p.collectionNames
-        : p.collectionName
-          ? [p.collectionName]
-          : [];
-    for (const displayName of list) {
-      const handle = ensure(displayName);
-      if (!handle) continue;
-      counts.set(handle, (counts.get(handle) || 0) + 1);
-    }
-  }
-
-  return [...names.keys()].map((handle) => {
-    const name = names.get(handle);
-    const count = counts.get(handle) || 0;
-    const image = collectionCoverSrc(name);
-    return {
-      handle,
-      collectionKey: handle,
-      name,
-      count,
-      productCount: count,
-      image,
-    };
-  });
+export function buildCollectionsFromProducts(products = []) {
+  return detectSquareCollections(products, {}, { includeEmptyOptions: false }).filter(
+    (c) => c.productCount > 0
+  );
 }
 
 /** True when a product belongs to a collection handle (primary or multi-value). */
@@ -285,8 +257,9 @@ export function productInCollection(product, handle) {
 }
 
 /**
- * Full collection records for admin (includes empty Square options).
- * Public pages should use getCollections() instead.
+ * Admin records: SAME Square-derived collections as the public site, plus any
+ * empty Square Collection definition options (still Square — never seed orphans).
+ * KV/seed overlays description / visible / featured / sortOrder only.
  */
 export async function getAllCollectionRecords() {
   const [raw, products, meta] = await Promise.all([
@@ -294,17 +267,36 @@ export async function getAllCollectionRecords() {
     getProducts(),
     loadCollectionsMeta(),
   ]);
-  const detected = detectCollectionsFromCatalog(products, raw);
-  return mergeCollectionsWithConfig(detected, meta).map((c) => {
-    const cover = collectionCoverSrc(c.name || c.displayName);
-    return {
-      ...c,
-      // Filesystem covers win — KV/image URL fields are presentation leftovers.
-      image: cover,
-      heroImage: cover,
-      featuredImage: cover,
-    };
-  });
+
+  // Include empty Square definition options so admin can see all Square values;
+  // public getCollections() still filters to productCount > 0.
+  const detected = detectSquareCollections(products, raw, { includeEmptyOptions: true });
+  const configByKey = indexConfigByKey(meta);
+
+  return detected
+    .map((c) => {
+      const cfg = configByKey.get(c.handle);
+      const cover = collectionCoverSrc(c.name);
+      return {
+        ...c,
+        image: cover,
+        heroImage: cover,
+        featuredImage: cover,
+        description: cfg?.description || "",
+        // Presentation-only. Public listing is Square membership, not this flag.
+        visible: cfg ? Boolean(cfg.visible) : c.productCount > 0,
+        featured: cfg ? Boolean(cfg.featured) : false,
+        sortOrder: Number.isFinite(Number(cfg?.sortOrder)) ? Number(cfg.sortOrder) : 0,
+        isConfigured: Boolean(cfg),
+        isNew: !cfg,
+      };
+    })
+    .sort(
+      (a, b) =>
+        (a.sortOrder || 0) - (b.sortOrder || 0) ||
+        Number(b.productCount > 0) - Number(a.productCount > 0) ||
+        a.name.localeCompare(b.name)
+    );
 }
 
 /**
