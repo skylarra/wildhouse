@@ -168,12 +168,31 @@ export async function getProducts() {
   return normalize(raw);
 }
 
-/** Detect collections from Square membership only (no visibility filter).
- *  Counts every Collection attribute value on a product (multi-collection). */
-async function detectCollectionsFromProducts(products) {
+/**
+ * Detect collections from Square:
+ * 1) Every allowed selection on the Collection custom-attribute definition
+ * 2) Plus any Collection values actually assigned on products (counts/images)
+ * Admin/collections must list Square options even when productCount is 0.
+ */
+async function detectCollectionsFromCatalog(products, raw) {
   const counts = new Map();
   const names = new Map();
   const firstImage = new Map();
+
+  const ensure = (displayName) => {
+    const label = String(displayName || "").trim();
+    if (!label) return null;
+    const handle = slugify(label);
+    if (!handle) return null;
+    if (!names.has(handle)) names.set(handle, label);
+    if (!counts.has(handle)) counts.set(handle, 0);
+    return handle;
+  };
+
+  // Seed from Square Collection definition options (single- or multi-select).
+  for (const option of raw?.collectionOptions || []) {
+    ensure(option);
+  }
 
   for (const p of products) {
     const list =
@@ -183,24 +202,26 @@ async function detectCollectionsFromProducts(products) {
           ? [p.collectionName]
           : [];
     for (const displayName of list) {
-      const handle = slugify(displayName);
+      const handle = ensure(displayName);
       if (!handle) continue;
       counts.set(handle, (counts.get(handle) || 0) + 1);
-      names.set(handle, displayName);
       if (!firstImage.has(handle) && p.images.length) {
         firstImage.set(handle, p.images[0]);
       }
     }
   }
 
-  return [...counts.entries()].map(([handle, count]) => ({
-    handle,
-    collectionKey: handle,
-    name: names.get(handle),
-    count,
-    productCount: count,
-    image: firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE,
-  }));
+  return [...names.keys()].map((handle) => {
+    const count = counts.get(handle) || 0;
+    return {
+      handle,
+      collectionKey: handle,
+      name: names.get(handle),
+      count,
+      productCount: count,
+      image: firstImage.get(handle) || DEFAULT_COLLECTION_IMAGE,
+    };
+  });
 }
 
 /** True when a product belongs to a collection handle (primary or multi-value). */
@@ -215,8 +236,12 @@ export function productInCollection(product, handle) {
  * Public pages should use getCollections() instead.
  */
 export async function getAllCollectionRecords() {
-  const [products, meta] = await Promise.all([getProducts(), loadCollectionsMeta()]);
-  const detected = await detectCollectionsFromProducts(products);
+  const [raw, products, meta] = await Promise.all([
+    loadRaw(),
+    getProducts(),
+    loadCollectionsMeta(),
+  ]);
+  const detected = await detectCollectionsFromCatalog(products, raw);
   return mergeCollectionsWithConfig(detected, meta).map((c) => ({
     ...c,
     image: c.image || DEFAULT_COLLECTION_IMAGE,

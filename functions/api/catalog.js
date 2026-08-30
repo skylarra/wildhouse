@@ -2,7 +2,14 @@
 // Returns the live Square catalog + inventory in the same shape as
 // data/products.json. If Square isn't configured, responds 501 so the
 // frontend falls back to the bundled products.json.
-import { squareConfig, squareFetch, squareToCatalog, json, missingSquareEnv } from "./_square.js";
+import {
+  squareConfig,
+  squareFetch,
+  squareToCatalog,
+  listCatalogObjects,
+  json,
+  missingSquareEnv,
+} from "./_square.js";
 
 export async function onRequestGet({ env }) {
   const cfg = squareConfig(env);
@@ -19,11 +26,9 @@ export async function onRequestGet({ env }) {
   }
 
   try {
-    const catalog = await squareFetch(
-      cfg,
-      "/v2/catalog/list?types=ITEM,CATEGORY,IMAGE,CUSTOM_ATTRIBUTE_DEFINITION"
-    );
-    const objects = catalog.objects || [];
+    // Paginate so CUSTOM_ATTRIBUTE_DEFINITION (Collection selections, Featured)
+    // is never dropped when the catalog spans multiple List pages.
+    const objects = await listCatalogObjects(cfg);
 
     // Look up real-time inventory for every variation.
     const variationIds = objects
@@ -49,6 +54,7 @@ export async function onRequestGet({ env }) {
       source: "square",
       environment: cfg.environment,
       itemCount: (payload.objects || []).length,
+      collectionOptionCount: (payload.collectionOptions || []).length,
     };
     return json(payload);
   } catch (err) {
