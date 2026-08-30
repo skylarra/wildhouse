@@ -6,7 +6,7 @@ import {
   getProducts,
   getFeaturedCollections,
 } from "./catalog.js";
-import { loadPage, loadJSON } from "./content.js";
+import { loadPage } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml, collectionCardHTML } from "./ui.js";
 
@@ -36,39 +36,6 @@ function renderHero(hero) {
     </div>
     <div class="hero-strip">${stripImgs}</div>
     <div class="hero-bottom">${ctaHTML(hero.cta)}</div>`;
-}
-
-/** Stable daily pick: same message for everyone on a given local calendar day. */
-function pickDailyMessage(messages) {
-  if (!messages?.length) return "";
-  const now = new Date();
-  const dayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
-  let hash = 0;
-  for (let i = 0; i < dayKey.length; i++) {
-    hash = (hash * 31 + dayKey.charCodeAt(i)) >>> 0;
-  }
-  return messages[hash % messages.length];
-}
-
-async function renderLittleNote() {
-  const el = document.getElementById("little-note");
-  if (!el) return;
-  try {
-    const data = await loadJSON("content/notes.json");
-    const message = pickDailyMessage(data.messages);
-    if (!message) {
-      el.hidden = true;
-      return;
-    }
-    const heading = data.heading || "A Little Note";
-    el.innerHTML = `
-      <p class="little-note__label homemade-apple-regular">${escapeHtml(heading)}</p>
-      <p class="little-note__message shadows-into-light-regular">${escapeHtml(message)}</p>`;
-    el.hidden = false;
-  } catch (err) {
-    el.hidden = true;
-    console.error(err);
-  }
 }
 
 function renderWelcome(w) {
@@ -230,7 +197,6 @@ async function renderRecentlyViewed(heading) {
 }
 
 async function init() {
-  renderLittleNote();
   try {
     const home = await loadPage("home");
     renderSeo(home.seo);

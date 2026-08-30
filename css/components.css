@@ -1642,11 +1642,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  align-items: center;
 }
 .custom-hero__actions .btn {
   flex: 1 1 auto;
   min-width: min(100%, 11rem);
   text-align: center;
+  box-sizing: border-box;
 }
 .custom-hero__media {
   position: relative;

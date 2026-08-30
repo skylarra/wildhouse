@@ -1,11 +1,11 @@
 {
-  "_comment": "Contact page — simple channels for launch. Form opens a mailto draft to skylar@wildhouselane.com.",
+  "_comment": "Contact page — email + social channels. No form for launch; visitors use mailto or Instagram.",
   "title": "Contact",
   "intro": "Say hello — whether you have a question about an order, a custom idea, or just want to share something kind.",
   "blocks": [
     {
       "type": "paragraph",
-      "html": "The fastest way to reach me is email. You can also find Wildhouse Lane on social media."
+      "html": "The fastest way to reach me is email or Instagram. You can also find Wildhouse Lane on TikTok and Pinterest."
     }
   ],
   "channels": [
@@ -29,16 +29,5 @@
       "value": "Wildhouse Lane",
       "href": "https://www.pinterest.com/wildhouselane/"
     }
-  ],
-  "form": {
-    "heading": "Send a note",
-    "successMessage": "Your email app should open with a draft — press send when you’re ready.",
-    "errorMessage": "Please fill in your name, a valid email, and a message.",
-    "fields": {
-      "name": "Name",
-      "email": "Email",
-      "message": "Message",
-      "submit": "Open email draft"
-    }
-  }
+  ]
 }

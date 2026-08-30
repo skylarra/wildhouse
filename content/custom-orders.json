@@ -12,11 +12,13 @@
       {
         "label": "Message on Instagram",
         "href": "https://www.instagram.com/wildhouselane/",
-        "external": true
+        "external": true,
+        "style": "secondary"
       },
       {
-        "label": "Email Skylar",
-        "href": "mailto:skylar@wildhouselane.com?subject=Custom%20order%20idea"
+        "label": "Email me",
+        "href": "mailto:skylar@wildhouselane.com?subject=Custom%20order%20idea",
+        "style": "primary"
       }
     ],
     "image": {

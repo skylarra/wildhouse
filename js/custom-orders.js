@@ -12,13 +12,14 @@ function linkAttrs(item) {
 
 function ctaHTML(cta, cls = "btn secondary") {
   if (!cta?.href) return "";
-  return `<a class="${cls}" href="${escapeHtml(cta.href)}"${linkAttrs(cta)}>${escapeHtml(cta.label)}</a>`;
+  const style = cta.style === "primary" ? "btn primary" : cta.style === "secondary" ? "btn secondary" : cls;
+  return `<a class="${style}" href="${escapeHtml(cta.href)}"${linkAttrs(cta)}>${escapeHtml(cta.label)}</a>`;
 }
 
 function renderHero(hero) {
   if (!hero) return "";
   const actions = (hero.ctas || (hero.cta ? [hero.cta] : []))
-    .map((c, i) => ctaHTML(c, i === 0 ? "btn secondary" : "btn"))
+    .map((c, i) => ctaHTML(c, i === 0 ? "btn secondary" : "btn primary"))
     .join("");
 
   return `
