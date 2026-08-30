@@ -1,7 +1,7 @@
-// Single collection page — products whose Square Collection attribute matches.
+// Collection page — same layout as Shop All, scoped to one Square Collection.
 // URLs:
 //   /collections/<slug>          (Cloudflare _redirects → /collection?handle=…)
-//   /collection?handle=<slug>    (extensionless; also works as collection.html?handle=)
+//   /collection?handle=<slug>
 //   collection.html?handle=<slug>
 import {
   getCollectionByHandle,
@@ -11,10 +11,17 @@ import {
 } from "./catalog.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml } from "./ui.js";
 
-const mount = document.getElementById("collection-page");
-const state = { sort: "featured", type: "all" };
+const state = { search: "", category: "all", sort: "featured" };
 let collection = null;
-let products = [];
+/** Products that belong to the active collection (already filtered). */
+let collectionProducts = [];
+
+const grid = document.getElementById("shop-grid");
+const countEl = document.getElementById("shop-count");
+const searchInput = document.getElementById("shop-search");
+const sortSelect = document.getElementById("shop-sort");
+const categoryList = document.getElementById("category-list");
+const headingEl = document.getElementById("collection-heading");
 
 function handleFromUrl() {
   const q = new URLSearchParams(location.search).get("handle");
@@ -23,8 +30,28 @@ function handleFromUrl() {
   return m ? decodeURIComponent(m[1]) : "";
 }
 
-function typeFromUrl() {
-  return new URLSearchParams(location.search).get("type") || "all";
+function emptyStateHTML({ title, body, primary, secondary }) {
+  const second = secondary
+    ? `<a class="btn" href="${secondary.href}">${secondary.label}</a>`
+    : "";
+  return `
+    <div class="empty-state">
+      <h2 class="empty-state__title">${title}</h2>
+      <p class="empty-state__body">${body}</p>
+      <div class="empty-state__actions">
+        <a class="btn secondary" href="${primary.href}">${primary.label}</a>
+        ${second}
+      </div>
+    </div>`;
+}
+
+function skeletonGridHTML(count = 8) {
+  return `<div class="skeleton-grid" aria-hidden="true">${Array.from({ length: count }, () => `
+    <div class="skeleton-card">
+      <div class="skeleton-card__media"></div>
+      <div class="skeleton-card__line"></div>
+      <div class="skeleton-card__line skeleton-card__line--short"></div>
+    </div>`).join("")}</div>`;
 }
 
 function syncDocumentMeta(col) {
@@ -46,17 +73,23 @@ function syncDocumentMeta(col) {
 
 function syncUrl() {
   const params = new URLSearchParams();
-  // Keep handle in query when not on a pretty /collections/:slug path.
-  if (!/\/collections\/[^/]+\/?$/.test(location.pathname)) {
+  if (!/\/collections\/[^/]+\/?$/.test(location.pathname) && collection?.handle) {
     params.set("handle", collection.handle);
   }
-  if (state.type !== "all") params.set("type", state.type);
+  if (state.category !== "all") params.set("category", state.category);
+  if (state.search) params.set("q", state.search);
   if (state.sort !== "featured") params.set("sort", state.sort);
   const qs = params.toString();
-  const base = /\/collections\/[^/]+\/?$/.test(location.pathname)
-    ? location.pathname
-    : location.pathname;
-  history.replaceState(null, "", qs ? `${base}?${qs}` : base);
+  history.replaceState(null, "", qs ? `${location.pathname}?${qs}` : location.pathname);
+}
+
+function initFromUrl() {
+  const params = new URLSearchParams(location.search);
+  state.category = params.get("category") || params.get("type") || "all";
+  state.search = params.get("q") || "";
+  state.sort = params.get("sort") || "featured";
+  if (searchInput) searchInput.value = state.search;
+  if (sortSelect) sortSelect.value = state.sort;
 }
 
 function typesInCollection(list) {
@@ -70,175 +103,128 @@ function typesInCollection(list) {
   return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function renderTypeFilters() {
-  const el = document.getElementById("collection-type-filters");
-  if (!el) return;
-  const inCollection = products.filter((p) => productInCollection(p, collection.handle));
-  const types = typesInCollection(inCollection);
-  if (!types.length) {
-    el.hidden = true;
-    return;
-  }
-  el.hidden = false;
-  const items = [{ handle: "all", name: "All" }, ...types];
-  el.innerHTML = items
+function renderCategories() {
+  if (!categoryList) return;
+  // Sidebar lists product types present in this collection (same UI as Shop All).
+  const types = typesInCollection(collectionProducts);
+  const items = [{ handle: "all", name: "All Products" }, ...types];
+  categoryList.innerHTML = items
     .map(
-      (t) =>
-        `<button type="button" class="filter-chip${state.type === t.handle ? " is-active" : ""}" data-type="${escapeHtml(t.handle)}" aria-pressed="${state.type === t.handle}">${escapeHtml(t.name)}</button>`
+      (c) =>
+        `<li><a href="#" data-category="${escapeHtml(c.handle)}"${
+          c.handle === state.category ? ' class="is-active"' : ""
+        }>${escapeHtml(c.name)}</a></li>`
     )
     .join("");
 }
 
-function renderProducts() {
-  const grid = document.getElementById("collection-grid");
-  const countEl = document.getElementById("collection-count");
+function render() {
   if (!grid) return;
-  const results = queryProducts(products, {
-    collection: collection.handle,
-    category: state.type,
+  const results = queryProducts(collectionProducts, {
+    search: state.search,
+    category: state.category,
     sort: state.sort,
   });
   if (!results.length) {
-    grid.innerHTML = `
-      <div class="empty-state">
-        <h2 class="empty-state__title">No pieces in this filter</h2>
-        <p class="empty-state__body">Try All, or explore another collection.</p>
-        <div class="empty-state__actions">
-          <a class="btn secondary" href="./collections.html">All collections</a>
-          <a class="btn" href="./shop.html">Shop all</a>
-        </div>
-      </div>`;
+    grid.innerHTML = emptyStateHTML({
+      title: "No products match",
+      body: "Try a different search, clear filters, or browse another collection.",
+      primary: { href: "./collections.html", label: "All collections" },
+      secondary: { href: "./shop.html", label: "Shop all" },
+    });
   } else {
     grid.innerHTML = results.map(productCardHTML).join("");
     wireFavorites(grid);
     wireImagePlaceholders(grid);
   }
   if (countEl) {
-    countEl.textContent = `${results.length} ${results.length === 1 ? "piece" : "pieces"}`;
+    countEl.textContent = `${results.length} ${results.length === 1 ? "product" : "products"}`;
+  }
+  if (categoryList) {
+    categoryList.querySelectorAll("a").forEach((a) => {
+      a.classList.toggle("is-active", a.dataset.category === state.category);
+    });
   }
 }
 
-  function renderPage(col) {
-  const heroSrc = col.heroImage || col.image || "./assets/coming-soon.png";
-  mount.innerHTML = `
-    <section class="collection-hero" aria-label="${escapeHtml(col.name)} collection">
-      <img class="collection-hero__image" src="${heroSrc}" alt="" role="presentation" data-fallback="./assets/coming-soon.png" onerror="this.onerror=null;this.src=this.dataset.fallback||'./assets/coming-soon.png'">
-    </section>
-    <div class="collection-intro page-wrap">
-      <nav class="collection-breadcrumb" aria-label="Breadcrumb">
-        <a href="./collections.html">Collections</a>
-        <span aria-hidden="true"> / </span>
-        <span>${escapeHtml(col.name)}</span>
-      </nav>
-      <h1 class="page-title">${escapeHtml(col.name)}</h1>
-      ${
-        col.description
-          ? `<p class="collection-intro__body">${escapeHtml(col.description)}</p>`
-          : ""
-      }
-      <div class="collection-type-filters" id="collection-type-filters" role="group" aria-label="Filter by product type"></div>
-      <div class="collection-toolbar">
-        <label class="field">
-          <span class="visually-hidden">Sort products</span>
-          <select id="collection-sort">
-            <option value="featured">Featured</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="name-asc">Name: A to Z</option>
-          </select>
-        </label>
-        <p class="shop-count" id="collection-count" aria-live="polite"></p>
-        <a class="btn secondary" href="./shop.html">Shop all products</a>
-      </div>
-    </div>
-    <div class="page-wrap">
-      <div class="product-grid collection-product-grid" id="collection-grid"></div>
-    </div>`;
-
-  const sortSelect = document.getElementById("collection-sort");
-  if (sortSelect) {
-    sortSelect.value = state.sort;
-    sortSelect.addEventListener("change", () => {
-      state.sort = sortSelect.value;
-      syncUrl();
-      renderProducts();
-    });
-  }
-
-  const typeEl = document.getElementById("collection-type-filters");
-  if (typeEl) {
-    typeEl.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-type]");
-      if (!btn) return;
-      state.type = btn.dataset.type;
-      renderTypeFilters();
-      syncUrl();
-      renderProducts();
-    });
-  }
-
-  renderTypeFilters();
-  renderProducts();
+function wireChrome() {
+  categoryList?.addEventListener("click", (e) => {
+    const link = e.target.closest("a[data-category]");
+    if (!link) return;
+    e.preventDefault();
+    state.category = link.dataset.category;
+    syncUrl();
+    render();
+  });
+  searchInput?.addEventListener("input", () => {
+    state.search = searchInput.value;
+    syncUrl();
+    render();
+  });
+  sortSelect?.addEventListener("change", () => {
+    state.sort = sortSelect.value;
+    syncUrl();
+    render();
+  });
 }
 
 async function init() {
-  if (!mount) return;
   const handle = handleFromUrl();
-  state.type = typeFromUrl();
-  state.sort = new URLSearchParams(location.search).get("sort") || "featured";
+  if (grid) grid.innerHTML = skeletonGridHTML(8);
 
   if (!handle) {
-    mount.innerHTML = `<div class="page-wrap">
-      <div class="empty-state">
-        <h2 class="empty-state__title">No collection selected</h2>
-        <p class="empty-state__body">Pick a collection to browse handmade pieces by theme.</p>
-        <div class="empty-state__actions">
-          <a class="btn secondary" href="./collections.html">Browse collections</a>
-        </div>
-      </div>
-    </div>`;
+    if (headingEl) headingEl.textContent = "COLLECTION";
+    if (grid) {
+      grid.innerHTML = emptyStateHTML({
+        title: "No collection selected",
+        body: "Pick a collection to browse handmade pieces by theme.",
+        primary: { href: "./collections.html", label: "Browse collections" },
+        secondary: { href: "./shop.html", label: "Shop all" },
+      });
+    }
     return;
   }
 
-  mount.innerHTML = `<div class="page-wrap"><div class="skeleton-grid" aria-hidden="true">${Array.from({ length: 8 }, () => `
-    <div class="skeleton-card"><div class="skeleton-card__media"></div><div class="skeleton-card__line"></div><div class="skeleton-card__line skeleton-card__line--short"></div></div>`).join("")}</div></div>`;
-
+  let allProducts = [];
   try {
-    [collection, products] = await Promise.all([
+    [collection, allProducts] = await Promise.all([
       getCollectionByHandle(handle),
       getProducts(),
     ]);
   } catch (err) {
-    mount.innerHTML = `<div class="page-wrap">
-      <div class="empty-state">
-        <h2 class="empty-state__title">Couldn’t load this collection</h2>
-        <p class="empty-state__body">Please try again in a moment.</p>
-        <div class="empty-state__actions">
-          <a class="btn secondary" href="./collections.html">All collections</a>
-          <a class="btn" href="./shop.html">Shop all</a>
-        </div>
-      </div>
-    </div>`;
+    if (grid) {
+      grid.innerHTML = emptyStateHTML({
+        title: "Collection is taking a rest",
+        body: "We couldn’t load this collection right now. Please try again in a moment.",
+        primary: { href: "./collections.html", label: "All collections" },
+        secondary: { href: "./contact.html", label: "Contact us" },
+      });
+    }
     console.error(err);
     return;
   }
 
   if (!collection) {
-    mount.innerHTML = `<div class="page-wrap">
-      <div class="empty-state">
-        <h2 class="empty-state__title">Collection not found</h2>
-        <p class="empty-state__body">That collection may have moved. See what’s available now.</p>
-        <div class="empty-state__actions">
-          <a class="btn secondary" href="./collections.html">See collections</a>
-          <a class="btn" href="./shop.html">Shop all</a>
-        </div>
-      </div>
-    </div>`;
+    if (headingEl) headingEl.textContent = "COLLECTION";
+    if (grid) {
+      grid.innerHTML = emptyStateHTML({
+        title: "Collection not found",
+        body: "That collection may have moved. See what’s available now.",
+        primary: { href: "./collections.html", label: "See collections" },
+        secondary: { href: "./shop.html", label: "Shop all" },
+      });
+    }
     return;
   }
 
   syncDocumentMeta(collection);
-  renderPage(collection);
+  if (headingEl) headingEl.textContent = collection.name.toUpperCase();
+
+  collectionProducts = allProducts.filter((p) => productInCollection(p, collection.handle));
+  initFromUrl();
+  renderCategories();
+  wireChrome();
+  render();
 }
 
 init();
