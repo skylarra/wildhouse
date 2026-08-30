@@ -234,7 +234,9 @@
   flex-direction: column;
 }
 .product-card__link { display: block; color: inherit; }
-/* Shared 4:5 portrait frame — keeps every card the same media height. */
+/* Shared 4:5 portrait frame — every listing card uses the same media box.
+   Photos crop with cover so mixed upload sizes never change card height.
+   Override focal point later via --product-image-position on the <img>. */
 .product-card__media {
   position: relative;
   overflow: hidden;
@@ -246,8 +248,8 @@
 .product-card__media img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  object-fit: cover;
+  object-position: var(--product-image-position, 50% 50%);
   display: block;
 }
 .product-card__price { font-weight: 700; }
@@ -358,6 +360,7 @@
 #gallery-main {
   width: 100%;
   height: 100%;
+  /* Detail gallery: show the full product — never crop with cover. */
   object-fit: contain;
   object-position: center;
   display: block;
