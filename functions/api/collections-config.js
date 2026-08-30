@@ -4,6 +4,7 @@
 // - PUT: requires Authorization: Bearer <ADMIN_PASSWORD>; writes to KV binding COLLECTIONS_CONFIG
 import { json } from "./_square.js";
 import { normalizeCollectionsConfig, KV_KEY } from "./_collections-config.js";
+import { checkAdmin } from "./_admin-auth.js";
 
 async function loadSeed(request, env) {
   try {
@@ -49,15 +50,6 @@ async function loadConfig(request, env) {
 
 function unauthorized() {
   return json({ error: "Unauthorized" }, 401);
-}
-
-function checkAdmin(request, env) {
-  const expected = env.ADMIN_PASSWORD;
-  if (!expected) return { ok: false, reason: "ADMIN_PASSWORD not configured" };
-  const header = request.headers.get("Authorization") || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
-  if (!token || token !== expected) return { ok: false, reason: "bad token" };
-  return { ok: true };
 }
 
 export async function onRequestGet({ request, env }) {
