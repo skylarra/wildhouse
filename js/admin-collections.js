@@ -6,6 +6,7 @@ import {
   toSavableConfig,
   ADMIN_TOKEN_SESSION_KEY,
 } from "./collections-config.js";
+import { collectionCoverFilename } from "./collection-assets.js";
 import { escapeHtml } from "./ui.js";
 
 const gate = document.getElementById("admin-gate");
@@ -117,17 +118,10 @@ function render() {
           <details class="admin-row__details">
             <summary>Edit presentation</summary>
             <div class="admin-row__fields">
+              <p class="admin-row__note">Cover image file: <code>assets/collections/${escapeHtml(collectionCoverFilename(r.displayName || r.name) || "…")}</code> — add/replace the PNG in the repo; names come from Square.</p>
               <label class="field">
-                <span>Description</span>
+                <span>Description (optional website copy)</span>
                 <textarea data-field="description" rows="3">${escapeHtml(r.description)}</textarea>
-              </label>
-              <label class="field">
-                <span>Featured / card image URL</span>
-                <input type="text" data-field="featuredImage" value="${escapeHtml(r.featuredImage)}" placeholder="./assets/… or https://…">
-              </label>
-              <label class="field">
-                <span>Hero image URL</span>
-                <input type="text" data-field="heroImage" value="${escapeHtml(r.heroImage)}" placeholder="./assets/… or https://…">
               </label>
             </div>
           </details>
@@ -172,7 +166,7 @@ function wireList() {
     const row = rowFromEvent(e);
     if (!row) return;
     const key = field.dataset.field;
-    if (key === "description" || key === "heroImage" || key === "featuredImage") {
+    if (key === "description") {
       row[key] = field.value;
       markDirty();
     }
