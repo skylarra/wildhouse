@@ -2,12 +2,12 @@
   "_comment": "Custom Orders page. No inquiry form yet — visitors reach out by Instagram or email.",
   "seo": {
     "title": "Custom Orders | Wildhouse Lane",
-    "description": "Have an idea? Message Wildhouse Lane on Instagram or email for personalized laser-cut and handmade pieces."
+    "description": "Have an idea? Message Wildhouse Lane on Instagram or email for personalized handmade pieces."
   },
   "hero": {
     "heading": "Custom Orders",
-    "tagline": "Have an idea? Let's make it real.",
-    "body": "Personalized gifts, nursery signs, custom charm set, custom charm set, and other laser-made keepsakes — built around your idea. No form for now; just reach out.",
+    "tagline": "Have an idea? Let's make it.",
+    "body": "Personalized gifts, nursery signs, custom charm set, custom charm set, and other keepsakes. Just reach out.",
     "ctas": [
       {
         "label": "Message on Instagram",
@@ -28,7 +28,7 @@
   },
   "showcase": {
     "heading": "A few custom pieces",
-    "body": "A small peek at things I've made to order.",
+    "body": "A small peek at things I've made as gifts.",
     "items": [
       {
         "_todo": "",
