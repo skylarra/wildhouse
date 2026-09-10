@@ -19,8 +19,8 @@
       "featured": true,
       "sortOrder": 2,
       "description": "Celestial charms, moonlit motifs, and starry keepsakes for night owls and sky watchers.",
-      "heroImage": "./assets/collections/moon-sun-and-stars.png",
-      "featuredImage": "./assets/collections/moon-sun-and-stars.png"
+      "heroImage": "/assets/collections/moon-sun-and-stars.png",
+      "featuredImage": "/assets/collections/moon-sun-and-stars.png"
     },
     {
       "collectionKey": "nocturnal",
@@ -109,8 +109,8 @@
       "featured": false,
       "sortOrder": 11,
       "description": "Spooky-nature folklore for the forever Halloween spirit — moths, moons, and misty woods.",
-      "heroImage": "./assets/collections/0.png",
-      "featuredImage": "./assets/collections/0.png"
+      "heroImage": "/assets/collections/0.png",
+      "featuredImage": "/assets/collections/0.png"
     },
     {
       "collectionKey": "weddings-and-events",

@@ -19,6 +19,7 @@ import {
 import {
   normalizeCollectionKey,
   collectionCoverSrc,
+  resolveCollectionCover,
 } from "./collection-assets.js";
 
 let cache = null;
@@ -39,7 +40,7 @@ export function slugify(str = "") {
     .replace(/^-+|-+$/g, "");
 }
 
-export { normalizeCollectionKey, collectionCoverSrc };
+export { normalizeCollectionKey, collectionCoverSrc, resolveCollectionCover };
 
 /** Collection detail URL. Prefer pretty `/collections/:handle` in production
  *  (`_redirects` → `/collection?handle=…`). Query form works locally too. */
@@ -276,7 +277,10 @@ export async function getAllCollectionRecords() {
   return detected
     .map((c) => {
       const cfg = configByKey.get(c.handle);
-      const cover = collectionCoverSrc(c.name);
+      const cover = resolveCollectionCover(
+        c.name,
+        cfg?.featuredImage || cfg?.heroImage || ""
+      );
       return {
         ...c,
         image: cover,
@@ -318,9 +322,17 @@ export async function getCollections() {
     .map((c) => {
       const cfg = byKey.get(c.handle);
       if (!cfg) return c;
+      // Optional seed/KV image overrides the filesystem convention when set.
+      const cover = resolveCollectionCover(
+        c.name,
+        cfg.featuredImage || cfg.heroImage || ""
+      );
       return {
         ...c,
-        // Keep Square name + filesystem cover; allow optional story copy/order.
+        image: cover,
+        heroImage: cover,
+        featuredImage: cover,
+        // Keep Square name; allow optional story copy/order + cover override.
         description: cfg.description || "",
         sortOrder: Number(cfg.sortOrder) || 0,
       };

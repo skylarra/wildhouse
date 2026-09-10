@@ -3,11 +3,12 @@
 
 import { formatMoney } from "./catalog.js";
 import { isFavorite, toggleFavorite } from "./store.js";
+import { absolutizeAssetUrl } from "./collection-assets.js";
 
 const FALLBACK_IMG = "/assets/coming-soon.png";
 
 export function productCardHTML(product) {
-  const img = product.images[0] || FALLBACK_IMG;
+  const img = absolutizeAssetUrl(product.images[0]) || FALLBACK_IMG;
   const priceLabel =
     product.hasVariants && product.minPriceCents !== product.maxPriceCents
       ? `From ${formatMoney(product.minPriceCents)}`
@@ -41,20 +42,39 @@ export function wireImagePlaceholders(container) {
   if (!container) return;
   container.querySelectorAll(".img-placeholder img").forEach((img) => {
     const parent = img.closest(".img-placeholder");
-    const done = () => parent?.classList.remove("img-placeholder");
+    if (!parent) return;
+
+    const done = () => parent.classList.remove("img-placeholder");
     const onError = () => {
-      const fallback = img.dataset.fallback || FALLBACK_IMG;
-      if (img.src && !img.src.endsWith(fallback.replace("./", ""))) {
+      const fallback = absolutizeAssetUrl(img.dataset.fallback || FALLBACK_IMG) || FALLBACK_IMG;
+      let currentPath = "";
+      try {
+        currentPath = new URL(img.currentSrc || img.src, location.href).pathname;
+      } catch (_) {
+        currentPath = "";
+      }
+      // Already-failed loads never re-fire "error" — swap fallback then reveal.
+      if (fallback && currentPath !== fallback) {
         img.src = fallback;
       }
       done();
     };
-    if (img.complete && img.naturalWidth > 0) {
+
+    if (img.naturalWidth > 0) {
       done();
       return;
     }
+
     img.addEventListener("load", done, { once: true });
     img.addEventListener("error", onError, { once: true });
+
+    // complete + naturalWidth 0 means the load already finished as a failure
+    // (listeners alone would leave the shimmer stuck). Skip lazy imgs that
+    // have not started fetching yet — they can look "complete" with width 0.
+    if (img.complete) {
+      const lazyPending = img.loading === "lazy" && !img.currentSrc;
+      if (!lazyPending) onError();
+    }
   });
 }
 
@@ -195,11 +215,13 @@ export function formatProductDescription({ html = "", text = "" } = {}) {
 }
 
 export function collectionCardHTML(collection) {
-  const cover = collection.image || "./assets/coming-soon.png";
+  const cover =
+    absolutizeAssetUrl(collection.image || collection.featuredImage || collection.heroImage) ||
+    FALLBACK_IMG;
   return `
     <a class="collection-card" href="./collection.html?handle=${encodeURIComponent(collection.handle)}">
       <div class="collection-card__media img-placeholder">
-        <img src="${cover}" alt="${escapeHtml(collection.name)}" loading="lazy" data-fallback="${FALLBACK_IMG}">
+        <img src="${cover}" alt="${escapeHtml(collection.name)}" loading="lazy" decoding="async" data-fallback="${FALLBACK_IMG}">
       </div>
       <h3 class="collection-card__name">${escapeHtml(collection.name)}</h3>
     </a>`;

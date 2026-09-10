@@ -26,6 +26,14 @@ export function normalizeCollectionKey(name = "") {
     .replace(/^-+|-+$/g, "");
 }
 
+/** Turn ./assets/… or assets/… into a root-absolute path for any route depth. */
+export function absolutizeAssetUrl(path = "") {
+  const raw = String(path || "").trim();
+  if (!raw) return "";
+  if (/^(https?:|data:|blob:)/i.test(raw)) return raw;
+  return `/${raw.replace(/^\.\//, "").replace(/^\/+/, "")}`;
+}
+
 /** e.g. "Midnight Light" → "midnight-light.png" */
 export function collectionCoverFilename(name = "") {
   const key = normalizeCollectionKey(name);
@@ -40,6 +48,16 @@ export function collectionCoverSrc(name = "") {
   const file = collectionCoverFilename(name);
   if (!file) return COLLECTION_COVER_FALLBACK;
   return `${COLLECTION_COVER_DIR}/${file}`;
+}
+
+/**
+ * Prefer an optional website override (seed/KV featuredImage or heroImage),
+ * otherwise the filesystem convention assets/collections/{key}.png.
+ */
+export function resolveCollectionCover(name = "", overridePath = "") {
+  const fromConfig = absolutizeAssetUrl(overridePath);
+  if (fromConfig) return fromConfig;
+  return collectionCoverSrc(name);
 }
 
 /** Repo-relative path shown in admin UI, e.g. assets/collections/ocean.png */
