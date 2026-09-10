@@ -1,5 +1,5 @@
 {
-  "_comment": "Custom Orders page. No inquiry form yet — visitors reach out by Instagram or email. Showcase items use placeholders until real project photos are added (_todo).",
+  "_comment": "Custom Orders page. No inquiry form yet — visitors reach out by Instagram or email.",
   "seo": {
     "title": "Custom Orders | Wildhouse Lane",
     "description": "Have an idea? Message Wildhouse Lane on Instagram or email for personalized laser-cut and handmade pieces."
@@ -7,7 +7,7 @@
   "hero": {
     "heading": "Custom Orders",
     "tagline": "Have an idea? Let's make it real.",
-    "body": "Personalized gifts, baby signs, name puzzles, custom keychains, and other laser-made keepsakes — built around your idea. No form for now; just reach out.",
+    "body": "Personalized gifts, nursery signs, custom charm set, custom charm set, and other laser-made keepsakes — built around your idea. No form for now; just reach out.",
     "ctas": [
       {
         "label": "Message on Instagram",
@@ -22,8 +22,8 @@
       }
     ],
     "image": {
-      "src": "./assets/sunny-mirror.jpg",
-      "alt": "Handmade Wildhouse Lane piece catching the light"
+      "src": "./assets/custom/laken-gail-nursery-sign.png",
+      "alt": "Handmade nursery sign with engraved striped background on maple wood and laser-cut lettering"
     }
   },
   "showcase": {
@@ -31,28 +31,28 @@
     "body": "A small peek at things I've made to order.",
     "items": [
       {
-        "_todo": "Replace with a real baby-sign photo",
-        "image": "./assets/1.png",
-        "title": "Baby sign",
-        "alt": "Placeholder — custom baby sign photo coming soon"
+        "_todo": "",
+        "image": "./assets/custom/denim-nursery-sign.png",
+        "title": "Nursery sign",
+        "alt": "Custom nursery sign with engraved striped background on maple wood and laser-cut lettering"
       },
       {
-        "_todo": "Replace with a real name-puzzle photo",
-        "image": "./assets/2.jpg",
-        "title": "Name puzzle",
-        "alt": "Placeholder — custom name puzzle photo coming soon"
+        "_todo": "",
+        "image": "./assets/custom/emerson-keychain.png",
+        "title": "Custom Charm Set",
+        "alt": "double sided Engraved walnut charm with a marbled pink bow and matchiing pink lobster keychain, with a custom beaded charm"
       },
       {
-        "_todo": "Replace with a real custom-keychain photo",
-        "image": "./assets/sunny-mirror.jpg",
-        "title": "Custom keychain",
-        "alt": "Placeholder — custom keychain photo coming soon"
+        "_todo": "",
+        "image": "./assets/custom/megan-keychain.png",
+        "title": "Custom Charm Set",
+        "alt": "double sided engraved walnut charm. sage green acrylic clover charm. and custom beaded charm."
       },
       {
-        "_todo": "Replace with a real personalized-gift photo",
-        "image": "./assets/welcome1.jpg",
-        "title": "Personalized gift",
-        "alt": "Placeholder — personalized gift photo coming soon"
+        "_todo": "",
+        "image": "./assets/custom/napoleon-magnet.png",
+        "title": "Personalized Pet Magnet",
+        "alt": "Laser-cut and engraved magnet of a dog with a custom name. using walnut and maple woods."
       }
     ]
   },

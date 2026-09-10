@@ -13,7 +13,7 @@
         },
         {
           "q": "Can I change or cancel my order?",
-          "a": "If your order hasn’t entered production yet, email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> as soon as possible. Once production has started, changes may not be possible."
+          "a": "If your order hasn’t entered production yet, email <a href=\"mailto:skylar@wildhouselane.com\">skylar@wildhouselane.com</a> as soon as possible. Once production has started, changes may not be possible but we will try our best to accomodate you."
         },
         {
           "q": "Will I receive a tracking number?",
@@ -27,7 +27,7 @@
       "items": [
         {
           "q": "How long does processing take?",
-          "a": "Please allow up to 2–3 weeks for processing. Handmade pieces are made to order with care, and timelines can vary during busy seasons."
+          "a": "Please allow up to 2–3 weeks for processing. Handmade pieces are made to order, and timelines can vary during busy seasons. We always try our best to ship as soon as possible."
         },
         {
           "q": "Which carrier do you use?",
@@ -35,8 +35,17 @@
         },
         {
           "q": "Do you offer free shipping?",
-          "a": "Yes — free shipping is available on qualifying orders over $75 within the supported shipping region."
+          "a": "Yes — free shipping is available on qualifying orders over $100 within the supported shipping region."
+        },
+        {
+          "q": "Do you ship internationally?",
+          "a": "Currently, we only ship to the United States. We hope to expand to international shipping in the future."
+        },
+        {
+          "q": "Does any of the artwork or designs use AI?",
+          "a": "No, all artwork and designs are created by my own hands (mostly using my iPad and procreate). AI is not used in the creation process."
         }
+
       ]
     },
     { "type": "heading", "text": "Returns", "level": 2 },
@@ -77,7 +86,7 @@
         },
         {
           "q": "Are your products made by you?",
-          "a": "Yes. Wildhouse Lane goods are designed and made by Skylar, with care for materials, wildlife-inspired art, and lasting quality."
+          "a": "Yes. Wildhouse Lane goods are designed and made by me and all of my crafty machines."
         }
       ]
     },

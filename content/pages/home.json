@@ -8,8 +8,8 @@
     "logo": "./assets/WILDHOUSE-LongMark.svg",
     "logoAlt": "Wildhouse Lane",
     "images": [
-      { "src": "./assets/sunny-mirror.jpg", "alt": "Laser cut mirror with a sunny design" },
-      { "src": "./assets/2.2.png", "alt": "Coming soon" }
+      { "src": "./assets/magic-tee.png", "alt": "screen-printed brown t-shirt that says words are spells and life is magic" },
+      { "src": "./assets/greenery-sticker-sheet.png", "alt": "small sticker sheet featuring flowers and stars" }
     ],
     "cta": { "label": "SHOP ALL", "href": "./shop.html" }
   },
@@ -32,17 +32,17 @@
       "id": "custom-creations",
       "eyebrow": "Made just for you",
       "heading": "Custom Orders",
-      "body": "Have an idea? Personalized gifts, signs, wall art, and other laser-made pieces — built around what you imagine.",
+      "body": "Have an idea? Personalized gifts, signs, wall art, and other laser-made pieces — created just for you.",
       "cta": { "label": "Start a custom order", "href": "./custom-creations.html" },
-      "image": { "src": "./assets/coming-soon.png", "alt": "Custom handmade piece" }
+      "image": { "src": "./assets/custom/laken-gail-nursery-sign.png", "alt": "Custom handmade nursery sign" }
     },
     {
       "id": "collections",
       "eyebrow": "Explore",
       "heading": "Collections",
-      "body": "Browse keychains, stickers, suncatchers, and more — grouped into little woodland corners of the shop.",
+      "body": "Browse keychains, stickers, suncatchers, and more — grouped by the collection.",
       "cta": { "label": "View collections", "href": "./collections.html" },
-      "image": { "src": "./assets/coming-soon.png", "alt": "Wildhouse Lane collections" }
+      "image": { "src": "./assets/collections/collections.png", "alt": "Wildhouse Lane collections" }
     },
     {
       "id": "contact",
@@ -50,7 +50,7 @@
       "heading": "Contact",
       "body": "Questions about an order or a custom idea? Reach out by email or find Wildhouse Lane on social.",
       "cta": { "label": "Get in touch", "href": "./contact.html" },
-      "image": { "src": "./assets/coming-soon.png", "alt": "Contact Wildhouse Lane" }
+      "image": { "src": "./assets/contact.png", "alt": "Contact Wildhouse Lane" }
     }
   ],
   "welcome": {
