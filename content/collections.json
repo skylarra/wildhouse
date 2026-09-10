@@ -19,8 +19,8 @@
       "featured": true,
       "sortOrder": 2,
       "description": "Celestial charms, moonlit motifs, and starry keepsakes for night owls and sky watchers.",
-      "heroImage": "",
-      "featuredImage": ""
+      "heroImage": "./assets/collections/moon-sun-and-stars.png",
+      "featuredImage": "./assets/collections/moon-sun-and-stars.png"
     },
     {
       "collectionKey": "nocturnal",
@@ -103,14 +103,14 @@
       "featuredImage": ""
     },
     {
-      "collectionKey": "haunted-hollow",
-      "displayName": "Haunted Hollow",
+      "collectionKey": "haunted-lane",
+      "displayName": "Haunted Lane",
       "visible": false,
       "featured": false,
       "sortOrder": 11,
       "description": "Spooky-nature folklore for the forever Halloween spirit — moths, moons, and misty woods.",
-      "heroImage": "",
-      "featuredImage": ""
+      "heroImage": "./assets/collections/0.png",
+      "featuredImage": "./assets/collections/0.png"
     },
     {
       "collectionKey": "weddings-and-events",
