@@ -3,6 +3,13 @@
 //
 // Drop files in `assets/collections/`. Filename = normalizeCollectionKey(name) + ".png".
 // Paths are root-absolute so covers resolve from /admin/* and pretty routes.
+//
+// Cache busting: cover URLs append ?v=<content-hash> from js/asset-versions.js so
+// browsers that previously cached /assets/* as immutable still fetch new bytes
+// after a deploy (Safari in particular). Re-run scripts/update-asset-versions.py
+// when replacing cover PNGs.
+
+import { ASSET_CONTENT_HASHES } from "./asset-versions.js";
 
 /** Root-absolute — required so /admin/collections does not resolve to /admin/assets/… */
 export const COLLECTION_COVER_DIR = "/assets/collections";
@@ -34,6 +41,42 @@ export function absolutizeAssetUrl(path = "") {
   return `/${raw.replace(/^\.\//, "").replace(/^\/+/, "")}`;
 }
 
+/**
+ * Append ?v=<sha256-12> for known local /assets files so deploys bust browser caches.
+ * External URLs (Square CDN, etc.) are returned unchanged. Idempotent.
+ */
+export function withAssetContentHash(url = "") {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+
+  // Absolute remote URLs that are not our /assets tree — leave alone.
+  if (/^(https?:|data:|blob:)/i.test(raw)) {
+    try {
+      const parsed = new URL(raw);
+      if (!parsed.pathname.startsWith("/assets/")) return raw;
+      return applyHashToPath(parsed.pathname);
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  const abs = absolutizeAssetUrl(raw.split("?")[0] || raw);
+  if (!abs.startsWith("/assets/")) return abs;
+  return applyHashToPath(abs);
+}
+
+function applyHashToPath(pathname = "") {
+  const file = pathname.split("/").pop() || "";
+  const hash = ASSET_CONTENT_HASHES[file];
+  if (!hash) return pathname;
+  return `${pathname}?v=${hash}`;
+}
+
+/** Versioned coming-soon fallback used by collection/product cards. */
+export function collectionCoverFallbackSrc() {
+  return withAssetContentHash(COLLECTION_COVER_FALLBACK);
+}
+
 /** e.g. "Midnight Light" → "midnight-light.png" */
 export function collectionCoverFilename(name = "") {
   const key = normalizeCollectionKey(name);
@@ -41,13 +84,13 @@ export function collectionCoverFilename(name = "") {
 }
 
 /**
- * Public URL for a collection cover (root-absolute).
+ * Public URL for a collection cover (root-absolute + content-hash query).
  * Missing files are detected at render time (img onerror / HEAD probe).
  */
 export function collectionCoverSrc(name = "") {
   const file = collectionCoverFilename(name);
-  if (!file) return COLLECTION_COVER_FALLBACK;
-  return `${COLLECTION_COVER_DIR}/${file}`;
+  if (!file) return collectionCoverFallbackSrc();
+  return withAssetContentHash(`${COLLECTION_COVER_DIR}/${file}`);
 }
 
 /**
@@ -56,7 +99,7 @@ export function collectionCoverSrc(name = "") {
  */
 export function resolveCollectionCover(name = "", overridePath = "") {
   const fromConfig = absolutizeAssetUrl(overridePath);
-  if (fromConfig) return fromConfig;
+  if (fromConfig) return withAssetContentHash(fromConfig);
   return collectionCoverSrc(name);
 }
 

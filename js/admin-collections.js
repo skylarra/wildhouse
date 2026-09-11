@@ -9,9 +9,11 @@ import {
   collectionCoverFilename,
   collectionCoverRepoPath,
   collectionCoverSrc,
-  COLLECTION_COVER_FALLBACK,
+  collectionCoverFallbackSrc,
   probeCollectionCover,
 } from "./collection-assets.js";
+
+const COLLECTION_COVER_FALLBACK = collectionCoverFallbackSrc();
 import {
   requireAdmin,
   mountAdminChrome,
