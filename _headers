@@ -1,15 +1,24 @@
-# Cloudflare Pages headers — long-cache immutable assets; keep HTML fresh.
+# Cloudflare Pages headers
+#
+# IMPORTANT: Files under /assets/ use STABLE filenames that are replaced in place
+# on deploy (collection covers, logos, heroes). Never mark them `immutable` with a
+# long max-age — Safari (and other browsers) will keep the old bytes for the full
+# TTL and will not revalidate. Collection covers also use ?v=<content-hash>
+# (see js/asset-versions.js) so deploys bust browser caches immediately.
+#
+# HTML stays on the Cloudflare Pages default: public, max-age=0, must-revalidate.
+
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800, must-revalidate
 
 /js/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=604800, must-revalidate
 
 /css/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=604800, must-revalidate
 
 /styles.css
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=604800, must-revalidate
 
 /*
   X-Content-Type-Options: nosniff

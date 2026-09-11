@@ -3,12 +3,18 @@
 
 import { formatMoney } from "./catalog.js";
 import { isFavorite, toggleFavorite } from "./store.js";
-import { absolutizeAssetUrl } from "./collection-assets.js";
+import {
+  absolutizeAssetUrl,
+  collectionCoverFallbackSrc,
+  withAssetContentHash,
+} from "./collection-assets.js";
 
-const FALLBACK_IMG = "/assets/coming-soon.png";
+const FALLBACK_IMG = collectionCoverFallbackSrc();
 
 export function productCardHTML(product) {
-  const img = absolutizeAssetUrl(product.images[0]) || FALLBACK_IMG;
+  // Square CDN product images stay untouched; local fallbacks get ?v=<hash>.
+  const raw = product.images[0];
+  const img = (raw ? absolutizeAssetUrl(raw) : "") || FALLBACK_IMG;
   const priceLabel =
     product.hasVariants && product.minPriceCents !== product.maxPriceCents
       ? `From ${formatMoney(product.minPriceCents)}`
@@ -46,15 +52,19 @@ export function wireImagePlaceholders(container) {
 
     const done = () => parent.classList.remove("img-placeholder");
     const onError = () => {
-      const fallback = absolutizeAssetUrl(img.dataset.fallback || FALLBACK_IMG) || FALLBACK_IMG;
+      const fallback =
+        withAssetContentHash(img.dataset.fallback || FALLBACK_IMG) || FALLBACK_IMG;
       let currentPath = "";
+      let fallbackPath = "";
       try {
         currentPath = new URL(img.currentSrc || img.src, location.href).pathname;
+        fallbackPath = new URL(fallback, location.href).pathname;
       } catch (_) {
         currentPath = "";
+        fallbackPath = fallback.split("?")[0];
       }
       // Already-failed loads never re-fire "error" — swap fallback then reveal.
-      if (fallback && currentPath !== fallback) {
+      if (fallback && currentPath !== fallbackPath) {
         img.src = fallback;
       }
       done();
@@ -216,8 +226,9 @@ export function formatProductDescription({ html = "", text = "" } = {}) {
 
 export function collectionCardHTML(collection) {
   const cover =
-    absolutizeAssetUrl(collection.image || collection.featuredImage || collection.heroImage) ||
-    FALLBACK_IMG;
+    withAssetContentHash(
+      collection.image || collection.featuredImage || collection.heroImage || ""
+    ) || FALLBACK_IMG;
   return `
     <a class="collection-card" href="./collection.html?handle=${encodeURIComponent(collection.handle)}">
       <div class="collection-card__media img-placeholder">

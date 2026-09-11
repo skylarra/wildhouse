@@ -72,4 +72,10 @@
 - Best Sellers uses explicit `featured` when present; otherwise falls back to in-stock Square items so the homepage is never empty after go-live.
 - Order confirmation is a small state machine: no order id → warning; order lookup failure → cautious thank-you; only clear claims success when evidence exists.
 - `/api/catalog` 501 responses include missing env var **names** (never values) plus resolved `environment` so sandbox vs production wiring can be verified safely.
-- Photographic assets are compressed JPEGs; unused multi‑MB assets removed; Cloudflare `_headers` sets long-cache for `/assets`.
+- Photographic assets are compressed JPEGs; unused multi‑MB assets removed; Cloudflare `_headers` caches `/assets` for performance **without** `immutable` year-long TTL (stable filenames change in place). Collection covers also append `?v=<content-hash>` from `js/asset-versions.js`.
+
+## 2026-09-11 (Collection image cache busting)
+
+- Root cause of Safari stale covers: `_headers` set `/assets/*` to `Cache-Control: public, max-age=31536000, immutable` while cover URLs were unversioned stable paths. No service worker / PWA cache.
+- Fix: stop using `immutable` year TTL for mutable `/assets/*`; append content-hash query (`?v=`) to collection cover URLs via `js/asset-versions.js` (regenerate with `scripts/update-asset-versions.py` after replacing cover PNGs).
+
