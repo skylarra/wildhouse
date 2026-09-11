@@ -1,7 +1,7 @@
 {
   "_comment": "Global site content. Launch nav/footer hide Studio, Post Office, and standalone About (pages kept, noindexed). Homepage About section remains.",
   "brand": "Wildhouse Lane",
-  "tagline": "Handmade goods for people who love spooky nature art.",
+  "tagline": "Handmade goods for people who love nature, art, and all things spooky.",
   "domain": "https://wildhouselane.com",
   "email": "skylar@wildhouselane.com",
   "freeShippingThresholdCents": 7500,
