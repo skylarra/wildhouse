@@ -88,10 +88,9 @@
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.2s ease-in-out infinite;
 }
-.product-card__media.img-placeholder img,
-.collection-card__media.img-placeholder img {
-  opacity: 0;
-}
+/* Do NOT hide imgs at opacity:0 while .img-placeholder is set.
+   If wireImagePlaceholders misses an already-completed (failed) load, the cover
+   would stay invisible forever. Shimmer sits behind; image fades in on top. */
 .product-card__media img,
 .collection-card__media img {
   transition: opacity 0.25s ease;
@@ -746,7 +745,7 @@
 .collection-card__media img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   transition: transform 0.2s ease;
 }
