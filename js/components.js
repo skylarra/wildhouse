@@ -6,6 +6,7 @@
 import { loadSite } from "./content.js";
 import { cartCount, getPref, setPref } from "./store.js";
 import { escapeHtml } from "./ui.js";
+import { withAssetContentHash } from "./collection-assets.js";
 
 const currentFile = location.pathname.split("/").pop() || "index.html";
 
@@ -78,7 +79,7 @@ function mountHeader(site) {
       <div class="nav-links" id="navLinks">${links}</div>
       <div class="nav-actions">
         <a class="nav-cart" href="./cart.html" id="navCartLink" aria-label="Cart">
-          <img src="./assets/cart-icon.svg" alt="">
+          <img src="${withAssetContentHash("./assets/cart-icon.svg")}" alt="">
           <span class="cart-badge" id="cartBadge" hidden>0</span>
         </a>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation menu">

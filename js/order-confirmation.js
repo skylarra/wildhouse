@@ -4,6 +4,7 @@
 import { clearCart } from "./store.js";
 import { formatMoney } from "./catalog.js";
 import { escapeHtml } from "./ui.js";
+import { withAssetContentHash } from "./collection-assets.js";
 
 const root = document.getElementById("confirmation-root");
 const params = new URLSearchParams(location.search);
@@ -50,7 +51,7 @@ function isSuccessfulState(state) {
 function render({ title, body, ref, order, tone = "success" }) {
   root.innerHTML = `
     <div class="confirmation confirmation--${tone}">
-      <img src="./assets/WILDHOUSE-logomark.svg" alt="" class="confirmation-mark">
+      <img src="${withAssetContentHash("./assets/WILDHOUSE-logomark.svg")}" alt="" class="confirmation-mark">
       <h1 class="page-title">${escapeHtml(title)}</h1>
       <p>${escapeHtml(body)}</p>
       ${ref ? `<p class="order-ref">Order reference: <strong>${escapeHtml(ref)}</strong></p>` : ""}

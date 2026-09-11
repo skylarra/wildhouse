@@ -1,13 +1,9 @@
-// Collection cover-art helpers.
-// Square owns collection names + membership. The website only supplies cover PNGs.
+// Local /assets URL helpers + collection cover paths.
 //
-// Drop files in `assets/collections/`. Filename = normalizeCollectionKey(name) + ".png".
-// Paths are root-absolute so covers resolve from /admin/* and pretty routes.
-//
-// Cache busting: cover URLs append ?v=<content-hash> from js/asset-versions.js so
-// browsers that previously cached /assets/* as immutable still fetch new bytes
-// after a deploy (Safari in particular). Re-run scripts/update-asset-versions.py
-// when replacing cover PNGs.
+// Cache model (see `_headers` + scripts/update-asset-versions.py):
+// - JS/CSS/HTML/JSON revalidate every visit (ETag → cheap 304s).
+// - /assets/* are long-cached immutable, so every local asset URL must include
+//   ?v=<content-hash> from js/asset-versions.js.
 
 import { ASSET_CONTENT_HASHES } from "./asset-versions.js";
 
@@ -42,7 +38,7 @@ export function absolutizeAssetUrl(path = "") {
 }
 
 /**
- * Append ?v=<sha256-12> for known local /assets files so deploys bust browser caches.
+ * Append ?v=<sha256-12> for known local /assets files so deploys bust caches.
  * External URLs (Square CDN, etc.) are returned unchanged. Idempotent.
  */
 export function withAssetContentHash(url = "") {
@@ -66,10 +62,36 @@ export function withAssetContentHash(url = "") {
 }
 
 function applyHashToPath(pathname = "") {
-  const file = pathname.split("/").pop() || "";
-  const hash = ASSET_CONTENT_HASHES[file];
-  if (!hash) return pathname;
-  return `${pathname}?v=${hash}`;
+  const path = String(pathname || "").split("?")[0];
+  const hash =
+    ASSET_CONTENT_HASHES[path] ||
+    // Legacy filename-only keys (older asset-versions.js) — keep working once.
+    ASSET_CONTENT_HASHES[path.split("/").pop() || ""];
+  if (!hash) return path;
+  return `${path}?v=${hash}`;
+}
+
+/**
+ * Deep-walk JSON/content values and content-hash any local /assets string.
+ * Used by loadJSON so footer logos, home heroes, studio layers, etc. all bust.
+ */
+export function versionAssetUrlsInData(value) {
+  if (typeof value === "string") {
+    if (!/(?:^|\/|\.)assets\//.test(value)) return value;
+    if (/^(https?:|data:|blob:)/i.test(value) && !value.includes("/assets/")) {
+      return value;
+    }
+    return withAssetContentHash(value);
+  }
+  if (Array.isArray(value)) return value.map(versionAssetUrlsInData);
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const [key, child] of Object.entries(value)) {
+      out[key] = versionAssetUrlsInData(child);
+    }
+    return out;
+  }
+  return value;
 }
 
 /** Versioned coming-soon fallback used by collection/product cards. */
@@ -120,7 +142,6 @@ export async function probeCollectionCover(name = "") {
   try {
     const res = await fetch(url, { method: "HEAD", cache: "no-store" });
     if (res.ok) return { found: true, url, repoPath };
-    // Some hosts reject HEAD — try a ranged GET.
     const get = await fetch(url, {
       method: "GET",
       headers: { Range: "bytes=0-0" },

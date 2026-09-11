@@ -2,6 +2,8 @@
 // Expected name patterns: "Black / M", "Sand / XL", "Oak - Large".
 // Falls back to a single "Option" axis when names are not multi-part.
 
+import { collectionCoverFallbackSrc } from "./collection-assets.js";
+
 const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "2XL", "3XL", "4XL"];
 const SIZE_RE = /^(xxs|xs|s|m|l|xl|xxl|xxxl|2xl|3xl|4xl|\d{1,2})$/i;
 
@@ -147,7 +149,7 @@ export function resolveOptionImage({
   const withImage = variationsForValue.find((v) => v.image);
   if (withImage?.image) return withImage.image;
   if (productImages[valueIndex]) return productImages[valueIndex];
-  return productImages[0] || "./assets/coming-soon.png";
+  return productImages[0] || collectionCoverFallbackSrc();
 }
 
 export function defaultSelection(model, variations) {
