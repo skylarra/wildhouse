@@ -9,6 +9,7 @@ import {
   resolveOptionImage,
   splitName,
 } from "./variants.js";
+import { collectionCoverFallbackSrc } from "./collection-assets.js";
 
 const root = document.getElementById("product-root");
 const params = new URLSearchParams(location.search);
@@ -87,7 +88,7 @@ function colorImagesForProduct() {
 }
 
 function imagesForSelection() {
-  const base = product.images.length ? [...product.images] : ["./assets/coming-soon.png"];
+  const base = product.images.length ? [...product.images] : [collectionCoverFallbackSrc()];
   const colorAxis = variantModel?.axes?.find((a) => a.key === "color");
   if (!colorAxis) return base;
   const color = selection.color;
@@ -500,7 +501,7 @@ function wireControls() {
       galleryImages[0] ||
       selectedVariation?.image ||
       product.images[0] ||
-      "./assets/coming-soon.png";
+      collectionCoverFallbackSrc();
     addToCart(
       {
         variationId: selectedVariation.id,
@@ -592,8 +593,8 @@ function syncProductMeta(product) {
   const image = product.images[0]
     ? product.images[0].startsWith("http")
       ? product.images[0]
-      : `${origin}/${product.images[0].replace(/^\.\//, "")}`
-    : `/assets/coming-soon.png`;
+      : `${origin}/${product.images[0].replace(/^\.\//, "").split("?")[0]}`
+    : `${origin}${collectionCoverFallbackSrc().split("?")[0]}`;
   const description = (product.description || `${product.name} from Wildhouse Lane.`).slice(0, 160);
 
   const desc = document.querySelector('meta[name="description"]');

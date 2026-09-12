@@ -4,6 +4,7 @@ import { loadJSON } from "./content.js";
 import { formatMoney } from "./catalog.js";
 import { addToCart } from "./store.js";
 import { escapeHtml, toast } from "./ui.js";
+import { withAssetContentHash } from "./collection-assets.js";
 
 const root = document.getElementById("studio-root");
 
@@ -669,7 +670,7 @@ function addDesignToCart() {
       image:
         shape?.image ||
         selectedOption("clasp")?.image ||
-        "./assets/studio/clasps/gold-lobster-clasp.png",
+        withAssetContentHash("./assets/studio/clasps/gold-lobster-clasp.png"),
       handle: config.productHandle || "custom-keychain",
       studioDesign: { ...state, charmSide },
     },

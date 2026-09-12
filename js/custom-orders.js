@@ -2,6 +2,7 @@
 // Content: content/custom-orders.json
 import { loadJSON } from "./content.js";
 import { escapeHtml, wireImagePlaceholders } from "./ui.js";
+import { collectionCoverFallbackSrc } from "./collection-assets.js";
 
 const root = document.getElementById("custom-orders-root");
 
@@ -34,7 +35,7 @@ function renderHero(hero) {
         ${
           hero.image
             ? `<div class="custom-hero__media img-placeholder">
-                <img src="${escapeHtml(hero.image.src)}" alt="${escapeHtml(hero.image.alt || "")}" fetchpriority="high" data-fallback="./assets/coming-soon.png">
+                <img src="${escapeHtml(hero.image.src)}" alt="${escapeHtml(hero.image.alt || "")}" fetchpriority="high" data-fallback="${collectionCoverFallbackSrc()}">
               </div>`
             : ""
         }
@@ -50,7 +51,7 @@ function renderShowcase(showcase) {
       <li class="custom-showcase__item">
         <figure class="custom-showcase__card">
           <div class="custom-showcase__media img-placeholder">
-            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.title || "")}" loading="lazy" data-fallback="./assets/coming-soon.png">
+            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.title || "")}" loading="lazy" data-fallback="${collectionCoverFallbackSrc()}">
           </div>
           <figcaption class="custom-showcase__caption">${escapeHtml(item.title || "")}</figcaption>
         </figure>

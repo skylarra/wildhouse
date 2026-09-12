@@ -157,7 +157,7 @@ header {
 .hero-container {
     position: relative;
     min-height: 650px;
-    background: url("./assets/hero-svg.svg") center center / cover no-repeat;
+    background: url("./assets/hero-svg.svg?v=fdfee4cccebd") center center / cover no-repeat;
     overflow: hidden;
     padding-bottom: 40px;
 }

@@ -74,8 +74,11 @@
 - `/api/catalog` 501 responses include missing env var **names** (never values) plus resolved `environment` so sandbox vs production wiring can be verified safely.
 - Photographic assets are compressed JPEGs; unused multi‑MB assets removed; Cloudflare `_headers` caches `/assets` for performance **without** `immutable` year-long TTL (stable filenames change in place). Collection covers also append `?v=<content-hash>` from `js/asset-versions.js`.
 
-## 2026-09-11 (Collection image cache busting)
 
-- Root cause of Safari stale covers: `_headers` set `/assets/*` to `Cache-Control: public, max-age=31536000, immutable` while cover URLs were unversioned stable paths. No service worker / PWA cache.
-- Fix: stop using `immutable` year TTL for mutable `/assets/*`; append content-hash query (`?v=`) to collection cover URLs via `js/asset-versions.js` (regenerate with `scripts/update-asset-versions.py` after replacing cover PNGs).
+## 2026-09-11 (Site-wide cache strategy)
+
+- Stale Safari/Chrome assets were caused by **browser cache + stable URLs**, not a service worker. `_headers` had given `/assets`, `/js`, and `/css` multi-day TTLs while filenames never changed on deploy. Cloudflare Pages does not auto-hash assets (no build step).
+- Launch model: HTML + `/content` + `/data` + `/js` + `/css` use `Cache-Control: public, max-age=0, must-revalidate` (ETag → cheap 304s). `/assets/*` uses long `immutable` cache because every reference appends `?v=<content-hash>` from `js/asset-versions.js` (regenerate with `scripts/update-asset-versions.py`).
+- JSON content paths are hydrated at load time (`versionAssetUrlsInData`); HTML favicons + `styles.css` `url(...)` refs are rewritten by the same script.
+- Cloudflare dashboard: set Browser Cache TTL to **Respect Existing Headers** so zone rules do not override `_headers`.
 
