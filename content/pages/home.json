@@ -8,8 +8,8 @@
     "logo": "./assets/WILDHOUSE-LongMark.svg",
     "logoAlt": "Wildhouse Lane",
     "images": [
-      { "src": "./assets/magic-tee.png", "alt": "screen-printed brown t-shirt that says words are spells and life is magic" },
-      { "src": "./assets/greenery-sticker-sheet.png", "alt": "small sticker sheet featuring flowers and stars" }
+      { "src": "./assets/witchysunmirror.JPG", "alt": "Witchy Sun Mirror in the forest with a cauldron" },
+      { "src": "./assets/moonmagicstickers.JPG", "alt": "Moon Magic Stickers featuring crescent moons, rosemary, lavender, and stars" }
     ],
     "cta": { "label": "SHOP ALL", "href": "./shop.html" }
   },
