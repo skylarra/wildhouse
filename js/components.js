@@ -125,6 +125,10 @@ function mountNewsletter(n) {
   const el = document.getElementById("site-newsletter");
   if (!el || !n) return;
 
+  const consent =
+    n.consentText ||
+    "By joining, you agree to receive emails from Wildhouse Lane. Unsubscribe anytime.";
+
   el.innerHTML = `
     <section class="newsletter" aria-labelledby="newsletter-heading">
       <h2 id="newsletter-heading" class="shadows-into-light-regular">${escapeHtml(n.heading)}</h2>
@@ -134,6 +138,7 @@ function mountNewsletter(n) {
         <input type="email" id="newsletter-email" name="email" placeholder="${escapeHtml(n.placeholder)}" autocomplete="email" required>
         <button type="submit" class="btn secondary">${escapeHtml(n.buttonLabel)}</button>
       </form>
+      <p class="newsletter__consent">${escapeHtml(consent)}</p>
       <p class="newsletter__message" role="status" aria-live="polite"></p>
     </section>`;
 
@@ -142,11 +147,18 @@ function mountNewsletter(n) {
   const message = el.querySelector(".newsletter__message");
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  form.addEventListener("submit", (e) => {
+  const showSuccess = (title, detail) => {
+    el.querySelector(".newsletter").innerHTML = `
+      <h2 id="newsletter-heading" class="shadows-into-light-regular">${escapeHtml(title)}</h2>
+      <p class="newsletter__success-detail">${escapeHtml(detail)}</p>`;
+  };
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
-    if (!emailRe.test(input.value.trim())) {
-      message.textContent = n.errorMessage;
+    const email = input.value.trim();
+    if (!emailRe.test(email)) {
+      message.textContent = n.errorMessage || "Please enter a valid email address.";
       message.className = "newsletter__message is-error";
       input.focus();
       return;
@@ -155,16 +167,43 @@ function mountNewsletter(n) {
       btn.classList.add("is-loading");
       btn.disabled = true;
     }
-    // UI only for now — no email provider connected yet.
-    window.setTimeout(() => {
-      message.textContent = n.successMessage;
-      message.className = "newsletter__message is-success";
-      form.reset();
+    message.textContent = "";
+    message.className = "newsletter__message";
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.status === "already_subscribed") {
+        showSuccess("You're already on the list.", "You're all set — no need to join again.");
+        return;
+      }
+      if (res.ok && (data.status === "subscribed" || data.ok)) {
+        showSuccess(
+          "You're on the list.",
+          "Keep an eye on your inbox — we'll see you around the Lane."
+        );
+        return;
+      }
+      if (res.status === 400) {
+        message.textContent = data.error || n.errorMessage || "Please enter a valid email address.";
+        message.className = "newsletter__message is-error";
+      } else {
+        message.textContent = "Something went wrong. Please try again.";
+        message.className = "newsletter__message is-error";
+      }
+    } catch (_) {
+      message.textContent = "Something went wrong. Please try again.";
+      message.className = "newsletter__message is-error";
+    } finally {
       if (btn) {
         btn.classList.remove("is-loading");
         btn.disabled = false;
       }
-    }, 400);
+    }
   });
 }
 
