@@ -58,10 +58,18 @@ export async function onRequestGet({ env }) {
     };
     return json(payload);
   } catch (err) {
+    const message = String(err?.message || err);
+    const locationMismatch = /location with the id/i.test(message);
     return json(
       {
-        error: String(err?.message || err),
+        error: message,
         environment: cfg.environment,
+        // Hint only — never echo the token. Location ids differ between sandbox and production.
+        ...(locationMismatch
+          ? {
+              hint: "SQUARE_LOCATION_ID does not belong to this Square environment. In the Square Dashboard (Production mode), open Locations, copy the production Location ID, and set SQUARE_LOCATION_ID in Cloudflare Pages → Settings → Environment variables (Production).",
+            }
+          : {}),
       },
       502
     );

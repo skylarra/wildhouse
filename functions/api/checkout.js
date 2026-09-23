@@ -67,6 +67,21 @@ export async function onRequestPost({ request, env }) {
     const link = res.payment_link || {};
     return json({ url: link.url, orderId: link.order_id });
   } catch (err) {
-    return json({ error: String(err?.message || err) }, 502);
+    const message = String(err?.message || err);
+    const locationMismatch = /does not have a location|location with the id|invalid location/i.test(
+      message
+    );
+    return json(
+      {
+        error: message,
+        environment: cfg.environment,
+        ...(locationMismatch
+          ? {
+              hint: "SQUARE_LOCATION_ID must be the production Location ID when SQUARE_ENVIRONMENT=production.",
+            }
+          : {}),
+      },
+      502
+    );
   }
 }

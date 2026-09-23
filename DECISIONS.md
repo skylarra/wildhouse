@@ -13,7 +13,7 @@
 - The Function `/api/catalog` returns the **same schema as `data/products.json`**, so the frontend catalog layer is source-agnostic and **falls back to `products.json`** when Square is not configured (local/static preview).
 - Checkout uses **Square Payment Links** (Square-hosted checkout) rather than the Web Payments SDK, so the site never handles card data and Square owns pricing. Cart sends only variation ids + quantities.
 - `order-confirmation.html` is the Square `redirect_url` target; it clears the local cart and shows the order reference.
-- Secrets required (set in Cursor + Cloudflare Pages): `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, and `SQUARE_ENVIRONMENT` (`sandbox`|`production`, defaults to `sandbox`). Sandbox first; production only after testing.
+- Secrets required (set in Cursor + Cloudflare Pages): `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, and `SQUARE_ENVIRONMENT` (`sandbox`|`production`, defaults to `sandbox` for local safety). Production tokens and location ids are a separate Square environment — never reuse a sandbox `SQUARE_LOCATION_ID` when `SQUARE_ENVIRONMENT=production`.
 - Domain `wildhouselane.com` finalized: canonical tags added; custom domain must be connected in the Cloudflare Pages dashboard (not in-repo).
 
 ## 2026-07-30 (Dynamic collections)
