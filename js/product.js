@@ -1,6 +1,6 @@
 // Product detail page — 4:5 gallery with zoom, variants, cart, info notes, related.
 import { getProductByHandle, getRelated, formatMoney } from "./catalog.js";
-import { loadJSON, loadSite } from "./content.js";
+import { loadJSON } from "./content.js";
 import { addToCart, pushRecentlyViewed, isFavorite, toggleFavorite } from "./store.js";
 import { productCardHTML, wireFavorites, toast, escapeHtml, formatProductDescription } from "./ui.js";
 import {
@@ -21,7 +21,6 @@ let info = null;
 let variantMedia = {};
 let variantModel = null;
 let selection = {};
-let freeShippingThresholdCents = 7500;
 let galleryIndex = 0;
 let galleryImages = [];
 
@@ -73,11 +72,7 @@ function stockCopy(stock) {
 
 function shippingText() {
   const shipping = info.shipping || DEFAULT_INFO.shipping;
-  let text = shipping.text || "";
-  const threshold = formatMoney(freeShippingThresholdCents);
-  // Keep JSON editable while still reflecting site.json threshold when present.
-  text = text.replace(/\$\d+(?:\.\d+)?/, threshold);
-  return text;
+  return shipping.text || "";
 }
 
 function colorImagesForProduct() {
@@ -511,6 +506,9 @@ function wireControls() {
         priceCents: selectedVariation.priceCents,
         image: cartImage,
         handle: product.handle,
+        // Used by shipping-quote when Square catalog lookup is unavailable.
+        categoryName: product.categoryName || "",
+        categoryHandle: product.categoryHandle || "",
       },
       qty
     );
@@ -545,18 +543,14 @@ async function init() {
   }
 
   try {
-    const [loadedProduct, loadedInfo, site, media] = await Promise.all([
+    const [loadedProduct, loadedInfo, media] = await Promise.all([
       getProductByHandle(handle),
       loadJSON("./content/product-info.json").catch(() => DEFAULT_INFO),
-      loadSite().catch(() => null),
       loadJSON("./content/variant-media.json").catch(() => ({})),
     ]);
     product = loadedProduct;
     info = loadedInfo || DEFAULT_INFO;
     variantMedia = media || {};
-    if (site?.freeShippingThresholdCents) {
-      freeShippingThresholdCents = site.freeShippingThresholdCents;
-    }
   } catch (err) {
     root.innerHTML = `<p class="error">Could not load this product.</p>`;
     console.error(err);

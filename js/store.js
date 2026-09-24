@@ -34,7 +34,7 @@ function emit(name, detail) {
 }
 
 /* ----------------------------- Cart ----------------------------- */
-// A cart line: { variationId, itemId, name, variationName, priceCents, image, handle, qty }
+// A cart line: { variationId, itemId, name, variationName, priceCents, image, handle, qty, categoryName?, categoryHandle? }
 // Optional studio fields: catalogVariationId (Square id), note, studioDesign
 
 export function getCart() {

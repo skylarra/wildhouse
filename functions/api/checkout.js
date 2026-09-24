@@ -5,16 +5,19 @@
 // Square handles:
 //   - Catalog pricing (source of truth)
 //   - Sales tax via order.pricing_options.auto_apply_taxes (catalog tax rules)
-//   - Shipping fee via checkout_options.shipping_fee (flat fee on the Square order)
+//   - Shipping fee via checkout_options.shipping_fee (Wildhouse Lane flat tier on the Square order)
 //   - Local pickup via order.fulfillments type PICKUP
 //
 // Honest limitation: Payment Links do NOT return address-based carrier rates.
-// Shipping is a merchant-configured flat fee (SHIPPING_FEE_CENTS), waived when
-// the Square catalog subtotal meets FREE_SHIPPING_THRESHOLD_CENTS.
+// Shipping is a Wildhouse Lane flat tier (letter / standard / large) from env vars,
+// classified from Square catalog categories + product names — not live USPS rates.
 import { squareConfig, squareFetch, json, missingSquareEnv } from "./_square.js";
+import {
+  quoteShipping,
+  DEFAULT_STANDARD_SHIPPING_FEE_CENTS,
+  shippingLabelForTier,
+} from "./_shipping.js";
 
-const DEFAULT_SHIPPING_FEE_CENTS = 699;
-const DEFAULT_FREE_SHIPPING_CENTS = 7500;
 const DEFAULT_PICKUP_PREP = "P14D";
 const OWNER_EMAIL = "skylar@wildhouselane.com";
 
@@ -23,44 +26,6 @@ function parseFulfillment(raw) {
     .trim()
     .toLowerCase();
   return v === "pickup" ? "pickup" : "ship";
-}
-
-function shippingFeeCents(env) {
-  const n = parseInt(env.SHIPPING_FEE_CENTS, 10);
-  return Number.isFinite(n) && n >= 0 ? n : DEFAULT_SHIPPING_FEE_CENTS;
-}
-
-function freeShippingThresholdCents(env) {
-  const n = parseInt(env.FREE_SHIPPING_THRESHOLD_CENTS, 10);
-  return Number.isFinite(n) && n >= 0 ? n : DEFAULT_FREE_SHIPPING_CENTS;
-}
-
-/** Sum catalog variation prices × qty (server-side; never trust the browser). */
-async function catalogSubtotalCents(cfg, lineItems) {
-  const ids = [...new Set(lineItems.map((l) => l.catalog_object_id).filter(Boolean))];
-  if (!ids.length) return 0;
-
-  const res = await squareFetch(cfg, "/v2/catalog/batch-retrieve", {
-    method: "POST",
-    body: JSON.stringify({ object_ids: ids }),
-  });
-
-  const priceById = new Map();
-  for (const obj of res.objects || []) {
-    const money = obj.item_variation_data?.price_money;
-    if (money && typeof money.amount === "number") {
-      priceById.set(obj.id, money.amount);
-    }
-  }
-
-  let total = 0;
-  for (const li of lineItems) {
-    const unit = priceById.get(li.catalog_object_id);
-    if (typeof unit !== "number") continue;
-    const qty = Math.max(1, parseInt(li.quantity, 10) || 1);
-    total += unit * qty;
-  }
-  return total;
 }
 
 function buildPickupFulfillment(env) {
@@ -119,12 +84,32 @@ export async function onRequestPost({ request, env }) {
   if (!lineItems.length) return json({ error: "Cart is empty" }, 400);
 
   const origin = new URL(request.url).origin;
+
+  let shippingQuote;
+  try {
+    shippingQuote = await quoteShipping({
+      env,
+      cfg,
+      fulfillment,
+      items: lineItems.map((li) => ({ variationId: li.catalog_object_id })),
+    });
+  } catch (err) {
+    console.error("checkout shipping quote failed", String(err?.message || err));
+    shippingQuote = {
+      tier: "standard",
+      label: shippingLabelForTier("standard"),
+      feeCents: DEFAULT_STANDARD_SHIPPING_FEE_CENTS,
+    };
+  }
+
   const studioNotes = lineItems.map((l) => l.note).filter(Boolean);
   const orderNoteParts = [];
   if (studioNotes.length) orderNoteParts.push(studioNotes.join(" | "));
-  orderNoteParts.push(
-    fulfillment === "pickup" ? "Fulfillment: LOCAL PICKUP" : "Fulfillment: SHIPPING"
-  );
+  if (fulfillment === "pickup") {
+    orderNoteParts.push("Fulfillment: LOCAL PICKUP");
+  } else {
+    orderNoteParts.push(`Fulfillment: SHIPPING (${shippingQuote.label})`);
+  }
   const orderNote = orderNoteParts.join(" — ").slice(0, 500);
 
   const order = {
@@ -141,28 +126,17 @@ export async function onRequestPost({ request, env }) {
     merchant_support_email: env.ORDER_NOTIFY_TO || env.NEWSLETTER_NOTIFY_TO || OWNER_EMAIL,
   };
 
-  let appliedShippingFeeCents = 0;
+  const appliedShippingFeeCents = fulfillment === "pickup" ? 0 : shippingQuote.feeCents || 0;
 
   if (fulfillment === "pickup") {
     order.fulfillments = [buildPickupFulfillment(env)];
     checkoutOptions.ask_for_shipping_address = false;
   } else {
     checkoutOptions.ask_for_shipping_address = true;
-
-    let fee = shippingFeeCents(env);
-    try {
-      const subtotal = await catalogSubtotalCents(cfg, lineItems);
-      const threshold = freeShippingThresholdCents(env);
-      if (threshold > 0 && subtotal >= threshold) fee = 0;
-    } catch (err) {
-      console.error("checkout subtotal lookup failed", String(err?.message || err));
-    }
-
-    appliedShippingFeeCents = fee;
-    if (fee > 0) {
+    if (appliedShippingFeeCents > 0) {
       checkoutOptions.shipping_fee = {
-        name: "Shipping",
-        charge: { amount: fee, currency: "USD" },
+        name: shippingQuote.label || "Shipping",
+        charge: { amount: appliedShippingFeeCents, currency: "USD" },
       };
     }
   }
@@ -182,6 +156,8 @@ export async function onRequestPost({ request, env }) {
       url: link.url,
       orderId: link.order_id,
       fulfillment,
+      shippingTier: shippingQuote.tier,
+      shippingLabel: shippingQuote.label,
       shippingFeeCents: appliedShippingFeeCents,
     });
   } catch (err) {

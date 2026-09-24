@@ -4,7 +4,6 @@
   "tagline": "Handmade goods for people who love nature, art, and all things spooky.",
   "domain": "https://wildhouselane.com",
   "email": "skylar@wildhouselane.com",
-  "freeShippingThresholdCents": 7500,
   "archivedPages": [
     "./keychain-studio.html",
     "./post-office.html",
@@ -19,7 +18,7 @@
     "dismissible": true,
     "rotateMs": 4500,
     "messages": [
-      "Free shipping on orders over $100",
+      "Letter mail for sticker-only orders \u00b7 packages from $6.99",
       "Handmade with care \u2014 please allow 2\u20133 weeks for processing",
       "10% of profits support wildlife conservation"
     ]
@@ -116,6 +115,5 @@
     "successMessage": "You're on the list.",
     "errorMessage": "Please enter a valid email address.",
     "consentText": "By joining, you agree to receive emails from Wildhouse Lane. Unsubscribe anytime."
-  },
-  "shippingFeeCents": 699
+  }
 }

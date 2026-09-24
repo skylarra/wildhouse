@@ -59,8 +59,6 @@ Everything should remain production quality.
 | `EMAIL_FROM` | Variable | Verified sender, e.g. `Wildhouse Lane <hello@wildhouselane.com>` |
 | `NEWSLETTER_NOTIFY_TO` | Variable (optional) | Defaults to `skylar@wildhouselane.com` |
 | `ORDER_NOTIFY_TO` | Variable (optional) | Owner order alerts; defaults to `skylar@wildhouselane.com` |
-| `SHIPPING_FEE_CENTS` | Variable (optional) | Flat shipping fee applied via Square Payment Link (default `699`) |
-| `FREE_SHIPPING_THRESHOLD_CENTS` | Variable (optional) | Waive shipping at this catalog subtotal (default `7500`) |
 | `PICKUP_ADDRESS` | Secret/Variable | Shown only after a pickup order + in emails |
 | `PICKUP_INSTRUCTIONS` | Variable | Pickup instructions for customer email |
 | `PICKUP_CONTACT` | Variable | Contact line for pickup emails |
@@ -85,7 +83,7 @@ Do **not** change existing Square production secrets (`SQUARE_ACCESS_TOKEN`, `SQ
 
 1. Production → **Items → Taxes** (or Settings → Sales tax): configure your tax rates / locations.
 2. Ensure taxable catalog items have the tax applied (Square auto-apply uses these catalog tax rules).
-3. Shipping is a **flat fee** on Payment Links (`SHIPPING_FEE_CENTS`) — Square Payment Links do **not** return live carrier rates by address. Free shipping uses `FREE_SHIPPING_THRESHOLD_CENTS` against the Square catalog subtotal.
+3. Shipping is Wildhouse Lane **flat tiers** on Payment Links (`LETTER_SHIPPING_FEE_CENTS` / `STANDARD_SHIPPING_FEE_CENTS` / `LARGE_SHIPPING_FEE_CENTS`) — not live carrier rates. See “Tiered shipping” below.
 4. Local pickup uses Square order fulfillments type `PICKUP` (free; no shipping address asked).
 
 ### Production smoke test (no live card charge for newsletter)
@@ -93,4 +91,37 @@ Do **not** change existing Square production secrets (`SQUARE_ACCESS_TOKEN`, `SQ
 1. Newsletter: submit a new email on the site → expect success UI; check KV for `sub:{sha256}`; check inbox for “New Wildhouse Lane Subscriber”. Submit same email again → “already on the list”, no second owner email.
 2. Cart: choose **Ship to me** vs **Local pickup — FREE**; shipping line updates; Checkout redirects to Square.
 3. On Square sandbox/test (or a tiny production charge you authorize): complete payment → land on order confirmation → owner gets “NEW WILDHOUSE LANE ORDER” with fulfillment; pickup orders get pickup instructions email (address from env).
+
+## Tiered shipping (cart + Payment Links)
+
+Wildhouse Lane flat shipping rates (NOT live USPS/carrier quotes). Applied as Square Payment Link `shipping_fee`.
+
+### Cloudflare env vars (Production)
+
+| Name | Type | Default | Purpose |
+|------|------|---------|---------|
+| `LETTER_SHIPPING_FEE_CENTS` | Variable | `99` (interim) | Sticker-only letter mail |
+| `STANDARD_SHIPPING_FEE_CENTS` | Variable | `699` ($6.99) | Magnets, keychains, other packages |
+| `LARGE_SHIPPING_FEE_CENTS` | Variable | `1099` ($10.99) | Shirts, wall mirrors / wall decor / suncatchers |
+
+Remove / ignore: `SHIPPING_FEE_CENTS`, `FREE_SHIPPING_THRESHOLD_CENTS` (no free-shipping threshold for now).
+
+### Classification (server)
+
+1. Pickup → $0 + Square `PICKUP` fulfillment  
+2. Else if **every** item is sticker / mini sticker sheet → Letter Mail  
+3. Else if **any** item is shirt or wall decor/mirror/suncatcher → Large Item Shipping  
+4. Else → Standard Shipping  
+
+Stickers + keychain/magnet → Standard. Stickers + shirt/wall decor → Large.
+
+### How to test
+
+1. Sticker-only cart + Ship → Letter Mail + `LETTER_SHIPPING_FEE_CENTS`  
+2. Magnet or keychain cart + Ship → Standard $6.99  
+3. Tee or suncatcher/mirror + Ship → Large $10.99  
+4. Stickers + keychain → Standard  
+5. Stickers + tee → Large  
+6. Any cart + Local pickup → FREE / PICKUP  
+7. Confirm Square Payment Link shows the same shipping line name + amount  
 

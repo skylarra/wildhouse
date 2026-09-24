@@ -1,15 +1,23 @@
 // Cart page — line items, quantity controls, fulfillment choice (ship / pickup),
-// subtotal + estimated shipping, and Square Payment Link checkout.
+// auto shipping tier (letter / standard / large), and Square Payment Link checkout.
 import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
 import { loadSite, sitePath } from "./content.js";
 import { escapeHtml, toast } from "./ui.js";
 
 const root = document.getElementById("cart-root");
-let freeShippingThresholdCents = 7500;
-let shippingFeeCents = 699;
+
 /** @type {"ship" | "pickup"} */
 let fulfillment = "ship";
+
+/** Latest quote from /api/shipping-quote (fees come from Cloudflare env, not hard-coded). */
+let shippingQuote = {
+  tier: "standard",
+  label: "Standard Shipping",
+  feeCents: null,
+  loading: false,
+  error: false,
+};
 
 try {
   const saved = sessionStorage.getItem("whl_fulfillment");
@@ -48,19 +56,32 @@ function lineHTML(line) {
     </div>`;
 }
 
-function estimatedShippingCents(subtotal) {
-  if (fulfillment === "pickup") return 0;
-  if (freeShippingThresholdCents > 0 && subtotal >= freeShippingThresholdCents) return 0;
-  return shippingFeeCents;
+function shippingRowLabel() {
+  if (fulfillment === "pickup") return "Local Pickup";
+  return shippingQuote.label || "Shipping";
 }
 
-function shippingNote(subtotal) {
+function shippingRowValue() {
+  if (fulfillment === "pickup") return "FREE";
+  if (shippingQuote.loading) return "…";
+  if (shippingQuote.feeCents == null) return "—";
+  if (shippingQuote.feeCents === 0) return "FREE";
+  return formatMoney(shippingQuote.feeCents);
+}
+
+function shippingNote() {
   if (fulfillment === "pickup") {
     return "Local pickup is free. We'll confirm when your order is ready.";
   }
-  const remaining = Math.max(0, freeShippingThresholdCents - subtotal);
-  if (remaining === 0) return "You've unlocked free shipping!";
-  return `You're ${formatMoney(remaining)} away from free shipping.`;
+  if (shippingQuote.loading) return "Calculating shipping…";
+  if (shippingQuote.error) return "Shipping will be confirmed at checkout.";
+  if (shippingQuote.tier === "letter") {
+    return "Sticker-only order — Letter Mail rate applied (Wildhouse Lane flat rate, not live USPS).";
+  }
+  if (shippingQuote.tier === "large") {
+    return "Includes a large item — Large Item Shipping applied (Wildhouse Lane flat rate).";
+  }
+  return "Standard Shipping applied (Wildhouse Lane flat rate for packaged goods).";
 }
 
 function render() {
@@ -79,7 +100,6 @@ function render() {
   }
 
   const subtotal = cartSubtotalCents();
-  const shipCents = estimatedShippingCents(subtotal);
 
   root.innerHTML = `
     <h1>Your Cart</h1>
@@ -107,13 +127,11 @@ function render() {
         <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${formatMoney(
           subtotal
         )}</span></div>
-        <div class="cart-summary__row"><span>${
-          fulfillment === "pickup" ? "Local pickup" : "Shipping"
-        }</span><span id="cart-shipping">${
-          shipCents === 0 ? "FREE" : formatMoney(shipCents)
-        }</span></div>
+        <div class="cart-summary__row"><span id="cart-shipping-label">${escapeHtml(
+          shippingRowLabel()
+        )}</span><span id="cart-shipping">${shippingRowValue()}</span></div>
         <div class="cart-summary__row cart-summary__row--muted"><span>Tax</span><span>Calculated at checkout</span></div>
-        <p class="cart-summary__ship">${shippingNote(subtotal)}</p>
+        <p class="cart-summary__ship" id="cart-shipping-note">${escapeHtml(shippingNote())}</p>
         <button class="btn secondary cart-checkout" id="checkout-btn" type="button">Checkout</button>
         <p class="cart-summary__note">Secure checkout powered by Square. Sales tax is applied by Square on the next step.</p>
         <a class="cart-continue" href="./shop.html">Continue shopping</a>
@@ -121,6 +139,7 @@ function render() {
     </div>`;
 
   wire();
+  refreshShippingQuote();
 }
 
 function wire() {
@@ -162,6 +181,65 @@ function wire() {
   if (checkout) {
     checkout.addEventListener("click", () => startCheckout(checkout));
   }
+}
+
+let quoteRequestId = 0;
+
+async function refreshShippingQuote() {
+  const cart = getCart();
+  if (!cart.length) return;
+
+  const requestId = ++quoteRequestId;
+  shippingQuote = { ...shippingQuote, loading: true, error: false };
+  updateShippingDom();
+
+  try {
+    const res = await fetch(sitePath("api/shipping-quote"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fulfillment,
+        items: cart.map((l) => ({
+          variationId: l.catalogVariationId || l.variationId,
+          name: l.name || "",
+          categoryName: l.categoryName || "",
+          categoryHandle: l.categoryHandle || "",
+        })),
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (requestId !== quoteRequestId) return;
+    if (!res.ok) throw new Error(data.error || `Quote failed (${res.status})`);
+
+    shippingQuote = {
+      tier: data.tier || "standard",
+      label: data.label || "Shipping",
+      feeCents: typeof data.feeCents === "number" ? data.feeCents : null,
+      loading: false,
+      error: false,
+    };
+  } catch (err) {
+    console.error(err);
+    if (requestId !== quoteRequestId) return;
+    shippingQuote = {
+      ...shippingQuote,
+      loading: false,
+      error: true,
+      feeCents: fulfillment === "pickup" ? 0 : shippingQuote.feeCents,
+      label: fulfillment === "pickup" ? "Local Pickup" : shippingQuote.label,
+      tier: fulfillment === "pickup" ? "pickup" : shippingQuote.tier,
+    };
+  }
+  updateShippingDom();
+}
+
+function updateShippingDom() {
+  const label = document.getElementById("cart-shipping-label");
+  const value = document.getElementById("cart-shipping");
+  const note = document.getElementById("cart-shipping-note");
+  if (label) label.textContent = shippingRowLabel();
+  if (value) value.textContent = shippingRowValue();
+  if (note) note.textContent = shippingNote();
 }
 
 async function startCheckout(button) {
@@ -206,10 +284,5 @@ async function startCheckout(button) {
 document.addEventListener("cart:change", render);
 
 loadSite()
-  .then((site) => {
-    freeShippingThresholdCents =
-      site.freeShippingThresholdCents ?? freeShippingThresholdCents;
-    shippingFeeCents = site.shippingFeeCents ?? shippingFeeCents;
-  })
   .catch((err) => console.error(err))
   .finally(render);

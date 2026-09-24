@@ -53,7 +53,7 @@
 
 - Product gallery uses a consistent **4:5** frame with `object-fit: contain` (same language as shop cards) so product photography isn’t cropped oddly.
 - Zoom is a native `<dialog>` lightbox with keyboard arrows / Escape — no Canvas or third-party zoom library.
-- Shared shipping, handmade, and processing copy lives in `content/product-info.json` so studio messaging can change without touching JS. Free-shipping threshold still reads from `content/site.json` when present.
+- Shared shipping, handmade, and processing copy lives in `content/product-info.json` so studio messaging can change without touching JS. Free-shipping threshold is disabled for now (tiered flat rates instead).
 - Inventory status is variation-aware (in stock / low / sold out); quantity is capped to available stock on add-to-cart.
 - Multi-axis Square variations named like `Black / M` render as separate sections: **Color** (image swatches) then **Size** (chips). Parsing lives in `js/variants.js`. Color photos come from Square variation `image_ids` when present, else `custom.colorImages` / `content/variant-media.json`, else product image order.
 - Product descriptions prefer Square `description_html` (sanitized to Square’s supported tags) so dashboard spacing/lists/bold match the site. Plain-text descriptions keep `\n` / `\n\n` as `<br>` / paragraphs via `formatProductDescription()` in `js/ui.js`.
@@ -87,4 +87,12 @@
 - Newsletter posts to `/api/newsletter`; subscribers stored in KV binding `EMAIL_SUBSCRIBERS` under privacy-conscious keys `sub:{sha256(email)}` with `{ email, joinedAt, source, status }`. Owner notified via Resend only on **new** subscribes.
 - Checkout remains Square **Payment Links**. Tax uses `pricing_options.auto_apply_taxes` (Square catalog tax rules). Shipping uses Payment Link `shipping_fee` (flat fee from env) — not carrier rate shopping. Pickup uses order `fulfillments` type `PICKUP` with `ask_for_shipping_address: false`.
 - Post-checkout `/api/order-notify` sends owner + customer emails (pickup instructions from env). Idempotent via KV `order-notify:{orderId}`.
+
+## 2026-09-24 (Tiered flat shipping)
+
+- Customer-facing shipping is Wildhouse Lane flat tiers (letter / standard / large / pickup), not live carrier rates.
+- Classification uses Square catalog category + item name on the server (`functions/api/_shipping.js`).
+- Fees come from Cloudflare env: `LETTER_SHIPPING_FEE_CENTS`, `STANDARD_SHIPPING_FEE_CENTS`, `LARGE_SHIPPING_FEE_CENTS`.
+- Free-shipping threshold is disabled for now.
+- Cart shows the auto-selected tier via `POST /api/shipping-quote`; checkout applies the same quote as Payment Link `shipping_fee`.
 
