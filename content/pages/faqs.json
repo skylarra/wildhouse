@@ -34,8 +34,8 @@
           "a": "Orders ship using the carrier that provides the best service and value for your destination."
         },
         {
-          "q": "Do you offer free shipping?",
-          "a": "Yes — free shipping is available on qualifying orders over $100 within the supported shipping region."
+          "q": "How much is shipping?",
+          "a": "Shipping is a Wildhouse Lane flat rate based on what’s in your cart: letter mail for sticker-only orders, $6.99 for standard packages (magnets, keychains, and similar), and $10.99 when the order includes a shirt or wall decor. Local pickup is free. These are studio flat rates — not live carrier quotes."
         },
         {
           "q": "Do you ship internationally?",

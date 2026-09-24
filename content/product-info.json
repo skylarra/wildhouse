@@ -10,7 +10,7 @@
   },
   "shipping": {
     "label": "Shipping",
-    "text": "Carefully packed and shipped from the studio. Free shipping on orders over $100.",
+    "text": "Carefully packed and shipped from the studio. Sticker-only orders use letter mail; packages start at $6.99. Local pickup is free.",
     "policiesHref": "./policies.html",
     "policiesLabel": "Shipping & policies"
   },

@@ -672,6 +672,9 @@ function addDesignToCart() {
         selectedOption("clasp")?.image ||
         withAssetContentHash("./assets/studio/clasps/gold-lobster-clasp.png"),
       handle: config.productHandle || "custom-keychain",
+      // Custom keychains ship as standard packaged goods (not letter mail).
+      categoryName: "Keychains",
+      categoryHandle: "keychains",
       studioDesign: { ...state, charmSide },
     },
     1
