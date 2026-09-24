@@ -120,7 +120,7 @@ function render() {
             <input type="radio" name="fulfillment" value="pickup" ${
               fulfillment === "pickup" ? "checked" : ""
             }>
-            <span>Local pickup — <strong>FREE</strong></span>
+            <span>Local pickup — FREE</span>
           </label>
         </fieldset>
 
