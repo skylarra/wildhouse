@@ -1,5 +1,5 @@
-// Cart page — line items with quantity controls, remove, subtotal, free-shipping
-// progress, and a placeholder checkout (Square Checkout is wired after launch).
+// Cart page — line items, quantity controls, fulfillment choice (ship / pickup),
+// subtotal + estimated shipping, and Square Payment Link checkout.
 import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
 import { loadSite, sitePath } from "./content.js";
@@ -7,9 +7,21 @@ import { escapeHtml, toast } from "./ui.js";
 
 const root = document.getElementById("cart-root");
 let freeShippingThresholdCents = 7500;
+let shippingFeeCents = 699;
+/** @type {"ship" | "pickup"} */
+let fulfillment = "ship";
+
+try {
+  const saved = sessionStorage.getItem("whl_fulfillment");
+  if (saved === "pickup" || saved === "ship") fulfillment = saved;
+} catch (_) {
+  /* ignore */
+}
 
 function lineHTML(line) {
-  const variant = line.variationName ? `<p class="cart-line__variant">${escapeHtml(line.variationName)}</p>` : "";
+  const variant = line.variationName
+    ? `<p class="cart-line__variant">${escapeHtml(line.variationName)}</p>`
+    : "";
   const note = line.note ? `<p class="cart-line__note">${escapeHtml(line.note)}</p>` : "";
   const href =
     line.handle === "custom-keychain" || line.studioDesign
@@ -36,6 +48,21 @@ function lineHTML(line) {
     </div>`;
 }
 
+function estimatedShippingCents(subtotal) {
+  if (fulfillment === "pickup") return 0;
+  if (freeShippingThresholdCents > 0 && subtotal >= freeShippingThresholdCents) return 0;
+  return shippingFeeCents;
+}
+
+function shippingNote(subtotal) {
+  if (fulfillment === "pickup") {
+    return "Local pickup is free. We'll confirm when your order is ready.";
+  }
+  const remaining = Math.max(0, freeShippingThresholdCents - subtotal);
+  if (remaining === 0) return "You've unlocked free shipping!";
+  return `You're ${formatMoney(remaining)} away from free shipping.`;
+}
+
 function render() {
   const cart = getCart();
   if (!cart.length) {
@@ -52,11 +79,7 @@ function render() {
   }
 
   const subtotal = cartSubtotalCents();
-  const remaining = Math.max(0, freeShippingThresholdCents - subtotal);
-  const shippingNote =
-    remaining === 0
-      ? `You've unlocked free shipping!`
-      : `You're ${formatMoney(remaining)} away from free shipping.`;
+  const shipCents = estimatedShippingCents(subtotal);
 
   root.innerHTML = `
     <h1>Your Cart</h1>
@@ -64,10 +87,35 @@ function render() {
       <div class="cart-lines">${cart.map(lineHTML).join("")}</div>
       <aside class="cart-summary">
         <h2>Summary</h2>
-        <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${formatMoney(subtotal)}</span></div>
-        <p class="cart-summary__ship">${shippingNote}</p>
+
+        <fieldset class="cart-fulfillment">
+          <legend>Fulfillment</legend>
+          <label class="cart-fulfillment__option">
+            <input type="radio" name="fulfillment" value="ship" ${
+              fulfillment === "ship" ? "checked" : ""
+            }>
+            <span>Ship to me</span>
+          </label>
+          <label class="cart-fulfillment__option">
+            <input type="radio" name="fulfillment" value="pickup" ${
+              fulfillment === "pickup" ? "checked" : ""
+            }>
+            <span>Local pickup — <strong>FREE</strong></span>
+          </label>
+        </fieldset>
+
+        <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${formatMoney(
+          subtotal
+        )}</span></div>
+        <div class="cart-summary__row"><span>${
+          fulfillment === "pickup" ? "Local pickup" : "Shipping"
+        }</span><span id="cart-shipping">${
+          shipCents === 0 ? "FREE" : formatMoney(shipCents)
+        }</span></div>
+        <div class="cart-summary__row cart-summary__row--muted"><span>Tax</span><span>Calculated at checkout</span></div>
+        <p class="cart-summary__ship">${shippingNote(subtotal)}</p>
         <button class="btn secondary cart-checkout" id="checkout-btn" type="button">Checkout</button>
-        <p class="cart-summary__note">Secure checkout powered by Square.</p>
+        <p class="cart-summary__note">Secure checkout powered by Square. Sales tax is applied by Square on the next step.</p>
         <a class="cart-continue" href="./shop.html">Continue shopping</a>
       </aside>
     </div>`;
@@ -98,14 +146,24 @@ function wire() {
     });
   });
 
+  root.querySelectorAll('input[name="fulfillment"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      fulfillment = radio.value === "pickup" ? "pickup" : "ship";
+      try {
+        sessionStorage.setItem("whl_fulfillment", fulfillment);
+      } catch (_) {
+        /* ignore */
+      }
+      render();
+    });
+  });
+
   const checkout = document.getElementById("checkout-btn");
   if (checkout) {
     checkout.addEventListener("click", () => startCheckout(checkout));
   }
 }
 
-// Sends the cart to our Square-backed Function and redirects to the hosted
-// checkout. Fails gracefully when Square isn't configured (e.g. static preview).
 async function startCheckout(button) {
   const cart = getCart();
   if (!cart.length) return;
@@ -121,8 +179,8 @@ async function startCheckout(button) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        fulfillment,
         items: cart.map((l) => ({
-          // Studio designs use a local unique variationId; checkout needs the Square catalog id.
           variationId: l.catalogVariationId || l.variationId,
           qty: l.qty,
           note: l.note || "",
@@ -141,7 +199,7 @@ async function startCheckout(button) {
     button.classList.remove("is-loading");
     button.removeAttribute("aria-busy");
     button.textContent = originalLabel;
-    toast("Checkout isn't available yet. Please try again soon.");
+    toast("We couldn't complete your order right now. Please try again.");
   }
 }
 
@@ -149,7 +207,9 @@ document.addEventListener("cart:change", render);
 
 loadSite()
   .then((site) => {
-    freeShippingThresholdCents = site.freeShippingThresholdCents ?? freeShippingThresholdCents;
+    freeShippingThresholdCents =
+      site.freeShippingThresholdCents ?? freeShippingThresholdCents;
+    shippingFeeCents = site.shippingFeeCents ?? shippingFeeCents;
   })
   .catch((err) => console.error(err))
   .finally(render);

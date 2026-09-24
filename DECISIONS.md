@@ -82,3 +82,9 @@
 - JSON content paths are hydrated at load time (`versionAssetUrlsInData`); HTML favicons + `styles.css` `url(...)` refs are rewritten by the same script.
 - Cloudflare dashboard: set Browser Cache TTL to **Respect Existing Headers** so zone rules do not override `_headers`.
 
+## 2026-09-23 (Email list + checkout fulfillment)
+
+- Newsletter posts to `/api/newsletter`; subscribers stored in KV binding `EMAIL_SUBSCRIBERS` under privacy-conscious keys `sub:{sha256(email)}` with `{ email, joinedAt, source, status }`. Owner notified via Resend only on **new** subscribes.
+- Checkout remains Square **Payment Links**. Tax uses `pricing_options.auto_apply_taxes` (Square catalog tax rules). Shipping uses Payment Link `shipping_fee` (flat fee from env) — not carrier rate shopping. Pickup uses order `fulfillments` type `PICKUP` with `ask_for_shipping_address: false`.
+- Post-checkout `/api/order-notify` sends owner + customer emails (pickup instructions from env). Idempotent via KV `order-notify:{orderId}`.
+
