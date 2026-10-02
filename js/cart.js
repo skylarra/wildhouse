@@ -351,6 +351,30 @@ function wire() {
     input.addEventListener("blur", () => {
       readCustomerFromDom();
     });
+    input.addEventListener("input", () => {
+      // Clear stale inline errors as the customer types.
+      const id = input.id || "";
+      const key =
+        id === "cart-customer-name"
+          ? "name"
+          : id === "cart-customer-email"
+            ? "email"
+            : id === "cart-ship-line1"
+              ? "line1"
+              : id === "cart-ship-city"
+                ? "city"
+                : id === "cart-ship-state"
+                  ? "state"
+                  : id === "cart-ship-postal"
+                    ? "postalCode"
+                    : null;
+      if (key && fieldErrors[key]) {
+        delete fieldErrors[key];
+        input.setAttribute("aria-invalid", "false");
+        input.removeAttribute("aria-describedby");
+        document.getElementById(`cart-err-${key}`)?.remove();
+      }
+    });
   });
 
   const checkout = document.getElementById("checkout-btn");
