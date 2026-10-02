@@ -152,18 +152,6 @@ function buildPrePopulatedData(customer) {
 }
 
 export async function onRequestPost({ request, env }) {
-  const cfg = squareConfig(env);
-  if (!cfg.configured) {
-    return json(
-      {
-        error: "Square not configured",
-        missing: missingSquareEnv(env),
-        environment: cfg.environment,
-      },
-      501
-    );
-  }
-
   let payload;
   try {
     payload = await request.json();
@@ -183,6 +171,18 @@ export async function onRequestPost({ request, env }) {
     );
   }
   const customer = parsed.customer;
+
+  const cfg = squareConfig(env);
+  if (!cfg.configured) {
+    return json(
+      {
+        error: "Square not configured",
+        missing: missingSquareEnv(env),
+        environment: cfg.environment,
+      },
+      501
+    );
+  }
 
   const items = Array.isArray(payload?.items) ? payload.items : [];
   const lineItems = items
