@@ -1,8 +1,12 @@
-// Wildhouse Lane flat shipping tiers for Square Payment Links.
-// These are merchant-configured customer-facing rates — NOT live USPS/carrier quotes.
+// DEPRECATED for checkout: Payment Links no longer send checkout_options.shipping_fee
+// from this module. Shipping is left to Square Dashboard shipping rate profiles /
+// Payment Link fulfillment settings. Kept for reference / local experiments only.
 //
-// Env (Cloudflare Pages):
-//   LETTER_SHIPPING_FEE_CENTS      — sticker-only letter mail (required for letter tier)
+// Wildhouse Lane flat shipping tiers (legacy — not applied at checkout).
+// These were merchant-configured customer-facing rates — NOT live USPS/carrier quotes.
+//
+// Env (Cloudflare Pages) — unused by current checkout:
+//   LETTER_SHIPPING_FEE_CENTS      — sticker-only letter mail
 //   STANDARD_SHIPPING_FEE_CENTS    — default package rate (default 699 = $6.99)
 //   LARGE_SHIPPING_FEE_CENTS       — shirts / wall decor (default 1099 = $10.99)
 //

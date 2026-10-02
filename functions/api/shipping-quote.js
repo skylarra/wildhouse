@@ -1,80 +1,45 @@
-// POST /api/shipping-quote
-// Body: { fulfillment?: "ship"|"pickup", items: [{ variationId, name?, categoryHandle?, categoryName? }] }
-// Returns the Wildhouse Lane flat shipping tier + fee for the cart (from env rates).
-// Does NOT claim live carrier rates — Payment Links only support flat shipping_fee.
-import { squareConfig, json } from "./_square.js";
-import { quoteShipping, shippingFeesFromEnv } from "./_shipping.js";
+// GET|POST /api/shipping-quote
+// Shipping is no longer calculated by this site. Square applies the merchant's
+// Dashboard shipping rate profile / Payment Link fulfillment shipping at checkout.
+// Kept as a thin compatibility endpoint so older clients do not 404.
+import { json } from "./_square.js";
 
-export async function onRequestPost({ request, env }) {
-  let payload;
+function squareDeferredPayload(fulfillment = "ship") {
+  const fulfill = fulfillment === "pickup" ? "pickup" : "ship";
+  if (fulfill === "pickup") {
+    return {
+      ok: true,
+      fulfillment: "pickup",
+      tier: "pickup",
+      label: "Local Pickup",
+      feeCents: 0,
+      rateSource: "square",
+      note: "Local pickup is free.",
+    };
+  }
+  return {
+    ok: true,
+    fulfillment: "ship",
+    tier: "square",
+    label: "Shipping",
+    feeCents: null,
+    rateSource: "square",
+    note: "Shipping is calculated by Square at checkout from your shipping rate profile.",
+  };
+}
+
+export async function onRequestPost({ request }) {
+  let payload = {};
   try {
     payload = await request.json();
   } catch {
-    return json({ error: "Invalid request body" }, 400);
+    /* empty body is fine */
   }
-
-  const fulfillment = String(payload?.fulfillment || "ship").toLowerCase() === "pickup" ? "pickup" : "ship";
-  const items = Array.isArray(payload?.items) ? payload.items : [];
-
-  const cfg = squareConfig(env);
-  try {
-    const quote = await quoteShipping({
-      env,
-      cfg: cfg.configured ? cfg : null,
-      fulfillment,
-      items: items.map((i) => ({
-        variationId: i?.variationId || i?.catalogVariationId || null,
-        name: i?.name || "",
-        categoryName: i?.categoryName || "",
-        categoryHandle: i?.categoryHandle || "",
-      })),
-    });
-
-    return json({
-      ok: true,
-      fulfillment,
-      tier: quote.tier,
-      label: quote.label,
-      feeCents: quote.feeCents,
-      // Public rate card (not secrets) so the cart can explain tiers if needed.
-      rates: {
-        letterCents: quote.fees.letterCents,
-        standardCents: quote.fees.standardCents,
-        largeCents: quote.fees.largeCents,
-        pickupCents: 0,
-      },
-      // Honest: these are Wildhouse Lane flat rates applied via Square Payment Links.
-      rateSource: "wildhouse_flat",
-    });
-  } catch (err) {
-    console.error("shipping-quote failed", String(err?.message || err));
-    // Still return configured rate card so the UI can show something useful.
-    const fees = shippingFeesFromEnv(env);
-    return json(
-      {
-        error: "We couldn't estimate shipping right now.",
-        rates: {
-          letterCents: fees.letterCents,
-          standardCents: fees.standardCents,
-          largeCents: fees.largeCents,
-          pickupCents: 0,
-        },
-      },
-      502
-    );
-  }
+  const fulfillment =
+    String(payload?.fulfillment || "ship").toLowerCase() === "pickup" ? "pickup" : "ship";
+  return json(squareDeferredPayload(fulfillment));
 }
 
-export async function onRequestGet({ env }) {
-  // Public rate card only (no cart classification). Fees come from Cloudflare env.
-  const fees = shippingFeesFromEnv(env);
-  return json({
-    rates: {
-      letterCents: fees.letterCents,
-      standardCents: fees.standardCents,
-      largeCents: fees.largeCents,
-      pickupCents: 0,
-    },
-    rateSource: "wildhouse_flat",
-  });
+export async function onRequestGet() {
+  return json(squareDeferredPayload("ship"));
 }

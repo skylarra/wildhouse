@@ -35,7 +35,7 @@
         },
         {
           "q": "How much is shipping?",
-          "a": "Shipping is a Wildhouse Lane flat rate based on what’s in your cart: letter mail for sticker-only orders, $6.99 for standard packages (magnets, keychains, and similar), and $10.99 when the order includes a shirt or wall decor. Local pickup is free. These are studio flat rates — not live carrier quotes."
+          "a": "Shipping is calculated by Square at checkout based on our Square shipping rate profile. Local pickup is free."
         },
         {
           "q": "Do you ship internationally?",

@@ -9,22 +9,14 @@
 // Square handles:
 //   - Catalog pricing (source of truth)
 //   - Sales tax via order.pricing_options.auto_apply_taxes (catalog tax rules)
-//   - Shipping fee via checkout_options.shipping_fee (Wildhouse Lane flat tier on the Square order)
+//   - Shipping via Square Dashboard shipping / Payment Link fulfillment settings
+//     (we do NOT override with checkout_options.shipping_fee)
 //   - Local pickup via order.fulfillments type PICKUP
 //
 // Customer email/name are required here before a link is created. Email is passed to Square via
 // pickup recipient (pickup) or pre_populated_data.buyer_email (ship). Shipping address is
 // required on our cart for ship orders and pre-filled on Square's hosted page.
-//
-// Honest limitation: Payment Links do NOT return address-based carrier rates.
-// Shipping is a Wildhouse Lane flat tier (letter / standard / large) from env vars,
-// classified from Square catalog categories + product names — not live USPS rates.
 import { squareConfig, squareFetch, json, missingSquareEnv } from "./_square.js";
-import {
-  quoteShipping,
-  DEFAULT_STANDARD_SHIPPING_FEE_CENTS,
-  shippingLabelForTier,
-} from "./_shipping.js";
 
 const DEFAULT_PICKUP_PREP = "P14D";
 const OWNER_EMAIL = "skylar@wildhouselane.com";
@@ -201,30 +193,13 @@ export async function onRequestPost({ request, env }) {
 
   const origin = new URL(request.url).origin;
 
-  let shippingQuote;
-  try {
-    shippingQuote = await quoteShipping({
-      env,
-      cfg,
-      fulfillment,
-      items: lineItems.map((li) => ({ variationId: li.catalog_object_id })),
-    });
-  } catch (err) {
-    console.error("checkout shipping quote failed", String(err?.message || err));
-    shippingQuote = {
-      tier: "standard",
-      label: shippingLabelForTier("standard"),
-      feeCents: DEFAULT_STANDARD_SHIPPING_FEE_CENTS,
-    };
-  }
-
   const studioNotes = lineItems.map((l) => l.note).filter(Boolean);
   const orderNoteParts = [];
   if (studioNotes.length) orderNoteParts.push(studioNotes.join(" | "));
   if (fulfillment === "pickup") {
     orderNoteParts.push("Fulfillment: LOCAL PICKUP");
   } else {
-    orderNoteParts.push(`Fulfillment: SHIPPING (${shippingQuote.label})`);
+    orderNoteParts.push("Fulfillment: SHIPPING (Square shipping rates)");
   }
   orderNoteParts.push(`Customer: ${customer.name} <${customer.email}>`);
   const orderNote = orderNoteParts.join(" — ").slice(0, 500);
@@ -248,11 +223,10 @@ export async function onRequestPost({ request, env }) {
     merchant_support_email: env.ORDER_NOTIFY_TO || env.NEWSLETTER_NOTIFY_TO || OWNER_EMAIL,
   };
 
-  const appliedShippingFeeCents = fulfillment === "pickup" ? 0 : shippingQuote.feeCents || 0;
-
   // Payment Link payload. Pickup uses fulfillment recipient for contact email
   // (cannot combine fulfillments with pre_populated_data.buyer_email).
-  // Ship uses pre_populated_data and Square still collects/confirms shipping address.
+  // Ship: ask for shipping address and do NOT set shipping_fee — Square applies
+  // the merchant's configured shipping rates from the Dashboard.
   let prePopulatedData = null;
 
   if (fulfillment === "pickup") {
@@ -260,12 +234,6 @@ export async function onRequestPost({ request, env }) {
     checkoutOptions.ask_for_shipping_address = false;
   } else {
     checkoutOptions.ask_for_shipping_address = true;
-    if (appliedShippingFeeCents > 0) {
-      checkoutOptions.shipping_fee = {
-        name: shippingQuote.label || "Shipping",
-        charge: { amount: appliedShippingFeeCents, currency: "USD" },
-      };
-    }
     prePopulatedData = buildPrePopulatedData(customer);
   }
 
@@ -287,9 +255,8 @@ export async function onRequestPost({ request, env }) {
       url: link.url,
       orderId: link.order_id,
       fulfillment,
-      shippingTier: shippingQuote.tier,
-      shippingLabel: shippingQuote.label,
-      shippingFeeCents: appliedShippingFeeCents,
+      shippingSource: fulfillment === "pickup" ? "pickup" : "square",
+      shippingFeeCents: fulfillment === "pickup" ? 0 : null,
     });
   } catch (err) {
     const message = String(err?.message || err);
