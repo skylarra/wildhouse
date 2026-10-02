@@ -61,11 +61,25 @@ function fulfillmentInfo(order) {
   };
 }
 
-function extractBuyerEmail(_order, fulfillment) {
+function extractBuyerEmail(order, fulfillment) {
   const fromFulfillment = String(fulfillment.recipient?.email_address || "")
     .trim()
     .toLowerCase();
   if (fromFulfillment && EMAIL_RE.test(fromFulfillment)) return fromFulfillment;
+
+  // Set at Payment Link create time when the cart collected a confirmed email.
+  const fromMeta = String(order?.metadata?.customer_email || "")
+    .trim()
+    .toLowerCase();
+  if (fromMeta && EMAIL_RE.test(fromMeta)) return fromMeta;
+
+  // Fallback: "Customer: Name <email>" written into the order note.
+  const noteMatch = String(order?.note || "").match(/<([^>\s]+@[^>\s]+)>/);
+  const fromNote = String(noteMatch?.[1] || "")
+    .trim()
+    .toLowerCase();
+  if (fromNote && EMAIL_RE.test(fromNote)) return fromNote;
+
   return "";
 }
 
