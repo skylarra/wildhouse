@@ -1,5 +1,7 @@
 // Cart page — line items, quantity controls, fulfillment choice (ship / pickup),
-// required customer contact fields, auto shipping tier, and Square Payment Link checkout.
+// required customer contact fields, and Square Payment Link checkout.
+// Shipping amounts for ship orders come from Square (Dashboard shipping rates),
+// not a site-side letter/standard/large calculator.
 import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
 import { loadSite, sitePath } from "./content.js";
@@ -12,15 +14,6 @@ const CUSTOMER_KEY = "whl_checkout_customer";
 
 /** @type {"ship" | "pickup"} */
 let fulfillment = "ship";
-
-/** Latest quote from /api/shipping-quote (fees come from Cloudflare env, not hard-coded). */
-let shippingQuote = {
-  tier: "standard",
-  label: "Standard Shipping",
-  feeCents: null,
-  loading: false,
-  error: false,
-};
 
 /** @type {{ name: string, email: string, phone: string, line1: string, line2: string, city: string, state: string, postalCode: string, country: string }} */
 let customer = {
@@ -217,30 +210,19 @@ function lineHTML(line) {
 
 function shippingRowLabel() {
   if (fulfillment === "pickup") return "Local Pickup";
-  return shippingQuote.label || "Shipping";
+  return "Shipping";
 }
 
 function shippingRowValue() {
   if (fulfillment === "pickup") return "FREE";
-  if (shippingQuote.loading) return "…";
-  if (shippingQuote.feeCents == null) return "—";
-  if (shippingQuote.feeCents === 0) return "FREE";
-  return formatMoney(shippingQuote.feeCents);
+  return "Calculated at checkout";
 }
 
 function shippingNote() {
   if (fulfillment === "pickup") {
     return "Local pickup is free. We'll confirm when your order is ready.";
   }
-  if (shippingQuote.loading) return "Calculating shipping…";
-  if (shippingQuote.error) return "Shipping will be confirmed at checkout.";
-  if (shippingQuote.tier === "letter") {
-    return "Sticker-only order — Letter Mail rate applied (Wildhouse Lane flat rate, not live USPS).";
-  }
-  if (shippingQuote.tier === "large") {
-    return "Includes a large item — Large Item Shipping applied (Wildhouse Lane flat rate).";
-  }
-  return "Standard Shipping applied (Wildhouse Lane flat rate for packaged goods).";
+  return "Shipping is calculated at checkout.";
 }
 
 function render() {
@@ -288,19 +270,20 @@ function render() {
         <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${formatMoney(
           subtotal
         )}</span></div>
-        <div class="cart-summary__row"><span id="cart-shipping-label">${escapeHtml(
+        <div class="cart-summary__row${
+          fulfillment === "ship" ? " cart-summary__row--muted" : ""
+        }"><span id="cart-shipping-label">${escapeHtml(
           shippingRowLabel()
         )}</span><span id="cart-shipping">${shippingRowValue()}</span></div>
         <div class="cart-summary__row cart-summary__row--muted"><span>Tax</span><span>Calculated at checkout</span></div>
         <p class="cart-summary__ship" id="cart-shipping-note">${escapeHtml(shippingNote())}</p>
         <button class="btn secondary cart-checkout" id="checkout-btn" type="button">Checkout</button>
-        <p class="cart-summary__note">Secure checkout powered by Square. Sales tax is applied by Square on the next step.</p>
+        <p class="cart-summary__note">Secure checkout powered by Square. Shipping and sales tax are calculated at checkout.</p>
         <a class="cart-continue" href="./shop.html">Continue shopping</a>
       </aside>
     </div>`;
 
   wire();
-  refreshShippingQuote();
 }
 
 function wire() {
@@ -351,71 +334,35 @@ function wire() {
     input.addEventListener("blur", () => {
       readCustomerFromDom();
     });
+    input.addEventListener("input", () => {
+      const id = input.id || "";
+      const key =
+        id === "cart-customer-name"
+          ? "name"
+          : id === "cart-customer-email"
+            ? "email"
+            : id === "cart-ship-line1"
+              ? "line1"
+              : id === "cart-ship-city"
+                ? "city"
+                : id === "cart-ship-state"
+                  ? "state"
+                  : id === "cart-ship-postal"
+                    ? "postalCode"
+                    : null;
+      if (key && fieldErrors[key]) {
+        delete fieldErrors[key];
+        input.setAttribute("aria-invalid", "false");
+        input.removeAttribute("aria-describedby");
+        document.getElementById(`cart-err-${key}`)?.remove();
+      }
+    });
   });
 
   const checkout = document.getElementById("checkout-btn");
   if (checkout) {
     checkout.addEventListener("click", () => startCheckout(checkout));
   }
-}
-
-let quoteRequestId = 0;
-
-async function refreshShippingQuote() {
-  const cart = getCart();
-  if (!cart.length) return;
-
-  const requestId = ++quoteRequestId;
-  shippingQuote = { ...shippingQuote, loading: true, error: false };
-  updateShippingDom();
-
-  try {
-    const res = await fetch(sitePath("api/shipping-quote"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fulfillment,
-        items: cart.map((l) => ({
-          variationId: l.catalogVariationId || l.variationId,
-          name: l.name || "",
-          categoryName: l.categoryName || "",
-          categoryHandle: l.categoryHandle || "",
-        })),
-      }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (requestId !== quoteRequestId) return;
-    if (!res.ok) throw new Error(data.error || `Quote failed (${res.status})`);
-
-    shippingQuote = {
-      tier: data.tier || "standard",
-      label: data.label || "Shipping",
-      feeCents: typeof data.feeCents === "number" ? data.feeCents : null,
-      loading: false,
-      error: false,
-    };
-  } catch (err) {
-    console.error(err);
-    if (requestId !== quoteRequestId) return;
-    shippingQuote = {
-      ...shippingQuote,
-      loading: false,
-      error: true,
-      feeCents: fulfillment === "pickup" ? 0 : shippingQuote.feeCents,
-      label: fulfillment === "pickup" ? "Local Pickup" : shippingQuote.label,
-      tier: fulfillment === "pickup" ? "pickup" : shippingQuote.tier,
-    };
-  }
-  updateShippingDom();
-}
-
-function updateShippingDom() {
-  const label = document.getElementById("cart-shipping-label");
-  const value = document.getElementById("cart-shipping");
-  const note = document.getElementById("cart-shipping-note");
-  if (label) label.textContent = shippingRowLabel();
-  if (value) value.textContent = shippingRowValue();
-  if (note) note.textContent = shippingNote();
 }
 
 function customerPayload() {
