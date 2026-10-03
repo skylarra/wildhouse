@@ -2,7 +2,7 @@
 // Body: {
 //   items: [{ variationId, qty, note? }],
 //   fulfillment?: "ship" | "pickup",
-//   customer: { name, email, phone?, address? }
+//   customer: { name, email, phone, address? }
 // }
 // Creates a Square Payment Link (Square-hosted checkout) and returns { url, orderId }.
 //
@@ -13,9 +13,9 @@
 //     (we do NOT override with checkout_options.shipping_fee)
 //   - Local pickup via order.fulfillments type PICKUP
 //
-// Customer email/name are required here before a link is created. Email is passed to Square via
-// pickup recipient (pickup) or pre_populated_data.buyer_email (ship). Shipping address is
-// required on our cart for ship orders and pre-filled on Square's hosted page.
+// Customer name, email, and phone are required here before a link is created. Email/phone are
+// passed to Square via pickup recipient (pickup) or pre_populated_data (ship). Shipping address
+// is required on our cart for ship orders and pre-filled on Square's hosted page.
 import { squareConfig, squareFetch, json, missingSquareEnv } from "./_square.js";
 
 const DEFAULT_PICKUP_PREP = "P14D";
@@ -36,7 +36,7 @@ function splitName(fullName = "") {
   return { firstName: parts[0], lastName: parts.slice(1).join(" ") };
 }
 
-/** Optional phone → E.164 when possible; otherwise omit (Square rejects bad numbers). */
+/** Phone → E.164 when possible (required for checkout). */
 function normalizePhone(raw) {
   const s = String(raw || "").trim();
   if (!s) return "";
@@ -55,6 +55,7 @@ function parseCustomer(raw, fulfillment) {
     .trim()
     .toLowerCase();
   const phone = String(raw?.phone || "").trim();
+  const phoneE164 = normalizePhone(phone);
   const addr = raw?.address && typeof raw.address === "object" ? raw.address : {};
   const address = {
     line1: String(addr.line1 || "").trim(),
@@ -74,6 +75,11 @@ function parseCustomer(raw, fulfillment) {
   } else if (!EMAIL_RE.test(email)) {
     errors.push("Please enter a valid email address so we can send your order confirmation.");
   }
+  if (!phone) {
+    errors.push("Please enter your phone number.");
+  } else if (!phoneE164) {
+    errors.push("Please enter a valid phone number.");
+  }
 
   if (fulfillment === "ship") {
     if (!address.line1) errors.push("Please enter your shipping address.");
@@ -89,7 +95,7 @@ function parseCustomer(raw, fulfillment) {
       name,
       email,
       phone,
-      phoneE164: normalizePhone(phone),
+      phoneE164,
       address,
     },
   };
@@ -105,8 +111,8 @@ function buildPickupFulfillment(env, customer) {
   const recipient = {
     display_name: customer.name || "Customer",
     email_address: customer.email,
+    phone_number: customer.phoneE164,
   };
-  if (customer.phoneE164) recipient.phone_number = customer.phoneE164;
 
   return {
     type: "PICKUP",
@@ -124,8 +130,8 @@ function buildPrePopulatedData(customer) {
   const { firstName, lastName } = splitName(customer.name);
   const data = {
     buyer_email: customer.email,
+    buyer_phone_number: customer.phoneE164,
   };
-  if (customer.phoneE164) data.buyer_phone_number = customer.phoneE164;
 
   const a = customer.address || {};
   if (a.line1) {
