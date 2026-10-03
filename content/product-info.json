@@ -2,7 +2,7 @@
   "_comment": "Shared product-page notes shown on every product detail page. Edit copy here — no code changes needed. processingTime is the estimated handmade lead time before shipping.",
   "processingTime": {
     "label": "Estimated processing",
-    "text": "Handmade to order — please give 2–3 weeks for processing, but will normally ship as soon as possible."
+    "text": "Handmade to order — please allow 3–4 business days for processing."
   },
   "handmade": {
     "label": "Handmade",
