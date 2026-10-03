@@ -17,7 +17,7 @@
         },
         {
           "q": "Will I receive a tracking number?",
-          "a": "Yes — when your order ships, you’ll receive shipping details and tracking information by email when the carrier provides them."
+          "a": "Sticker-only orders do not include tracking. All other orders include tracking when the carrier provides it."
         }
       ]
     },
@@ -27,7 +27,7 @@
       "items": [
         {
           "q": "How long does processing take?",
-          "a": "Please allow up to 2–3 weeks for processing. Handmade pieces are made to order, and timelines can vary during busy seasons. We always try our best to ship as soon as possible."
+          "a": "Please allow 3–4 business days for processing."
         },
         {
           "q": "Which carrier do you use?",

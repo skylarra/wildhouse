@@ -27,7 +27,7 @@ let galleryImages = [];
 const DEFAULT_INFO = {
   processingTime: {
     label: "Estimated processing",
-    text: "Handmade to order — typically ships in 3–5 business days.",
+    text: "Handmade to order — please allow 3–4 business days for processing.",
   },
   handmade: {
     label: "Handmade",
