@@ -77,6 +77,12 @@ function validateCustomer() {
   } else if (!EMAIL_RE.test(customer.email)) {
     errors.email = EMAIL_MSG;
   }
+  const phoneDigits = String(customer.phone || "").replace(/\D/g, "");
+  if (!customer.phone.trim()) {
+    errors.phone = "Please enter your phone number.";
+  } else if (phoneDigits.length < 10) {
+    errors.phone = "Please enter a valid phone number.";
+  }
 
   if (fulfillment === "ship") {
     if (!customer.line1) errors.line1 = "Please enter your shipping address.";
@@ -122,10 +128,13 @@ function customerFieldsHTML() {
       ${fieldErrorHTML("email")}
 
       <label class="cart-customer__field" for="cart-customer-phone">
-        <span>Phone <span class="cart-customer__optional">(optional)</span></span>
-        <input id="cart-customer-phone" name="phone" type="tel" autocomplete="tel"
-          value="${escapeHtml(customer.phone)}">
+        <span>Phone <abbr title="required">*</abbr></span>
+        <input id="cart-customer-phone" name="phone" type="tel" autocomplete="tel" required
+          value="${escapeHtml(customer.phone)}"
+          aria-invalid="${fieldErrors.phone ? "true" : "false"}"
+          ${fieldErrors.phone ? 'aria-describedby="cart-err-phone"' : ""}>
       </label>
+      ${fieldErrorHTML("phone")}
 
       <div class="cart-customer__ship" id="cart-ship-fields"${shipHidden}>
         <p class="cart-customer__ship-title">Shipping address</p>
@@ -341,15 +350,17 @@ function wire() {
           ? "name"
           : id === "cart-customer-email"
             ? "email"
-            : id === "cart-ship-line1"
-              ? "line1"
-              : id === "cart-ship-city"
-                ? "city"
-                : id === "cart-ship-state"
-                  ? "state"
-                  : id === "cart-ship-postal"
-                    ? "postalCode"
-                    : null;
+            : id === "cart-customer-phone"
+              ? "phone"
+              : id === "cart-ship-line1"
+                ? "line1"
+                : id === "cart-ship-city"
+                  ? "city"
+                  : id === "cart-ship-state"
+                    ? "state"
+                    : id === "cart-ship-postal"
+                      ? "postalCode"
+                      : null;
       if (key && fieldErrors[key]) {
         delete fieldErrors[key];
         input.setAttribute("aria-invalid", "false");
@@ -385,12 +396,13 @@ function customerPayload() {
 }
 
 function focusFirstError() {
-  const order = ["name", "email", "line1", "city", "state", "postalCode"];
+  const order = ["name", "email", "phone", "line1", "city", "state", "postalCode"];
   for (const key of order) {
     if (!fieldErrors[key]) continue;
     const idMap = {
       name: "cart-customer-name",
       email: "cart-customer-email",
+      phone: "cart-customer-phone",
       line1: "cart-ship-line1",
       city: "cart-ship-city",
       state: "cart-ship-state",
