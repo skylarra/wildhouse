@@ -261,7 +261,7 @@ function render() {
             <input type="radio" name="fulfillment" value="pickup" ${
               fulfillment === "pickup" ? "checked" : ""
             }>
-            <span>Local pickup — FREE</span>
+            <span>Local pickup in Pendleton, SC — FREE</span>
           </label>
         </fieldset>
 
