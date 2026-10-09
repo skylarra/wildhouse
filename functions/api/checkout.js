@@ -191,6 +191,19 @@ export async function onRequestPost({ request, env }) {
       };
       const note = String(l.note || "").trim();
       if (note) item.note = note.slice(0, 500);
+      // Square LIST modifiers (catalog option ids). TEXT modifiers ride in `note`.
+      const mods = Array.isArray(l.modifiers) ? l.modifiers : [];
+      const squareMods = mods
+        .map((m) => {
+          const id = m?.catalogObjectId || m?.catalog_object_id || m?.id;
+          if (!id) return null;
+          return {
+            catalog_object_id: String(id),
+            quantity: String(Math.max(1, parseInt(m.quantity, 10) || 1)),
+          };
+        })
+        .filter(Boolean);
+      if (squareMods.length) item.modifiers = squareMods;
       return item;
     });
 

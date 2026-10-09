@@ -22,7 +22,8 @@
     "IMG_TEE_1": { "url": "./assets/coming-soon.png" },
     "IMG_TEE_2": { "url": "./assets/WILDHOUSE-logomark-pink.svg" },
     "IMG_LUNA_1": { "url": "./assets/coming-soon.png" },
-    "IMG_CUSTOM_KEY": { "url": "./assets/studio/charms/tree.svg" }
+    "IMG_CUSTOM_KEY": { "url": "./assets/studio/charms/tree.svg" },
+    "IMG_PET_MAGNET": { "url": "./assets/custom/napoleon-magnet.png" }
   },
   "inventory": {
     "VAR_SUNNY_DEFAULT": 14,
@@ -42,7 +43,8 @@
     "VAR_TEE_SAND_M": 7,
     "VAR_TEE_SAND_L": 3,
     "VAR_TEE_SAND_XL": 0,
-    "VAR_CUSTOM_KEYCHAIN": 999
+    "VAR_CUSTOM_KEYCHAIN": 999,
+    "VAR_PET_MAGNET_DEFAULT": 12
   },
   "objects": [
     {
@@ -223,6 +225,49 @@
         ]
       },
       "custom": { "handle": "custom-keychain", "tags": ["custom", "studio", "handmade", "charm-set"], "featured": false }
+    },
+    {
+      "type": "ITEM",
+      "id": "ITEM_PET_MAGNET",
+      "item_data": {
+        "name": "Personalized Pet Magnet",
+        "description": "A custom pet magnet engraved with your pet’s name. Enter the name below — we’ll engrave it by hand.",
+        "category_id": "CAT_MAGNETS",
+        "image_ids": ["IMG_PET_MAGNET"],
+        "variations": [
+          {
+            "type": "ITEM_VARIATION",
+            "id": "VAR_PET_MAGNET_DEFAULT",
+            "item_variation_data": {
+              "item_id": "ITEM_PET_MAGNET",
+              "name": "Regular",
+              "sku": "WHL-MAG-PET",
+              "pricing_type": "FIXED_PRICING",
+              "price_money": { "amount": 1800, "currency": "USD" }
+            }
+          }
+        ]
+      },
+      "custom": {
+        "handle": "personalized-pet-magnet",
+        "tags": ["pet", "personalized", "magnet"],
+        "featured": true,
+        "collection": "Personalized Gifts",
+        "collections": ["Personalized Gifts"],
+        "modifiers": [
+          {
+            "listId": "MODLIST_PET_NAME",
+            "name": "Pet Name",
+            "modifierType": "TEXT",
+            "required": true,
+            "maxTextLength": 20,
+            "minSelected": 1,
+            "maxSelected": 1,
+            "ordinal": 0,
+            "options": []
+          }
+        ]
+      }
     }
   ]
 }

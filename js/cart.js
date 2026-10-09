@@ -2,7 +2,7 @@
 // required customer contact fields, and Square Payment Link checkout.
 // Shipping amounts for ship orders come from Square (Dashboard shipping rates),
 // not a site-side letter/standard/large calculator.
-import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
+import { getCart, setLineQty, removeLine, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
 import { loadSite, sitePath } from "./content.js";
 import { escapeHtml, toast } from "./ui.js";
@@ -179,7 +179,7 @@ function customerFieldsHTML() {
     </fieldset>`;
 }
 
-function lineHTML(line) {
+function lineHTML(line, index) {
   const variant = line.variationName
     ? `<p class="cart-line__variant">${escapeHtml(line.variationName)}</p>`
     : "";
@@ -189,7 +189,7 @@ function lineHTML(line) {
       ? "./custom-creations.html"
       : `./product.html?handle=${encodeURIComponent(line.handle)}`;
   return `
-    <div class="cart-line" data-variation-id="${line.variationId}">
+    <div class="cart-line" data-line-index="${index}" data-variation-id="${line.variationId}">
       <a href="${href}" class="cart-line__media">
         <img src="${line.image}" alt="${escapeHtml(line.name)}" loading="lazy">
       </a>
@@ -247,7 +247,7 @@ function render() {
   root.innerHTML = `
     <h1>Your Cart</h1>
     <div class="cart-layout">
-      <div class="cart-lines">${cart.map(lineHTML).join("")}</div>
+      <div class="cart-lines">${cart.map((line, i) => lineHTML(line, i)).join("")}</div>
       <aside class="cart-summary">
         <h2>Summary</h2>
 
@@ -288,27 +288,27 @@ function render() {
 
 function wire() {
   root.querySelectorAll(".cart-line").forEach((lineEl) => {
-    const id = lineEl.dataset.variationId;
+    const index = parseInt(lineEl.dataset.lineIndex, 10);
     const input = lineEl.querySelector(".qty-input");
 
     lineEl.querySelector('[data-action="inc"]').addEventListener("click", () => {
       readCustomerFromDom();
-      setQty(id, (parseInt(input.value, 10) || 0) + 1);
+      setLineQty(index, (parseInt(input.value, 10) || 0) + 1);
       render();
     });
     lineEl.querySelector('[data-action="dec"]').addEventListener("click", () => {
       readCustomerFromDom();
-      setQty(id, (parseInt(input.value, 10) || 0) - 1);
+      setLineQty(index, (parseInt(input.value, 10) || 0) - 1);
       render();
     });
     input.addEventListener("change", () => {
       readCustomerFromDom();
-      setQty(id, parseInt(input.value, 10) || 0);
+      setLineQty(index, parseInt(input.value, 10) || 0);
       render();
     });
     lineEl.querySelector('[data-action="remove"]').addEventListener("click", () => {
       readCustomerFromDom();
-      removeFromCart(id);
+      removeLine(index);
       render();
     });
   });
@@ -434,6 +434,7 @@ async function startCheckout(button) {
           variationId: l.catalogVariationId || l.variationId,
           qty: l.qty,
           note: l.note || "",
+          modifiers: Array.isArray(l.modifiers) ? l.modifiers : [],
         })),
       }),
     });

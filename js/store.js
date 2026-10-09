@@ -65,12 +65,17 @@ export function addToCart(line, qty = 1) {
   return cart;
 }
 
-export function setQty(variationId, qty) {
+export function setQty(variationId, qty, note) {
   let cart = getCart();
+  const noteKey = note == null ? null : String(note || "");
+  const matches = (l) =>
+    l.variationId === variationId &&
+    (noteKey === null || String(l.note || "") === noteKey);
+
   if (qty <= 0) {
-    cart = cart.filter((l) => l.variationId !== variationId);
+    cart = cart.filter((l) => !matches(l));
   } else {
-    const line = cart.find((l) => l.variationId === variationId);
+    const line = cart.find(matches);
     if (line) line.qty = qty;
   }
   write(KEYS.cart, cart);
@@ -78,8 +83,23 @@ export function setQty(variationId, qty) {
   return cart;
 }
 
-export function removeFromCart(variationId) {
-  return setQty(variationId, 0);
+export function removeFromCart(variationId, note) {
+  return setQty(variationId, 0, note);
+}
+
+/** Update/remove a cart line by index (preferred when notes/modifiers differ). */
+export function setLineQty(index, qty) {
+  let cart = getCart();
+  if (index < 0 || index >= cart.length) return cart;
+  if (qty <= 0) cart = cart.filter((_, i) => i !== index);
+  else cart[index] = { ...cart[index], qty };
+  write(KEYS.cart, cart);
+  emit("cart:change", { cart });
+  return cart;
+}
+
+export function removeLine(index) {
+  return setLineQty(index, 0);
 }
 
 export function clearCart() {

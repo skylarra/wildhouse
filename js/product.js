@@ -22,6 +22,8 @@ let info = null;
 let variantMedia = {};
 let variantModel = null;
 let selection = {};
+/** @type {Record<string, string | string[]>} text value or selected option id(s) keyed by listId */
+let modifierValues = {};
 let galleryIndex = 0;
 let galleryImages = [];
 
@@ -249,6 +251,200 @@ function renderVariations() {
   return `<div class="product-options" id="product-options">${variantModel.axes.map(renderAxisSection).join("")}</div>`;
 }
 
+function productModifiers() {
+  return Array.isArray(product?.modifiers) ? product.modifiers : [];
+}
+
+function initModifierValues() {
+  modifierValues = {};
+  for (const mod of productModifiers()) {
+    if (mod.modifierType === "TEXT") {
+      modifierValues[mod.listId] = "";
+      continue;
+    }
+    const defaults = (mod.options || []).filter((o) => o.onByDefault).map((o) => o.id);
+    const max = Number(mod.maxSelected) || 0;
+    if (max === 1 || max === 0) {
+      modifierValues[mod.listId] = defaults[0] || "";
+    } else {
+      modifierValues[mod.listId] = defaults.slice(0, max > 0 ? max : defaults.length);
+    }
+  }
+}
+
+function selectedListModifierOptions() {
+  const selected = [];
+  for (const mod of productModifiers()) {
+    if (mod.modifierType === "TEXT") continue;
+    const val = modifierValues[mod.listId];
+    const ids = Array.isArray(val) ? val : val ? [val] : [];
+    for (const id of ids) {
+      const opt = (mod.options || []).find((o) => o.id === id);
+      if (opt) selected.push({ list: mod, option: opt });
+    }
+  }
+  return selected;
+}
+
+function modifierExtraCents() {
+  return selectedListModifierOptions().reduce((sum, s) => sum + (s.option.priceCents || 0), 0);
+}
+
+function buildModifierNote() {
+  const parts = [];
+  for (const mod of productModifiers()) {
+    if (mod.modifierType === "TEXT") {
+      const text = String(modifierValues[mod.listId] || "").trim();
+      if (text) parts.push(`${mod.name}: ${text}`);
+      continue;
+    }
+    const picked = selectedListModifierOptions().filter((s) => s.list.listId === mod.listId);
+    if (picked.length) {
+      parts.push(`${mod.name}: ${picked.map((s) => s.option.name).join(", ")}`);
+    }
+  }
+  return parts.join(" · ").slice(0, 500);
+}
+
+function buildCheckoutModifiers() {
+  return selectedListModifierOptions().map((s) => ({
+    catalogObjectId: s.option.id,
+    quantity: "1",
+  }));
+}
+
+function validateModifiers() {
+  const errors = [];
+  for (const mod of productModifiers()) {
+    if (mod.modifierType === "TEXT") {
+      const text = String(modifierValues[mod.listId] || "").trim();
+      if (mod.required && !text) {
+        errors.push(`Please enter ${mod.name || "the required text"}.`);
+      }
+      continue;
+    }
+    const val = modifierValues[mod.listId];
+    const count = Array.isArray(val) ? val.length : val ? 1 : 0;
+    const min = Number(mod.minSelected) || 0;
+    if (min > 0 && count < min) {
+      errors.push(`Please choose ${mod.name || "an option"}.`);
+    }
+  }
+  return errors;
+}
+
+function renderModifierList(mod) {
+  const max = Number(mod.maxSelected) || 0;
+  const multi = max === 0 || max > 1;
+  const current = modifierValues[mod.listId];
+  const selectedIds = new Set(Array.isArray(current) ? current : current ? [current] : []);
+  const inputType = multi ? "checkbox" : "radio";
+  const options = (mod.options || [])
+    .map((opt) => {
+      const checked = selectedIds.has(opt.id);
+      const price =
+        opt.priceCents > 0 ? ` (+${formatMoney(opt.priceCents)})` : "";
+      return `
+        <label class="modifier-option">
+          <input type="${inputType}" name="modifier-${escapeHtml(mod.listId)}"
+            value="${escapeHtml(opt.id)}" data-modifier-list="${escapeHtml(mod.listId)}"
+            ${checked ? "checked" : ""}>
+          <span>${escapeHtml(opt.name)}${escapeHtml(price)}</span>
+        </label>`;
+    })
+    .join("");
+
+  return `
+    <section class="modifier-field" data-modifier-list="${escapeHtml(mod.listId)}">
+      <h2 class="option-section__title">${escapeHtml(mod.name)}
+        ${mod.required ? '<abbr title="required">*</abbr>' : ""}
+      </h2>
+      <div class="modifier-options">${options}</div>
+    </section>`;
+}
+
+function renderModifierText(mod) {
+  const value = String(modifierValues[mod.listId] || "");
+  const maxLen = Number(mod.maxTextLength) > 0 ? Number(mod.maxTextLength) : 255;
+  const id = `modifier-text-${mod.listId}`;
+  return `
+    <section class="modifier-field" data-modifier-list="${escapeHtml(mod.listId)}">
+      <label class="modifier-text" for="${escapeHtml(id)}">
+        <span class="option-section__title">${escapeHtml(mod.name)}
+          ${mod.required ? '<abbr title="required">*</abbr>' : ""}
+        </span>
+        <input id="${escapeHtml(id)}" type="text" maxlength="${maxLen}"
+          data-modifier-list="${escapeHtml(mod.listId)}" data-modifier-type="TEXT"
+          value="${escapeHtml(value)}" autocomplete="off"
+          ${mod.required ? "required" : ""}
+          aria-required="${mod.required ? "true" : "false"}">
+      </label>
+      <p class="modifier-hint">${maxLen} character max</p>
+    </section>`;
+}
+
+function renderModifiers() {
+  const mods = productModifiers();
+  if (!mods.length) return "";
+  return `
+    <div class="product-modifiers" id="product-modifiers">
+      ${mods
+        .map((mod) =>
+          mod.modifierType === "TEXT" ? renderModifierText(mod) : renderModifierList(mod)
+        )
+        .join("")}
+      <p class="modifier-error" id="modifier-error" hidden role="alert"></p>
+    </div>`;
+}
+
+function setModifierError(msg) {
+  const el = document.getElementById("modifier-error");
+  if (!el) return;
+  if (!msg) {
+    el.hidden = true;
+    el.textContent = "";
+    return;
+  }
+  el.hidden = false;
+  el.textContent = msg;
+}
+
+function wireModifiers() {
+  const mount = document.getElementById("product-modifiers");
+  if (!mount) return;
+
+  mount.querySelectorAll('input[data-modifier-type="TEXT"]').forEach((input) => {
+    input.addEventListener("input", () => {
+      modifierValues[input.dataset.modifierList] = input.value;
+      setModifierError("");
+    });
+  });
+
+  mount.querySelectorAll("input[data-modifier-list]:not([data-modifier-type])").forEach((input) => {
+    input.addEventListener("change", () => {
+      const listId = input.dataset.modifierList;
+      const mod = productModifiers().find((m) => m.listId === listId);
+      if (!mod) return;
+      const max = Number(mod.maxSelected) || 0;
+      const multi = max === 0 || max > 1;
+      if (!multi) {
+        modifierValues[listId] = input.checked ? input.value : "";
+      } else {
+        const checked = [
+          ...mount.querySelectorAll(`input[data-modifier-list="${CSS.escape(listId)}"]:checked`),
+        ].map((el) => el.value);
+        if (max > 0 && checked.length > max) {
+          input.checked = false;
+          return;
+        }
+        modifierValues[listId] = checked;
+      }
+      setModifierError("");
+      renderPriceAndStock();
+    });
+  });
+}
+
 function syncSelectionToVariation({ updateGallery = false } = {}) {
   let next = variantModel.findVariation(selection);
   // If current size is unavailable for the color, snap to first in-stock size.
@@ -309,7 +505,8 @@ function renderPriceAndStock() {
   const addBtn = document.getElementById("add-to-cart");
   const qtyInput = document.getElementById("qty");
   if (priceEl) {
-    priceEl.innerHTML = priceDisplayHTML(selectedVariation.priceCents, {}, formatMoney);
+    const cents = (selectedVariation?.priceCents || 0) + modifierExtraCents();
+    priceEl.innerHTML = priceDisplayHTML(cents, {}, formatMoney);
   }
   const stock = currentStock();
   const status = stockCopy(stock);
@@ -362,6 +559,7 @@ function renderOptionsMount() {
 function render() {
   variantModel = buildVariantModel(product.variations);
   selection = defaultSelection(variantModel, product.variations);
+  initModifierValues();
   syncSelectionToVariation();
   const fav = isFavorite(product.id);
   const relatedHeading = info.relatedHeading || DEFAULT_INFO.relatedHeading;
@@ -394,6 +592,7 @@ function render() {
           text: product.description,
         })}</div>
         ${renderVariations()}
+        ${renderModifiers()}
         <div class="product-actions">
           <label class="field qty-field">
             <span>Qty</span>
@@ -413,6 +612,7 @@ function render() {
   renderPriceAndStock();
   wireGallery();
   wireOptionControls();
+  wireModifiers();
   wireControls();
   renderRelated();
 }
@@ -492,6 +692,17 @@ function wireControls() {
   addBtn.addEventListener("click", () => {
     const stock = currentStock();
     if (stock <= 0) return;
+    const modErrors = validateModifiers();
+    if (modErrors.length) {
+      setModifierError(modErrors[0]);
+      const firstInvalid =
+        document.querySelector('#product-modifiers input[required]:invalid') ||
+        document.querySelector("#product-modifiers input[data-modifier-type=\"TEXT\"]") ||
+        document.querySelector("#product-modifiers input");
+      firstInvalid?.focus();
+      return;
+    }
+    setModifierError("");
     let qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
     qty = Math.min(qty, stock);
     qtyInput.value = String(qty);
@@ -500,18 +711,22 @@ function wireControls() {
       selectedVariation?.image ||
       product.images[0] ||
       collectionCoverFallbackSrc();
+    const note = buildModifierNote();
+    const modifiers = buildCheckoutModifiers();
     addToCart(
       {
         variationId: selectedVariation.id,
         itemId: product.id,
         name: product.name,
         variationName: product.hasVariants ? selectedVariation.name : "",
-        priceCents: selectedVariation.priceCents,
+        priceCents: selectedVariation.priceCents + modifierExtraCents(),
         image: cartImage,
         handle: product.handle,
         // Used by shipping-quote when Square catalog lookup is unavailable.
         categoryName: product.categoryName || "",
         categoryHandle: product.categoryHandle || "",
+        note,
+        modifiers,
       },
       qty
     );
