@@ -221,6 +221,10 @@
   font-weight: 700;
   color: var(--brown, #4e2829);
 }
+/* Shop / collection / home product cards sit on brown — sale price needs light pink */
+.product-card__price .price__now {
+  color: var(--light-pink);
+}
 .price__from {
   font-weight: 600;
 }
