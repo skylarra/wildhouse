@@ -11,13 +11,6 @@ import {
 import { normalizeSitePromo, promoBannerText } from "./site-promo.js";
 import { escapeHtml } from "./ui.js";
 
-if (!requireAdmin()) {
-  /* redirected */
-} else {
-  mountAdminChrome();
-  boot();
-}
-
 const form = document.getElementById("promo-form");
 const statusEl = document.getElementById("admin-status");
 const enabledEl = document.getElementById("promo-enabled");
@@ -155,4 +148,11 @@ function boot() {
     el?.addEventListener("change", updatePreview);
   });
   load();
+}
+
+if (!requireAdmin()) {
+  /* redirected to login */
+} else {
+  mountAdminChrome();
+  boot();
 }
