@@ -3,16 +3,6 @@
   "version": 2,
   "entries": [
     {
-      "collectionKey": "witches-lane",
-      "displayName": "Witches Lane",
-      "visible": true,
-      "featured": true,
-      "sortOrder": 1,
-      "description": "Spellbound motifs, midnight flora, and a little woodland witchcraft for everyday carry.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
       "collectionKey": "moon-sun-and-stars",
       "displayName": "Moon, Sun & Stars",
       "visible": true,
@@ -23,104 +13,22 @@
       "featuredImage": "/assets/collections/moon-sun-and-stars.png"
     },
     {
-      "collectionKey": "nocturnal",
-      "displayName": "Nocturnal",
+      "collectionKey": "personalized_gifts",
+      "displayName": "Personalized Gifts",
+      "visible": true,
+      "featured": true,
+      "sortOrder": 1,
+      "description": "Spells, potions, and charms for the modern witch.",
+      "heroImage": "/assets/collections/personalized_gifts.png",
+      "featuredImage": "/assets/collections/personalized_gifts.png"
+    },
+    {
+      "collectionKey": "wildlife",
+      "displayName": "Wildlife",
       "visible": true,
       "featured": true,
       "sortOrder": 3,
-      "description": "Creatures and quiet hours — moths, moonlight, and the soft magic after dark.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "wild-things",
-      "displayName": "Wild Things",
-      "visible": true,
-      "featured": true,
-      "sortOrder": 4,
-      "description": "Forest friends, fungi, and rooted evergreen energy for people who feel most at home outside.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "tide-and-marsh",
-      "displayName": "Tide & Marsh",
-      "visible": true,
-      "featured": true,
-      "sortOrder": 5,
-      "description": "Salt air, marsh light, and coastal flora — pieces that feel like a pocketful of the shore.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "ocean-wonders",
-      "displayName": "Ocean Wonders",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 6,
-      "description": "Tides, shells, and salt-air stories for anyone who carries the sea with them.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "coastal-carolina",
-      "displayName": "Coastal Carolina",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 7,
-      "description": "Hometown shores, marsh light, and the quiet magic of the Carolina coast.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "pet-keepsakes",
-      "displayName": "Pet Keepsakes",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 8,
-      "description": "Little tributes for the companions who make every ordinary day softer.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "family-and-home",
-      "displayName": "Family & Home",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 9,
-      "description": "Warm, rooted pieces meant to live on keys, shelves, and shared spaces.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "holiday-collection",
-      "displayName": "Holiday Collection",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 10,
-      "description": "Seasonal favorites that rotate with the calendar — festive, handmade, and easy to gift.",
-      "heroImage": "",
-      "featuredImage": ""
-    },
-    {
-      "collectionKey": "haunted-lane",
-      "displayName": "Haunted Lane",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 11,
-      "description": "Spooky-nature folklore for the forever Halloween spirit — moths, moons, and misty woods.",
-      "heroImage": "/assets/collections/0.png",
-      "featuredImage": "/assets/collections/0.png"
-    },
-    {
-      "collectionKey": "weddings-and-events",
-      "displayName": "Weddings & Events",
-      "visible": false,
-      "featured": false,
-      "sortOrder": 12,
-      "description": "Thoughtful favors and keepsakes for gatherings that deserve a handmade touch.",
-      "heroImage": "",
-      "featuredImage": ""
-    }
-  ]
-}
+      "description": "Animal-inspired charms, magnets, and keepsakes for wildlife lovers.",
+      "heroImage": "/assets/collections/wildlife.png",
+      "featuredImage": "/assets/collections/wildlife.png"
+    }]}
