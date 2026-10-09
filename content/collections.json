@@ -13,14 +13,14 @@
       "featuredImage": "/assets/collections/moon-sun-and-stars.png"
     },
     {
-      "collectionKey": "personalized_gifts",
+      "collectionKey": "personalized-gifts",
       "displayName": "Personalized Gifts",
       "visible": true,
       "featured": true,
       "sortOrder": 1,
       "description": "Spells, potions, and charms for the modern witch.",
-      "heroImage": "/assets/collections/personalized_gifts.png",
-      "featuredImage": "/assets/collections/personalized_gifts.png"
+      "heroImage": "/assets/collections/personalized-gifts.png",
+      "featuredImage": "/assets/collections/personalized-gifts.png"
     },
     {
       "collectionKey": "wildlife",

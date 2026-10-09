@@ -7,9 +7,12 @@ This vanilla static site serves covers from:
 Place PNGs there using the normalized Square Collection name:
 
 - `Moon, Sun, and Stars` → `moon-sun-and-stars.png`
+- `Personalized Gifts` → `personalized-gifts.png`
 - `Midnight Light` → `midnight-light.png`
 - `Ocean Wonders` → `ocean-wonders.png`
 - `Witches Lane` → `witches-lane.png`
+
+Use hyphens, not underscores (`personalized-gifts.png`, not `personalized_gifts.png`).
 
 Normalization (see `js/collection-assets.js`): lowercase, trim, `&` → `and`,
 punctuation → hyphens, collapse repeats, add `.png`.
