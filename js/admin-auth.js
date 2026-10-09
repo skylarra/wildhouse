@@ -10,6 +10,7 @@ export const ADMIN_NAV_ITEMS = [
   { href: "/admin/", label: "Dashboard", match: /^\/admin\/?$/ },
   { href: "/admin/products", label: "Products", match: /\/admin\/products/ },
   { href: "/admin/collections", label: "Collections", match: /\/admin\/collections/ },
+  { href: "/admin/promo", label: "Sale / Promo", match: /\/admin\/promo/ },
   { href: "/admin/media", label: "Media", match: /\/admin\/media/ },
   { href: "/admin/orders", label: "Orders", match: /\/admin\/orders/ },
 ];

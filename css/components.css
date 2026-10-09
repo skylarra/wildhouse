@@ -201,6 +201,29 @@
   line-height: 1;
   cursor: pointer;
 }
+.announcement--sale {
+  background: var(--green, #5a6b4a);
+}
+
+/* Sale price: original strikethrough + new price */
+.price--sale {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em;
+}
+.price__was {
+  font-weight: 500;
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+.price__now {
+  font-weight: 700;
+  color: var(--brown, #4e2829);
+}
+.price__from {
+  font-weight: 600;
+}
 
 /* --------------------------- Cart badge --------------------------- */
 .nav-cart { position: relative; }

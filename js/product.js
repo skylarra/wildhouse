@@ -3,6 +3,7 @@ import { getProductByHandle, getRelated, formatMoney } from "./catalog.js";
 import { loadJSON } from "./content.js";
 import { addToCart, pushRecentlyViewed, isFavorite, toggleFavorite } from "./store.js";
 import { productCardHTML, wireFavorites, toast, escapeHtml, formatProductDescription } from "./ui.js";
+import { loadSitePromo, priceDisplayHTML } from "./site-promo.js";
 import {
   buildVariantModel,
   defaultSelection,
@@ -307,7 +308,9 @@ function renderPriceAndStock() {
   const stockEl = document.getElementById("product-stock");
   const addBtn = document.getElementById("add-to-cart");
   const qtyInput = document.getElementById("qty");
-  if (priceEl) priceEl.textContent = formatMoney(selectedVariation.priceCents);
+  if (priceEl) {
+    priceEl.innerHTML = priceDisplayHTML(selectedVariation.priceCents, {}, formatMoney);
+  }
   const stock = currentStock();
   const status = stockCopy(stock);
   if (stockEl) {
@@ -547,6 +550,7 @@ async function init() {
       getProductByHandle(handle),
       loadJSON("./content/product-info.json").catch(() => DEFAULT_INFO),
       loadJSON("./content/variant-media.json").catch(() => ({})),
+      loadSitePromo(),
     ]);
     product = loadedProduct;
     info = loadedInfo || DEFAULT_INFO;

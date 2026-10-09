@@ -10,6 +10,7 @@ import {
   productInCollection,
 } from "./catalog.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml } from "./ui.js";
+import { loadSitePromo } from "./site-promo.js";
 
 const state = { search: "", category: "all", sort: "featured" };
 let collection = null;
@@ -187,6 +188,7 @@ async function init() {
 
   let allProducts = [];
   try {
+    await loadSitePromo();
     [collection, allProducts] = await Promise.all([
       getCollectionByHandle(handle),
       getProducts(),

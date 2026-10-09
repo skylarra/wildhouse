@@ -1,6 +1,7 @@
 // Shop page — search, product-type filter (Square Category), sort, and product grid.
 import { getProducts, getProductTypes, queryProducts } from "./catalog.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders } from "./ui.js";
+import { loadSitePromo } from "./site-promo.js";
 
 const state = { search: "", category: "all", sort: "featured" };
 let allProducts = [];
@@ -101,7 +102,8 @@ function initFromUrl() {
 async function init() {
   if (grid) grid.innerHTML = skeletonGridHTML(8);
   try {
-    allProducts = await getProducts();
+    const [products] = await Promise.all([getProducts(), loadSitePromo()]);
+    allProducts = products;
   } catch (err) {
     grid.innerHTML = emptyStateHTML({
       title: "Shop is taking a rest",
