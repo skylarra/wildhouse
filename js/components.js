@@ -7,6 +7,7 @@ import { loadSite } from "./content.js";
 import { cartCount, getPref, setPref } from "./store.js";
 import { escapeHtml } from "./ui.js";
 import { withAssetContentHash } from "./collection-assets.js";
+import { loadSitePromo, promoBannerText } from "./site-promo.js";
 
 const currentFile = location.pathname.split("/").pop() || "index.html";
 
@@ -20,34 +21,47 @@ function prefersReducedMotion() {
 }
 
 /* ------------------------- Announcement bar ------------------------- */
-function mountAnnouncement(announcement) {
+function mountAnnouncement(announcement, promo) {
   const el = document.getElementById("site-announcement");
-  if (!el || !announcement || !announcement.messages?.length) return;
+  if (!el) return;
 
-  if (announcement.dismissible && getPref("announcementDismissed") === true) {
+  const baseMessages = Array.isArray(announcement?.messages)
+    ? announcement.messages.filter(Boolean)
+    : [];
+  const saleMsg = promoBannerText(promo);
+  const messages = saleMsg ? [saleMsg, ...baseMessages] : baseMessages;
+  if (!messages.length) return;
+
+  const dismissKey = saleMsg
+    ? `announcementDismissed:promo:${saleMsg}:${promo?.discountPercent || 0}`
+    : "announcementDismissed";
+  const dismissible = announcement?.dismissible !== false;
+
+  if (dismissible && getPref(dismissKey) === true) {
     el.hidden = true;
     return;
   }
 
+  el.hidden = false;
   el.innerHTML = `
-    <div class="announcement" role="region" aria-label="Announcements">
-      <p class="announcement__text" aria-live="polite">${escapeHtml(announcement.messages[0])}</p>
-      ${announcement.dismissible ? '<button class="announcement__close" type="button" aria-label="Dismiss announcement">&times;</button>' : ""}
+    <div class="announcement${saleMsg ? " announcement--sale" : ""}" role="region" aria-label="Announcements">
+      <p class="announcement__text" aria-live="polite">${escapeHtml(messages[0])}</p>
+      ${dismissible ? '<button class="announcement__close" type="button" aria-label="Dismiss announcement">&times;</button>' : ""}
     </div>`;
 
   const textEl = el.querySelector(".announcement__text");
-  if (announcement.messages.length > 1 && !prefersReducedMotion()) {
+  if (messages.length > 1 && !prefersReducedMotion()) {
     let i = 0;
     setInterval(() => {
-      i = (i + 1) % announcement.messages.length;
-      textEl.textContent = announcement.messages[i];
-    }, announcement.rotateMs || 4500);
+      i = (i + 1) % messages.length;
+      textEl.textContent = messages[i];
+    }, announcement?.rotateMs || 4500);
   }
 
   const closeBtn = el.querySelector(".announcement__close");
   if (closeBtn) {
     closeBtn.addEventListener("click", () => {
-      setPref("announcementDismissed", true);
+      setPref(dismissKey, true);
       el.hidden = true;
     });
   }
@@ -243,8 +257,8 @@ function mountFooter(site) {
 async function mountChrome() {
   document.addEventListener("cart:change", updateCartBadge);
   try {
-    const site = await loadSite();
-    mountAnnouncement(site.announcement);
+    const [site, promo] = await Promise.all([loadSite(), loadSitePromo()]);
+    mountAnnouncement(site.announcement, promo);
     mountHeader(site);
     mountNewsletter(site.newsletter);
     mountFooter(site);

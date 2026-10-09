@@ -389,6 +389,50 @@
   border-top: 1px dashed rgba(78, 40, 41, 0.18);
 }
 
+/* Sale / Promo admin */
+.admin-promo-form {
+  display: grid;
+  gap: 16px;
+  max-width: 32rem;
+}
+.admin-promo-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-field {
+  display: grid;
+  gap: 6px;
+}
+.admin-field > span:first-child {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.admin-field input[type="text"],
+.admin-field input[type="number"] {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(78, 40, 41, 0.28);
+  border-radius: 4px;
+  background: #fff;
+  color: inherit;
+}
+.admin-field__hint {
+  font-size: 0.82rem;
+  color: #5a4443;
+  line-height: 1.4;
+}
+.admin-promo-preview {
+  margin: 0;
+  padding: 12px;
+  background: rgba(90, 107, 74, 0.08);
+  border-radius: 6px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
 @media (max-width: 640px) {
   .admin-row__title {
     gap: 6px;

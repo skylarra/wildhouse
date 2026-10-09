@@ -9,6 +9,7 @@ import {
 import { loadPage } from "./content.js";
 import { getRecentlyViewed } from "./store.js";
 import { productCardHTML, wireFavorites, wireImagePlaceholders, escapeHtml, collectionCardHTML } from "./ui.js";
+import { loadSitePromo } from "./site-promo.js";
 
 function ctaHTML(cta, cls = "btn secondary") {
   return cta ? `<a class="${cls}" href="${cta.href}">${escapeHtml(cta.label)}</a>` : "";
@@ -198,7 +199,7 @@ async function renderRecentlyViewed(heading) {
 
 async function init() {
   try {
-    const home = await loadPage("home");
+    const [home] = await Promise.all([loadPage("home"), loadSitePromo()]);
     renderSeo(home.seo);
     renderHero(home.hero);
     await renderHomeCollections(home.collections);

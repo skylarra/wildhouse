@@ -17,6 +17,11 @@
 // pickup recipient (pickup) or pre_populated_data.buyer_email (ship). Shipping address is
 // required on our cart for ship orders and pre-filled on Square's hosted page.
 import { squareConfig, squareFetch, json, missingSquareEnv } from "./_square.js";
+import {
+  loadSitePromoFromEnv,
+  isSalePricingActive,
+  promoBannerText,
+} from "./_site-promo.js";
 
 const DEFAULT_PICKUP_PREP = "P14D";
 const OWNER_EMAIL = "skylar@wildhouselane.com";
@@ -204,6 +209,9 @@ export async function onRequestPost({ request, env }) {
   orderNoteParts.push(`Customer: ${customer.name} <${customer.email}>`);
   const orderNote = orderNoteParts.join(" — ").slice(0, 500);
 
+  const promo = await loadSitePromoFromEnv(env);
+  const saleActive = isSalePricingActive(promo);
+
   const order = {
     location_id: cfg.locationId,
     line_items: lineItems,
@@ -217,6 +225,24 @@ export async function onRequestPost({ request, env }) {
       customer_name: customer.name.slice(0, 191),
     },
   };
+
+  // Match storefront sale display: apply the same percent as an order discount.
+  if (saleActive) {
+    const label =
+      promoBannerText(promo).slice(0, 255) || `${promo.discountPercent}% off`;
+    order.discounts = [
+      {
+        uid: "site-sale",
+        name: label,
+        percentage: String(promo.discountPercent),
+        scope: "ORDER",
+      },
+    ];
+    if (promo.promoCode) {
+      order.metadata.promo_code = promo.promoCode.slice(0, 191);
+    }
+    order.metadata.sale_percent = String(promo.discountPercent).slice(0, 191);
+  }
 
   const checkoutOptions = {
     redirect_url: `${origin}/order-confirmation.html`,

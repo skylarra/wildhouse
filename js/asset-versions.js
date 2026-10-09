@@ -22,6 +22,7 @@ export const ASSET_CONTENT_HASHES = {
   "/assets/collections/nocturnal.png": "3fc57471e4df",
   "/assets/collections/ocean-wonders.png": "3fc57471e4df",
   "/assets/collections/ocean.png": "3fc57471e4df",
+  "/assets/collections/personalized-gifts.png": "1ac4d391c8da",
   "/assets/collections/spooky.png": "3fc57471e4df",
   "/assets/collections/sun-moon-and-stars.png": "bd9d71b47294",
   "/assets/collections/tide-and-marsh.png": "3fc57471e4df",
@@ -37,6 +38,7 @@ export const ASSET_CONTENT_HASHES = {
   "/assets/greenery-sticker-sheet.png": "38ac403ab3be",
   "/assets/hero-svg.svg": "fdfee4cccebd",
   "/assets/magic-tee.png": "4f2bbf7ffffd",
+  "/assets/moonmagicstickers.JPG": "38fc296b594f",
   "/assets/social-pinterest.svg": "2c98d4e25c48",
   "/assets/social1.svg": "61151bc4405f",
   "/assets/social2.svg": "a31d2ff9d58f",
@@ -125,5 +127,6 @@ export const ASSET_CONTENT_HASHES = {
   "/assets/studio/mini/star.svg": "3808ba0a4b9a",
   "/assets/sunny-mirror.jpg": "bddcd05ac230",
   "/assets/welcome-circle.svg": "4b15ace78c13",
-  "/assets/welcome1.jpg": "16f24f3a99c3"
+  "/assets/welcome1.jpg": "16f24f3a99c3",
+  "/assets/witchysunmirror.JPG": "1fd5c3b19971"
 };

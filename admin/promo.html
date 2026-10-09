@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin · Sale / Promo | Wildhouse Lane</title>
+    <base href="/">
+    <link rel="icon" type="image/svg+xml" href="/assets/WILDHOUSE-logomark.svg?v=ecab441c3424">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+    <a class="skip-link" href="#admin-main">Skip to content</a>
+
+    <header class="admin-top">
+        <div class="admin-top__inner">
+            <nav class="admin-nav" aria-label="Admin"></nav>
+            <h1 class="admin-title">Sale / Promo</h1>
+            <p class="admin-tagline">Control the top announcement banner and sitewide sale pricing. When a discount percent is set, product prices show the original with strikethrough and the sale price beside it. The same percent is applied automatically at Square checkout.</p>
+        </div>
+    </header>
+
+    <main id="admin-main" class="admin-main">
+        <p class="admin-status" id="admin-status" role="status" aria-live="polite"></p>
+
+        <form class="admin-card admin-promo-form" id="promo-form">
+            <label class="admin-promo-toggle">
+                <input type="checkbox" id="promo-enabled" name="enabled">
+                <span>Show sale / promo on the site</span>
+            </label>
+
+            <label class="admin-field" for="promo-banner">
+                <span>Banner message</span>
+                <input id="promo-banner" name="bannerMessage" type="text" maxlength="200"
+                  placeholder="e.g. Spring sale — 15% off sitewide">
+            </label>
+
+            <label class="admin-field" for="promo-code">
+                <span>Promo code label <span class="cart-customer__optional">(optional)</span></span>
+                <input id="promo-code" name="promoCode" type="text" maxlength="40"
+                  placeholder="e.g. WILDFLOWER"
+                  autocomplete="off" spellcheck="false">
+                <span class="admin-field__hint">Shown in the banner if you leave the message blank. Discount is applied automatically at checkout — shoppers do not need to enter a code.</span>
+            </label>
+
+            <label class="admin-field" for="promo-percent">
+                <span>Discount percent</span>
+                <input id="promo-percent" name="discountPercent" type="number" min="0" max="100" step="1" value="0">
+                <span class="admin-field__hint">When greater than 0 and the sale is on, prices show strikethrough original + sale price.</span>
+            </label>
+
+            <p class="admin-promo-preview" id="promo-preview" aria-live="polite"></p>
+
+            <div class="admin-toolbar__actions">
+                <button type="button" class="btn" id="promo-reload">Reload</button>
+                <button type="submit" class="btn secondary" id="promo-save">Save</button>
+            </div>
+        </form>
+    </main>
+
+    <script type="module" src="/js/admin-promo.js"></script>
+</body>
+</html>

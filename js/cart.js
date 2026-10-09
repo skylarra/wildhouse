@@ -6,6 +6,7 @@ import { getCart, setQty, removeFromCart, cartSubtotalCents } from "./store.js";
 import { formatMoney } from "./catalog.js";
 import { loadSite, sitePath } from "./content.js";
 import { escapeHtml, toast } from "./ui.js";
+import { loadSitePromo, priceDisplayHTML } from "./site-promo.js";
 
 const root = document.getElementById("cart-root");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -196,14 +197,14 @@ function lineHTML(line) {
         <a href="${href}"><h3>${escapeHtml(line.name)}</h3></a>
         ${variant}
         ${note}
-        <p class="cart-line__price">${formatMoney(line.priceCents)}</p>
+        <p class="cart-line__price">${priceDisplayHTML(line.priceCents, {}, formatMoney)}</p>
       </div>
       <div class="cart-line__qty">
         <button class="qty-btn" data-action="dec" aria-label="Decrease quantity">&minus;</button>
         <input class="qty-input" type="number" min="0" value="${line.qty}" aria-label="Quantity">
         <button class="qty-btn" data-action="inc" aria-label="Increase quantity">+</button>
       </div>
-      <p class="cart-line__subtotal">${formatMoney(line.priceCents * line.qty)}</p>
+      <p class="cart-line__subtotal">${priceDisplayHTML(line.priceCents * line.qty, {}, formatMoney)}</p>
       <button class="cart-line__remove" data-action="remove" aria-label="Remove item">&times;</button>
     </div>`;
 }
@@ -241,6 +242,7 @@ function render() {
   }
 
   const subtotal = cartSubtotalCents();
+  const subtotalHTML = priceDisplayHTML(subtotal, {}, formatMoney);
 
   root.innerHTML = `
     <h1>Your Cart</h1>
@@ -267,9 +269,7 @@ function render() {
 
         ${customerFieldsHTML()}
 
-        <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${formatMoney(
-          subtotal
-        )}</span></div>
+        <div class="cart-summary__row"><span>Subtotal</span><span id="cart-subtotal">${subtotalHTML}</span></div>
         <div class="cart-summary__row${
           fulfillment === "ship" ? " cart-summary__row--muted" : ""
         }"><span id="cart-shipping-label">${escapeHtml(
@@ -466,6 +466,6 @@ document.addEventListener("cart:change", () => {
   render();
 });
 
-loadSite()
+Promise.all([loadSite(), loadSitePromo()])
   .catch((err) => console.error(err))
   .finally(render);

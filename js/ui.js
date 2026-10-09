@@ -8,6 +8,7 @@ import {
   collectionCoverFallbackSrc,
   withAssetContentHash,
 } from "./collection-assets.js";
+import { priceDisplayHTML } from "./site-promo.js";
 
 const FALLBACK_IMG = collectionCoverFallbackSrc();
 
@@ -17,8 +18,8 @@ export function productCardHTML(product) {
   const img = (raw ? absolutizeAssetUrl(raw) : "") || FALLBACK_IMG;
   const priceLabel =
     product.hasVariants && product.minPriceCents !== product.maxPriceCents
-      ? `From ${formatMoney(product.minPriceCents)}`
-      : formatMoney(product.minPriceCents);
+      ? priceDisplayHTML(product.minPriceCents, { from: true }, formatMoney)
+      : priceDisplayHTML(product.minPriceCents, {}, formatMoney);
   const fav = isFavorite(product.id);
   const soldOut = product.inStock ? "" : '<span class="badge badge--soldout">Sold out</span>';
   // Optional future focal-point override (e.g. "50% 20%"). Defaults to centered cover crop.
