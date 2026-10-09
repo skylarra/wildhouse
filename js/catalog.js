@@ -150,6 +150,8 @@ function normalize(raw) {
         tags: obj.custom?.tags || [],
         featured: Boolean(obj.custom?.featured),
         colorImages: obj.custom?.colorImages || {},
+        // Square MODIFIER_LIST / TEXT modifiers (pet name, engraving, etc.).
+        modifiers: Array.isArray(obj.custom?.modifiers) ? obj.custom.modifiers : [],
         categoryId: d.category_id || null,
         categoryName: category?.name || "",
         categoryHandle: category?.handle || null,

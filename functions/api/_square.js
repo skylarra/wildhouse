@@ -2,6 +2,7 @@
 // The access token and location come from environment variables (Cloudflare Pages
 // project settings / Cursor Secrets) and NEVER touch the browser.
 // Files prefixed with "_" are not routed by Cloudflare Pages, so this is import-only.
+import { buildModifierListIndex, resolveItemModifiers } from "./_modifiers.js";
 
 const API_VERSION_DEFAULT = "2025-01-23";
 
@@ -261,7 +262,10 @@ export async function squareFetch(cfg, path, options = {}) {
  * Paginate Square Catalog List — a single page can omit CUSTOM_ATTRIBUTE_DEFINITION
  * objects needed to resolve Collection selection UIDs and Featured keys.
  */
-export async function listCatalogObjects(cfg, types = "ITEM,CATEGORY,IMAGE,CUSTOM_ATTRIBUTE_DEFINITION") {
+export async function listCatalogObjects(
+  cfg,
+  types = "ITEM,CATEGORY,IMAGE,CUSTOM_ATTRIBUTE_DEFINITION,MODIFIER_LIST,MODIFIER"
+) {
   const objects = [];
   let cursor = null;
   do {
@@ -301,6 +305,7 @@ export function slugify(str = "") {
 // - Square Categories → product type (reporting / type filters)
 // - Square custom attribute "Collection" → customer-facing collection membership
 // - Square custom attribute "Featured" → product.featured (manual merchandising)
+// - Square MODIFIER_LIST / MODIFIER → product.custom.modifiers (text + list options)
 export function squareToCatalog(objects = [], counts = [], currency = "USD") {
   const categories = [];
   const images = {};
@@ -309,6 +314,7 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
   const defIndex = buildAttributeDefinitionIndex(objects);
   const selectionNameByUid = buildSelectionNameMap(objects);
   const collectionOptions = listCollectionOptionNames(objects, defIndex);
+  const modifierLists = buildModifierListIndex(objects);
 
   for (const obj of objects) {
     if (obj.type === "CATEGORY") {
@@ -378,6 +384,8 @@ export function squareToCatalog(objects = [], counts = [], currency = "USD") {
         // Exact Square Collection display name(s). Membership authority.
         collection: primaryCollection,
         collections: collectionNames,
+        // Square text + list modifiers for the product page / checkout.
+        modifiers: resolveItemModifiers(it, modifierLists),
       },
     };
   });
